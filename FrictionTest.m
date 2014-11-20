@@ -1,8 +1,6 @@
 
-JOINT = 'iCub03/right/ankle/roll/';
-
 %% Load value in idle for friction estimatation
-load([JOINT 'Idle.mat']);
+load([joint.folder_path 'idle.mat']);
 Fr = Friction(out(:,1),out(:,2),out(:,3),tout,1);
 TH = 5;
 %% Plot Friction
@@ -15,7 +13,7 @@ coeff = Fr.getFrictionData(TH);
 hold off
 
 %% Remove friction
-load([PATH JOINT 'ref.mat']);
+load([joint.folder_path 'ref.mat']);
 time_set = 25;
 %figure;
 qdot = out(1:time_set*100,2);
