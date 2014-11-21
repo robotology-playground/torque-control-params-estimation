@@ -1,28 +1,29 @@
 
 %% Load value in idle for friction estimatation
 load([joint.folder_path 'idle.mat']);
-Fr = Friction(out(:,1),out(:,2),out(:,3),time,1);
 TH = 1;
+Fr = Friction(out(:,1),out(:,2),out(:,3),time,TH);
+
 %% Plot Friction
 
-subplot(1,2,1);
+%subplot(1,2,1);
 hold on
 Fr.plotFriction();
 grid;
-coeff = Fr.getFrictionData(TH);
+Fr.getFrictionData();
 hold off
 
 %% Remove friction
-load([joint.folder_path 'ref.mat']);
-time_set = Time;
+load([joint.folder_path 'ref-1.mat']);
+time_var = Time;
 %figure;
-qdot = out(1:time_set*100,2);
-torque = out(1:time_set*100,3);
-pwm = out(1:time_set*100,4);
-pwm_jtc = out(1:time_set*100,5);
+qdot = out(1:time_var*100+1,2);
+torque = out(1:time_var*100+1,3);
+pwm = out(1:time_var*100+1,4);
+pwm_jtc = out(1:time_var*100+1,5);
 friction = zeros(size(qdot,1),1);
-friction(qdot < -TH) = coeff.AN(2) + coeff.AN(1)*qdot(qdot < -TH);
-friction(qdot > TH) = coeff.AP(2) + coeff.AP(1)*qdot(qdot > TH);
+friction(qdot < -TH) = Fr.coeff.AN(2) + Fr.coeff.AN(1)*qdot(qdot < -TH);
+friction(qdot > TH) = Fr.coeff.AP(2) + Fr.coeff.AP(1)*qdot(qdot > TH);
 
 %Plot data
 subplot(1,2,2);
@@ -40,7 +41,7 @@ hold off
 
 %% Plot plot Coulomb - Viscous
 figure;
-Fr.plotTree(coeff);
+Fr.plotParts();
 
 
 %% 

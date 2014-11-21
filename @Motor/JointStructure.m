@@ -1,4 +1,4 @@
-function joint = JointStructure( robot, part, type, info1, info2 )
+function joint = JointStructure( joint, robot, part, type, info1, info2 )
 %JOINTSTRUCTURE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,11 +11,12 @@ function joint = JointStructure( robot, part, type, info1, info2 )
 % 6	ankle_roll  Ankle	roll	When the calf is aligned with gravity
 
 
-joint = struct;
+%joint = struct;
 % HEAD
 joint.number = 3;
 joint.path = [type '_' part];
 joint.folder_path = [robot '/' part '/' type '/' info1];
+joint.robotName = robot;
 number = 1;
 
 if strcmp(part,'hand')
