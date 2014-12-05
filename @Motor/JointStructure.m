@@ -1,4 +1,4 @@
-function joint = JointStructure( joint, robot, part, type, info1, info2 )
+function joint = JointStructure( joint, start_folder, robot, part, type, info1, info2, name_exper )
 %JOINTSTRUCTURE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -15,8 +15,13 @@ function joint = JointStructure( joint, robot, part, type, info1, info2 )
 % HEAD
 joint.number = 3;
 joint.path = [type '_' part];
-joint.folder_path = [robot '/' part '/' type '/' info1];
+if ~strcmp(start_folder,'')
+    joint.folder_path = [start_folder '/' robot '/' part '/' type '/' info1];
+else
+    joint.folder_path = [robot '/' part '/' type '/' info1];
+end
 joint.robotName = robot;
+joint.select = eye(25);
 number = 1;
 
 if strcmp(part,'hand')
@@ -48,7 +53,17 @@ elseif strcmp(part,'leg')
 end
 
 joint.number = joint.number + number;
-joint.folder_path = [joint.folder_path '/'];
+joint.select = joint.select(:,joint.number);
+if ~strcmp(name_exper,'')
+    joint.folder_path = [joint.folder_path '/' name_exper '/'];
+else
+    joint.folder_path = [joint.folder_path '/'];
+end
 
+joint.figureName = [ part '-' type '-' info1];
+if ~strcmp(info2,'') 
+    joint.figureName = [ joint.figureName '-' info2];
+end
+    
 end
 

@@ -1,12 +1,12 @@
 
 
-joint = Motor('iCubGenova03','leg','left','hip','roll');
-Time = 60;
+joint = Motor('20141204','iCubGenova03','leg','left','hip','pitch','WBDT+40');
+Time =60;
 
 %% 
 name = 'idle';
 
-%% Reference configuration
+%%% Reference configuration
 Reference = struct;
 
 if strcmp(name,'idle')
@@ -18,14 +18,12 @@ elseif strcmp(name,'ref')
     Reference.sinFreq = 0.1;
     Reference.sinBias = 0;
 end
-
-
-%% Start simulation
 name_file = [name ''];
-
 localName = 'simulink';
 Ts = 0.01;
 robotName = joint.robotName;
+
+%% Start simulation
 
 disp('Change configuration on JTC and Calibrate (WBD)!');
 disp(['NOW IT IS SELECTED: ' joint.folder_path]);
@@ -39,7 +37,11 @@ sim_data = sim('MotorIdent','ReturnWorkspaceOutputs', 'on');
 out = sim_data.get('out');
 time = sim_data.get('tout');
 
-% Save on file
+%% Save on file
+if exist('tout','var')
+    time = tout;
+    clear tout;
+end
 save([joint.folder_path name_file '.mat'],'out','time');
 disp(['SAVED ON ' joint.folder_path name_file '.mat']);
 

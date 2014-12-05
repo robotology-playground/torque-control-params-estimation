@@ -16,17 +16,24 @@ classdef Friction
         KcN;
         KvP;
         KvN;
+        offset;
     end
     
     methods
-        function obj = Friction(position,velocity,torque,time,th_velocity)
+        function obj = Friction(position,velocity,torque,time,th_velocity,offset)
+            if exist('offset','var')
+                obj.offset = offset;
+            else
+                obj.offset = 0;
+            end
             obj.position = position;
             obj.velocity = velocity;
-            obj.torque = torque;
+            obj.torque = obj.offset+torque;
             obj.time = time;
             obj.step = time(2)-time(1);
 
             obj = obj.evaluateCoeff(th_velocity);
+
         end
         
         %% Evaluate Coefficent
