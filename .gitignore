@@ -17,3 +17,45 @@
 
 # Simulink Code Generation
 slprj/
+
+
+*.fig
+*.png
+
+# Created by https://www.gitignore.io
+
+#!! ERROR: l is undefined. Use list command to see defined gitignore types !!#
+
+### LaTeX ###
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.nav
+*.nlo
+*.out
+*.pdfsync
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdy
+*.tdo

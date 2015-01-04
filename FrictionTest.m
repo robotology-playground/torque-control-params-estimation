@@ -1,6 +1,6 @@
 
 %% Load joints
-joint = Motor('20141204','iCubGenova03','leg','left','hip','pitch','WBDT+20');
+joint = Motor('20141222','iCubGenova03','leg','left','hip','pitch','NJTC/WBDT/761');
 
 %% Evalute Friction on joint with data
 joint = joint.loadFriction('idle.mat',1);
@@ -9,7 +9,7 @@ joint = joint.loadFriction('idle.mat',1);
 
 hFig = figure(2);
 set(hFig, 'Position', [0 0 800 600]);
-subplot(1,2,1);
+%subplot(1,2,1);
 hold on
 grid;
 joint.friction.plotFriction();

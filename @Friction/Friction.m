@@ -131,6 +131,12 @@ classdef Friction
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
         end
+        
+        function data = getInfo(obj)
+            data = struct;
+            data.velocity = obj.velocity;
+            data.torque = obj.torque;
+        end
     end
     
     methods (Access = protected, Static)
