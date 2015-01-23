@@ -14,7 +14,7 @@ classdef Motor
     end
     
     methods
-        function joint = Motor(start_folder, robot, part, type, info1, info2,name_exper)
+        function joint = Motor(start_folder, robot, part, type, info1, info2, name_exper)
             if ~exist('info1','var')
                 info1 = '';
             end

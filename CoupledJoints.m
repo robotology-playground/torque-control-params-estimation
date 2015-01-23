@@ -43,6 +43,9 @@ save([folder_path name_file '.mat'],'logsout','time');
 disp(['SAVED ON ' folder_path name_file '.mat']);
 
 %% Coupled Friction
+
+Treshold = 5;
+
 % TORSO
 % R = 0.04;
 % r = 0.022;
@@ -50,38 +53,48 @@ disp(['SAVED ON ' folder_path name_file '.mat']);
 %       0    1/2     1/2;
 %       0   -1/2     1/2];
 
+% % Arm Left
+% t = 0.625;
+% T = [-1     0	0;
+%      -1    -t	0;
+%       0     t  -t];
+
+% % Arm Right
+% t = 0.625;
+% T = [1 0 0;
+%     1 t 0;
+%     0 -t t];
+
+%%%WRONG ARM RIGHT
 t = 0.625;
-T = [-1 0 0;
-    -1 -t 0;
-    0 t -t];
-  
+T = [1     0	0;
+    -t     t    0;
+    -t     t    t]';
 
 m     = (T^-1*logsout.get('q').Values.Data')';
 md    = (T^-1*logsout.get('qD').Values.Data')';
 tau_m = (T'*logsout.get('tau').Values.Data')';
 time  = logsout.get('qD').Values.Time;
-friction = Friction(m(:,1) ,md(:,1),tau_m(:,1), time, 0.1);
-friction = [friction Friction(m(:,2) ,md(:,2),tau_m(:,2), time, 0.1)];
-friction = [friction Friction(m(:,3) ,md(:,3),tau_m(:,3), time, 0.1)];
-
-%%
-% 
-% Friction(logsout.get('q').Values.Data(:,1),...
-%         logsout.get('qD').Values.Data(:,1),...
-%         logsout.get('tau').Values.Data(:,1),...
-%         logsout.get('qD').Values.Time, 1).plotFriction();
-
+friction = Friction(m(:,1) ,md(:,1),tau_m(:,1), time, Treshold);
+friction = [friction Friction(m(:,2) ,md(:,2),tau_m(:,2), time, Treshold)];
+friction = [friction Friction(m(:,3) ,md(:,3),tau_m(:,3), time, Treshold)];
 
 %% Plot Friction
 
-hFig = figure(1);
+if ~exist('counter','var')
+    counter = 1;
+else
+    counter = counter + 1;
+end
+
+hFig = figure(counter);
 set(hFig, 'Position', [0 0 800 600]);
 
 subplot(1,3,1);
 hold on
 grid;
 friction(3).plotFriction();
-friction(3).plotFrictionModel();
+%friction(3).plotFrictionModel();
 title('Pitch');
 hold off
 
@@ -89,7 +102,7 @@ subplot(1,3,2);
 hold on
 grid;
 friction(2).plotFriction();
-friction(2).plotFrictionModel();
+%friction(2).plotFrictionModel();
 title('Roll');
 hold off
 
@@ -97,6 +110,6 @@ subplot(1,3,3);
 hold on
 grid;
 friction(1).plotFriction();
-friction(1).plotFrictionModel();
+%friction(1).plotFrictionModel();
 title('Yaw');
 hold off
