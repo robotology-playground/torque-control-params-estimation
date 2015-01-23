@@ -44,7 +44,10 @@ disp(['SAVED ON ' folder_path name_file '.mat']);
 
 %% Coupled Friction
 
-Treshold = 5;
+threshold = 5;
+
+% Wiki reference
+% http://wiki.icub.org/wiki/ICub_coupled_joints
 
 % TORSO
 % R = 0.04;
@@ -75,9 +78,9 @@ m     = (T^-1*logsout.get('q').Values.Data')';
 md    = (T^-1*logsout.get('qD').Values.Data')';
 tau_m = (T'*logsout.get('tau').Values.Data')';
 time  = logsout.get('qD').Values.Time;
-friction = Friction(m(:,1) ,md(:,1),tau_m(:,1), time, Treshold);
-friction = [friction Friction(m(:,2) ,md(:,2),tau_m(:,2), time, Treshold)];
-friction = [friction Friction(m(:,3) ,md(:,3),tau_m(:,3), time, Treshold)];
+friction = Friction(m(:,1) ,md(:,1),tau_m(:,1), time, threshold);
+friction = [friction Friction(m(:,2) ,md(:,2),tau_m(:,2), time, threshold)];
+friction = [friction Friction(m(:,3) ,md(:,3),tau_m(:,3), time, threshold)];
 
 %% Plot Friction
 
