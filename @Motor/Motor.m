@@ -15,6 +15,15 @@ classdef Motor
     
     methods
         function joint = Motor(start_folder, robot, part, type, info1, info2,name_exper)
+            if ~exist('info1','var')
+                info1 = '';
+            end
+            if ~exist('info2','var')
+                info2 = '';
+            end
+            if ~exist('name_exper','var')
+                name_exper = '';
+            end
             joint = joint.JointStructure(start_folder, robot, part, type, info1, info2,name_exper);
             if ~exist(joint.folder_path,'dir')
                 mkdir(joint.folder_path);

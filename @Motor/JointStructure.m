@@ -14,20 +14,35 @@ function joint = JointStructure( joint, start_folder, robot, part, type, info1, 
 %joint = struct;
 % HEAD
 joint.number = 3;
-joint.path = [type '_' part];
-if ~strcmp(start_folder,'')
-    joint.folder_path = [start_folder '/' robot '/' part '/' type '/' info1];
+if ~strcmp(part,'torso')
+    joint.path = [type '_' part];
 else
-    joint.folder_path = [robot '/' part '/' type '/' info1];
+    joint.path = [part];
+end
+if ~strcmp(start_folder,'')
+    joint.folder_path = [start_folder '/' robot '/' part '/' type];
+else
+    joint.folder_path = [robot '/' part '/' type];
+end
+if ~strcmp(info1,'')
+    joint.folder_path = [joint.folder_path '/' info1];
 end
 joint.robotName = robot;
 joint.select = eye(25);
 number = 1;
 
-if strcmp(part,'hand')
+if strcmp(part,'arm')
     if strcmp(type,'right')
         joint.number = joint.number + 5;
     end
+ 
+    if strcmp(info1,'roll')
+        number = number + 1;
+    elseif strcmp(info1,'yaw')
+        number = number + 2;
+    end
+    joint.folder_path = [joint.folder_path '/' info1];
+    
 elseif strcmp(part,'leg')
     joint.number = joint.number + 10;
     if strcmp(type,'right')
@@ -50,6 +65,14 @@ elseif strcmp(part,'leg')
         end
         joint.folder_path = [joint.folder_path '/' info2];
     end
+elseif strcmp(part,'torso')
+    if strcmp(info1,'pith')
+        number = number + 0;
+    elseif strcmp(info1,'roll')
+        number = number + 1;
+    elseif strcmp(info1,'yaw')
+        number = number + 2;
+    end
 end
 
 joint.number = joint.number + number;
@@ -60,7 +83,11 @@ else
     joint.folder_path = [joint.folder_path '/'];
 end
 
-joint.figureName = [ part '-' type '-' info1];
+if strcmp(info1,'')
+    joint.figureName = [ part '-' type];
+else
+    joint.figureName = [ part '-' type '-' info1];
+end
 if ~strcmp(info2,'') 
     joint.figureName = [ joint.figureName '-' info2];
 end
