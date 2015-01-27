@@ -31,6 +31,13 @@ classdef Motor
             joint.name_exp = name_exper;
         end
         
+        function joint = loadFrictionData(joint, dataQ, dataQD, dataT, time, threshold,offset)
+            if ~exist('offset','var')
+                offset = 0;
+            end
+            joint.friction = Friction(dataQ(:) ,dataQD(:),dataT(:), time, threshold,offset);
+        end
+        
         function joint = loadFriction(joint, file, threshold,offset)
             if ~exist('offset','var')
                 offset = 0;

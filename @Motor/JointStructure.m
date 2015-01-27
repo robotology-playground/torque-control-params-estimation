@@ -40,6 +40,8 @@ if strcmp(part,'arm')
         number = number + 1;
     elseif strcmp(info1,'yaw')
         number = number + 2;
+    elseif strcmp(info1,'elbow')
+        number = number + 3;
     end
     joint.folder_path = [joint.folder_path '/' info1];
     

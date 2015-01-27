@@ -1,6 +1,6 @@
 
 
-joint = Motor('20141222','iCubGenova03','leg','left','hip','pitch','NJTC/WBDT/500');
+joint = Motor('20150126','iCubGenova03','leg','left','hip','pitch','');
 Time =60;
 
 %% 
@@ -24,7 +24,10 @@ name_file = [name ''];
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
 localName = 'simulink_raffa';
 setenv('YARP_ROBOT_NAME', joint.robotName);
-ROBOT_DOF = 1;
+
+%wbi_config_file='yarpWholeBodyInterface_noleftarm.ini';
+%Left Arm
+ROBOT_DOF = 25;
 robotName = 'icub';
 Ts = 0.01;
 
@@ -47,7 +50,7 @@ if exist('tout','var')
     time = tout;
     clear tout;
 end
-save([joint.folder_path name_file '.mat'],'out','time');
+save([joint.folder_path name_file '.mat'],'logsout','time');
 disp(['SAVED ON ' joint.folder_path name_file '.mat']);
 
 %% Clear Data
