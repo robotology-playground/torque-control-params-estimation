@@ -1,4 +1,4 @@
-function joint = JointStructure( joint, start_folder, robot, part, type, info1, info2, name_exper )
+function joint = JointStructure( joint, start_folder)
 %JOINTSTRUCTURE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -13,86 +13,95 @@ function joint = JointStructure( joint, start_folder, robot, part, type, info1, 
 
 %joint = struct;
 % HEAD
-joint.number = 3;
-if ~strcmp(part,'torso')
-    joint.path = [type '_' part];
-else
-    joint.path = [part];
-end
-if ~strcmp(start_folder,'')
-    joint.folder_path = [start_folder '/' robot '/' part '/' type];
-else
-    joint.folder_path = [robot '/' part '/' type];
-end
-if ~strcmp(info1,'')
-    joint.folder_path = [joint.folder_path '/' info1];
-end
-joint.robotName = robot;
-joint.select = eye(25);
-number = 1;
 
-if strcmp(part,'arm')
-    if strcmp(type,'right')
-        joint.number = joint.number + 5;
-    end
- 
-    if strcmp(info1,'roll')
-        number = number + 1;
-    elseif strcmp(info1,'yaw')
-        number = number + 2;
-    elseif strcmp(info1,'elbow')
-        number = number + 3;
-    end
-    joint.folder_path = [joint.folder_path '/' info1];
-    
-elseif strcmp(part,'leg')
-    joint.number = joint.number + 10;
-    if strcmp(type,'right')
-        joint.number = joint.number + 6;
-    end
-  
-    if strcmp(info1,'hip')
-        if strcmp(info2,'roll')
-            number = number + 1;
-        elseif strcmp(info2,'yaw')
-            number = number + 2;
+%Convert part in number
+part_number = 0;
+if strcmp(joint.part,'head')
+    part_number = 1;
+elseif strcmp(joint.part,'torso')
+    part_number = 2;
+elseif strcmp(joint.part,'arm')
+    part_number = 3;
+elseif strcmp(joint.part,'leg')
+    part_number = 4;
+end
+
+%Convert type in number
+type_number = 0;
+if strcmp(joint.type,'left')
+    type_number = 1;
+elseif strcmp(joint.type,'right')
+    type_number = 2;
+elseif(joint.info1 ~= 0)
+    type_number = joint.pitchRollYawNumber(joint.type);
+end
+
+%Convert info1 in number
+info1_number = 0;
+if strcmp(joint.info1,'hip')
+    info1_number = 1;
+elseif strcmp(joint.info1,'knee')
+    info1_number = 4;
+elseif strcmp(joint.info1,'ankle')
+    info1_number = 3;
+elseif(joint.info1 ~= 0)
+    info1_number = joint.pitchRollYawNumber(joint.info1);
+elseif strcmp(joint.info1,'elbow')
+    info1_number = 4;
+end
+
+%Convert info2 in number
+info2_number = -1;
+if ~strcmp(joint.info2,'')
+    info2_number = joint.pitchRollYawNumber(joint.info2);
+end
+
+N_HAND = 5;
+N_LEG = 6;
+ANKLE_START = 4;
+DOF_START_TORSO = 0;
+DOF_START_ARM_LEFT = 3;
+DOF_START_ARM_RIGHT = DOF_START_ARM_LEFT + N_HAND;
+DOF_START_LEG_LEFT = DOF_START_ARM_RIGHT + N_HAND;
+DOF_START_LEG_RIGHT = DOF_START_LEG_LEFT + N_LEG;
+joint.number = 0;       % For ROBOT_DOF = 25
+joint.path = [start_folder '/' joint.robot];
+switch(part_number)
+    case 2      % Torso
+        joint.group_select = joint.part;
+        joint.path = [joint.path '/' joint.part '/' joint.type];
+        joint.number = DOF_START_TORSO + type_number;
+    case 3      % Arm
+        joint.group_select = [joint.type '_' joint.part];
+        joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
+        joint.number = info1_number;
+        switch(type_number)
+            case 1
+                joint.number = joint.number + DOF_START_LEG_LEFT;
+            case 2
+                joint.number = joint.number + DOF_START_LEG_RIGHT;
         end
-        joint.folder_path = [joint.folder_path '/' info2];
-    elseif strcmp(info1,'knee')
-        number = number + 3;
-    elseif strcmp(info1,'ankle')
-        number = number + 4;
-        if strcmp(info2,'roll')
-            number = number + 1;
+    case 4      % Leg
+        joint.group_select = [joint.type '_' joint.part];
+        switch(info1_number)
+            case 1     % Case Hip
+                joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
+                joint.number = info2_number;
+            case 3     % Case ankle
+                joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
+                joint.number = ANKLE_START + info2_number;
+            case 4     % Case knee
+                joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
+                joint.number = info1_number;
         end
-        joint.folder_path = [joint.folder_path '/' info2];
-    end
-elseif strcmp(part,'torso')
-    if strcmp(info1,'pith')
-        number = number + 0;
-    elseif strcmp(info1,'roll')
-        number = number + 1;
-    elseif strcmp(info1,'yaw')
-        number = number + 2;
-    end
+        switch(type_number)
+            case 1
+                joint.number = joint.number + DOF_START_LEG_LEFT;
+            case 2
+                joint.number = joint.number + DOF_START_LEG_RIGHT;
+        end
 end
 
-joint.number = joint.number + number;
-joint.select = joint.select(:,joint.number);
-if ~strcmp(name_exper,'')
-    joint.folder_path = [joint.folder_path '/' name_exper '/'];
-else
-    joint.folder_path = [joint.folder_path '/'];
-end
-
-if strcmp(info1,'')
-    joint.figureName = [ part '-' type];
-else
-    joint.figureName = [ part '-' type '-' info1];
-end
-if ~strcmp(info2,'') 
-    joint.figureName = [ joint.figureName '-' info2];
-end
-    
-end
-
+% Select column
+I_matrix = eye(DOF_START_LEG_RIGHT + N_LEG);
+joint.select = I_matrix(:,joint.number);

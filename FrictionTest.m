@@ -9,7 +9,7 @@ joint = joint.loadFriction('idle.mat',1);
 
 hFig = figure(2);
 set(hFig, 'Position', [0 0 800 600]);
-%subplot(1,2,1);
+subplot(1,2,1);
 hold on
 grid;
 joint.friction.plotFriction();
@@ -21,6 +21,12 @@ grid;
 subplot(1,2,2);
 grid;
 measure = joint.plotFrVsMeasure('ref.mat',1,'end');
+
+%%
+hFig2 = figure(3);
+set(hFig2, 'Position', [0 0 800 600]);
+plot(measure.pwm,measure.current,'.');
+grid on;
 
 %% Save image
 currentFolder = pwd;
