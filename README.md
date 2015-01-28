@@ -25,12 +25,14 @@ Before run scripts are important to:
 - In `codyco-superbuild/libraries/yarpWholeBodyInterface/app/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
 Under **[WBI_ID_LISTS]** add:
 ```
-JOINT_FRICION = (NAME_JOINT)
+JOINT_FRICTION = (NAME_JOINT)
 ```
 example:
 ```
-JOINT_FRICION = (l_hip_pitch)
+JOINT_FRICTION = (l_hip_pitch)
 ```
+Quickly way: `codyco-superbuild/build/install/share/codyco/robots/iCubGenova03/yarpWholeBodyInterface.ini`
+
 - In `codyco-superbuild/main/codyco-modules/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
 set:
 ```
