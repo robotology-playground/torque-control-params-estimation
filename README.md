@@ -20,7 +20,28 @@ Before run scripts are important to:
 2. Run `robotInterface` on **pc104**
 3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
 4. Run `controlBoardDumper` to receive information about Voltage (PWM) and Current
-5. Run `matlab`
+5. Run `matlab` 
+
+- In `codyco-superbuild/libraries/yarpWholeBodyInterface/app/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
+Under **[WBI_ID_LISTS]** add:
+```
+JOINT_FRICION = (NAME_JOINT)
+```
+example:
+```
+JOINT_FRICION = (l_hip_pitch)
+```
+- In `codyco-superbuild/main/codyco-modules/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
+set:
+```
+robot          icubGazeboSim
+localName      simulink
+worldRefFrame  root_link
+robot_fixed    true
+wbi_id_list    JOINT_FRICION
+wbi_config_file yarpWholeBodyInterface.ini
+```
+Finally go on `codyco-superbuild/build/` and `make`
 
 ## On Matlab
 - Run the script `WBLmotor.m` to load on matlab environment all variables
@@ -31,4 +52,4 @@ Before run scripts are important to:
 
 ### Other information
 In `scripts` folder you have other script to compare or analyze information about joint or single data.
-
+`codyco-superbuild/src/modules/wholeBodyDynamicsTree/app/robots/`**NAME_ROBOT**`/wholeBodyDynamicsTree.ini`
