@@ -1,4 +1,4 @@
-function joint = JointStructure( joint, start_folder)
+function joint = JointStructure(joint)
 %JOINTSTRUCTURE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -27,7 +27,6 @@ elseif strcmp(joint.part,'leg')
 end
 
 %Convert type in number
-type_number = 0;
 if strcmp(joint.type,'left')
     type_number = 1;
 elseif strcmp(joint.type,'right')
@@ -56,25 +55,25 @@ if ~strcmp(joint.info2,'')
     info2_number = joint.pitchRollYawNumber(joint.info2);
 end
 
-N_HAND = 5;
-N_LEG = 6;
-ANKLE_START = 4;
 DOF_START_TORSO = 0;
-DOF_START_ARM_LEFT = 3;
-DOF_START_ARM_RIGHT = DOF_START_ARM_LEFT + N_HAND;
-DOF_START_LEG_LEFT = DOF_START_ARM_RIGHT + N_HAND;
-DOF_START_LEG_RIGHT = DOF_START_LEG_LEFT + N_LEG;
+DOF_START_ARM_LEFT = joint.N_TORSO;
+DOF_START_ARM_RIGHT = DOF_START_ARM_LEFT + joint.N_HAND;
+DOF_START_LEG_LEFT = DOF_START_ARM_RIGHT + joint.N_HAND;
+DOF_START_LEG_RIGHT = DOF_START_LEG_LEFT + joint.N_LEG;
 joint.number = 0;       % For ROBOT_DOF = 25
-joint.path = [start_folder '/' joint.robot];
+joint.path = [joint.start_folder '/' joint.robot];
+joint.number_part = 0;
 switch(part_number)
     case 2      % Torso
         joint.group_select = joint.part;
         joint.path = [joint.path '/' joint.part '/' joint.type];
         joint.number = DOF_START_TORSO + type_number;
+        joint.number_part = type_number;
     case 3      % Arm
         joint.group_select = [joint.type '_' joint.part];
         joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
         joint.number = info1_number;
+        joint.number_part = info1_number;
         switch(type_number)
             case 1
                 joint.number = joint.number + DOF_START_LEG_LEFT;
@@ -94,6 +93,7 @@ switch(part_number)
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
                 joint.number = info1_number;
         end
+        joint.number_part = joint.number;
         switch(type_number)
             case 1
                 joint.number = joint.number + DOF_START_LEG_LEFT;
@@ -101,7 +101,11 @@ switch(part_number)
                 joint.number = joint.number + DOF_START_LEG_RIGHT;
         end
 end
-
+joint.path = [joint.path '/'];
 % Select column
-I_matrix = eye(DOF_START_LEG_RIGHT + N_LEG);
-joint.select = I_matrix(:,joint.number);
+I_matrix = eye(joint.robot_dof);
+if joint.robot_dof > 1
+    joint.select = I_matrix(:,joint.number);
+else
+    joint.select = 1;
+end

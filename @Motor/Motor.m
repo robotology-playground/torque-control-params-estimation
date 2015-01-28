@@ -2,26 +2,36 @@ classdef Motor
     %MOTOR Summary of this class goes here
     %   Detailed explanation goes here
     
+    properties (Access = private)
+        N_HEAD = 0;
+        N_TORSO = 3;
+        N_HAND = 5;
+        N_LEG = 6;
+        ANKLE_START = 4;
+    end
+    
     properties (Access = protected)
-        robot;
+        start_folder;
         part;
         type;
         info1;
         info2;
+        robot_dof = 0;
     end
     
     properties
+        robot;
         number;
+        number_part;
         path;
         group_select;
         friction;
-        robotName;
         select;
-        figureName;
     end
     
     methods
         function joint = Motor(start_folder, robot, part, type, info1, info2)
+            joint.start_folder = start_folder;
             joint.robot = robot;
             joint.part = part;
             if exist('type','var')
@@ -33,9 +43,36 @@ classdef Motor
             if exist('info2','var')
                 joint.info2 = info2;
             end
+            joint.robot_dof = 25;
             % TODO remove
             % Build folder
-            joint = joint.buildFolder(start_folder);
+            joint = joint.buildFolder();
+        end
+        
+        function joint = setPart(joint, varargin)           
+            if nargin ~= 0
+                if strcmp(varargin{1},'number_joint')
+                    joint.robot_dof = varargin{2};
+                end
+            else
+                for i=1:nargin
+                    type_arg = varargin{i};
+                    if strcmp(type_arg,'head')
+                        joint.robot_dof = joint.robot_dof + joint.N_HEAD;
+                    elseif strcmp(type_arg,'torso')
+                        joint.robot_dof = joint.robot_dof + joint.N_TORSO;
+                    elseif strcmp(type_arg,'left_arm')
+                        joint.robot_dof = joint.robot_dof + joint.N_HAND;
+                    elseif strcmp(type_arg,'left_leg')
+                        joint.robot_dof = joint.robot_dof + joint.N_LEG;
+                    elseif strcmp(type_arg,'right_arm')
+                        joint.robot_dof = joint.robot_dof + joint.N_HAND;
+                    elseif strcmp(type_arg,'right_leg')
+                        joint.robot_dof = joint.robot_dof + joint.H_LEG;
+                    end
+                end
+            end
+            joint = joint.JointStructure(); % Build path
         end
         
         function joint = loadFrictionData(joint, position, velocity, torque, time, threshold, offset)
@@ -59,26 +96,30 @@ classdef Motor
             joint.friction = Friction(data.out(:,1) ,data.out(:,2),data.out(:,3), data.time, threshold,offset);
         end
         
-        function measure = plotFrVsMeasure(joint,file, time_init, time_stop)
+        function measure = plotFrVsMeasure(joint, file, time_init, time_stop)
             
             measure = struct;
             data = load([joint.folder_path file]);
             
-            if strcmp(time_stop,'end')
-                time_stop = data.time(end);
-            end
-            measure.q = data.logsout.get('q').Values.Data(:,4);
-            measure.qdot = data.logsout.get('qD').Values.Data(:,4);
-            measure.torque = data.logsout.get('tau').Values.Data(:,4);
-            measure.pwm = data.logsout.get('pwm').Values.Data;
-            measure.current = data.logsout.get('current').Values.Data;
-            measure.time = data.time;
+            measure.time = data.logsout.get('q').Values.Time;
             
-            %             measure.time = data.time(time_init*100+1:time_stop*100+1);
-            %             measure.qdot = data.out(time_init*100+1:time_stop*100+1,2);
-            %             measure.torque = data.out(time_init*100+1:time_stop*100+1,3);
-            %             measure.pwm = data.out(time_init*100+1:time_stop*100+1,4);
-            %             measure.pwm_jtc = data.out(time_init*100+1:time_stop*100+1,5);
+            if ~exist('time_init','var')
+                time_init = 0;
+            end
+            if ~exist('time_stop','var')
+                time_stop = measure.time(end);
+            else
+                if strcmp(time_stop,'end')
+                    time_stop = measure.time(end);
+                end
+            end
+            measure.q = data.logsout.get('q').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
+            measure.qdot = data.logsout.get('qD').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
+            measure.torque = data.logsout.get('tau').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
+            measure.pwm = data.logsout.get('pwm').Values.Data(time_init*100+1:time_stop*100+1,joint.number_part);
+            measure.current = data.logsout.get('current').Values.Data(time_init*100+1:time_stop*100+1,joint.number_part);
+            measure.time = measure.time(time_init*100+1:time_stop*100+1);
+            
             measure.friction_model = joint.friction.getFriction(measure.qdot);
             
             subplot(1,2,1);
@@ -102,10 +143,10 @@ classdef Motor
     end
     
     methods (Access = protected)
-        function joint = buildFolder(joint, start_folder)
+        function joint = buildFolder(joint)
             % Build a folder path and if doesn't exist a folder build a
             % selected forlder from information type of joint
-            joint = joint.JointStructure(start_folder); % Build path
+            joint = joint.JointStructure(); % Build path
             if ~exist(joint.path,'dir') % Build folder
                 mkdir(joint.path);
             end

@@ -4,7 +4,7 @@ joint = Motor('20150126','iCubGenova03','leg','left','hip','pitch','');
 Time =60;
 
 %% 
-name = 'idle';
+%name = 'idle';
 
 %%% Reference configuration
 Reference = struct;
@@ -18,7 +18,7 @@ elseif strcmp(name,'ref')
     Reference.sinFreq = 0.05;
     Reference.sinBias = 0;
 end
-name_file = [name ''];
+%name_file = [name ''];
 
 %%
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
