@@ -33,7 +33,7 @@ JOINT_FRICTION = (l_hip_pitch)
 ```
 Quickly way: `codyco-superbuild/build/install/share/codyco/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
 
-- In `codyco-superbuild/libraries/main/codyco-modules/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
+- In `codyco-superbuild/main/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
 set:
 ```
 robot          icubGazeboSim
