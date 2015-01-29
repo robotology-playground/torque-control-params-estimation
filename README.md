@@ -46,7 +46,7 @@ wbi_config_file yarpWholeBodyInterface.ini
 Finally go on `codyco-superbuild/build/` and `make`
 
 ## On Matlab
-- Run the script `WBLmotor.m` to load on matlab environment all variables
+- Run the script `example.m` to load on matlab environment all variables and read all information
 - Open *simunlink* to dump all information about experiment
   - Open `MotorIdent.slx` to dump measure for single joint
   - Open `MotorCoupledIdent.slx` to dump measure for coupled joints

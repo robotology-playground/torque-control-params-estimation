@@ -8,6 +8,13 @@ classdef Motor
         N_HAND = 5;
         N_LEG = 6;
         ANKLE_START = 4;
+        
+        q;
+        qdot;
+        torque;
+        pwm;
+        current;
+        time;
     end
     
     properties (Access = protected)
@@ -27,6 +34,10 @@ classdef Motor
         group_select;
         friction;
         select;
+        measure;
+        friction_model;
+        
+        a;
     end
     
     methods
@@ -75,52 +86,47 @@ classdef Motor
             joint = joint.JointStructure(); % Build path
         end
         
-        function joint = loadFrictionData(joint, position, velocity, torque, time, threshold, offset)
+        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold, offset)
             if ~exist('threshold','var')
                 threshold = 1;
             end
-            if ~exist('offset','var')
-                offset = 0;
-            end
-            joint.friction = Friction(position, velocity, torque, time, threshold, offset);
+            joint.friction = Friction(position, velocity, torque, time, threshold);
         end
         
-        function joint = loadFriction(joint, file, threshold, offset)
+        function joint = loadIdleMeasure(joint, file, threshold)
+            if ~exist('file','var')
+                file = 'idle.mat';
+            end
             if ~exist('threshold','var')
                 threshold = 1;
             end
-            if ~exist('offset','var')
-                offset = 0;
-            end
-            data = load([joint.folder_path file]);
-            joint.friction = Friction(data.out(:,1) ,data.out(:,2),data.out(:,3), data.time, threshold,offset);
-        end
-        
-        function measure = plotFrVsMeasure(joint, file, time_init, time_stop)
-            
-            measure = struct;
-            data = load([joint.folder_path file]);
-            
-            measure.time = data.logsout.get('q').Values.Time;
-            
-            if ~exist('time_init','var')
-                time_init = 0;
-            end
-            if ~exist('time_stop','var')
-                time_stop = measure.time(end);
+            data = load([joint.path file]);
+            if size(data.logsout.get('q').Values.Data,2) == 25
+                numb = joint.number;
             else
-                if strcmp(time_stop,'end')
-                    time_stop = measure.time(end);
-                end
+                numb = 1;
             end
-            measure.q = data.logsout.get('q').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
-            measure.qdot = data.logsout.get('qD').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
-            measure.torque = data.logsout.get('tau').Values.Data(time_init*100+1:time_stop*100+1,joint.number);
-            measure.pwm = data.logsout.get('pwm').Values.Data(time_init*100+1:time_stop*100+1,joint.number_part);
-            measure.current = data.logsout.get('current').Values.Data(time_init*100+1:time_stop*100+1,joint.number_part);
-            measure.time = measure.time(time_init*100+1:time_stop*100+1);
-            
-            measure.friction_model = joint.friction.getFriction(measure.qdot);
+            position_data = data.logsout.get('q').Values.Data(:,numb);
+            velocity_data = data.logsout.get('qD').Values.Data(:,numb);
+            torque_data = data.logsout.get('tau').Values.Data(:,numb);
+            joint.friction = Friction(position_data, velocity_data, torque_data, data.time, threshold);
+        end
+        
+        function joint = loadReference(joint, file)
+            if ~exist('file','var')
+                file = 'reference.mat';
+            end
+            data = load([joint.path file]);
+            joint.q = data.logsout.get('q').Values.Data(:,joint.number);
+            joint.qdot = data.logsout.get('qD').Values.Data(:,joint.number);
+            joint.torque = data.logsout.get('tau').Values.Data(:,joint.number);
+            joint.pwm = data.logsout.get('pwm').Values.Data(:,joint.number_part);
+            joint.current = data.logsout.get('current').Values.Data(:,joint.number_part);
+            joint.time = data.logsout.get('q').Values.Time;
+            joint.friction_model = joint.friction.getFriction(joint.measure.qdot);
+        end
+        
+        function joint = plotFrVsMeasure(joint)
             
             subplot(1,2,1);
             hold on
@@ -130,15 +136,15 @@ classdef Motor
             hold off
             
             subplot(1,2,2);
-            plot(measure.pwm,measure.torque-measure.friction_model,'.');
+            plot(joint.pwm, joint.torque-joint.friction_model,'.');
             xlabel('PWM','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
             grid;
             hold on
-            measure.a = lineRegress(measure.current,measure.torque-measure.friction_model);
+            joint.a = lineRegress(joint.current,joint.torque-joint.friction_model);
             %measure.a = lineRegress(measure.pwm,measure.torque-measure.friction_model);
             %plot(measure.pwm,measure.pwm*measure.a(1),'r-','LineWidth',3);
-            plot(measure.current,measure.current*measure.a(1),'r-','LineWidth',3);
+            plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
         end
     end
     

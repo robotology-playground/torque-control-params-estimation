@@ -88,7 +88,7 @@ switch(part_number)
                 joint.number = info2_number;
             case 3     % Case ankle
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
-                joint.number = ANKLE_START + info2_number;
+                joint.number = joint.ANKLE_START + info2_number;
             case 4     % Case knee
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
                 joint.number = info1_number;
@@ -105,7 +105,7 @@ joint.path = [joint.path '/'];
 % Select column
 I_matrix = eye(joint.robot_dof);
 if joint.robot_dof > 1
-    joint.select = I_matrix(:,joint.number);
+    joint.select = I_matrix(:,joint.robot_dof);
 else
     joint.select = 1;
 end

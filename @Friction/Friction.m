@@ -16,19 +16,14 @@ classdef Friction
         KcN;
         KvP;
         KvN;
-        offset;
+        offset = 0;
     end
     
     methods
-        function obj = Friction(position,velocity,torque,time,th_velocity,offset)
-            if exist('offset','var')
-                obj.offset = offset;
-            else
-                obj.offset = 0;
-            end
+        function obj = Friction(position,velocity,torque,time,th_velocity)
             obj.position = position;
             obj.velocity = velocity;
-            obj.torque = obj.offset+torque;
+            obj.torque = torque;
             obj.time = time;
             obj.step = time(2)-time(1);
 
@@ -55,6 +50,23 @@ classdef Friction
             obj.KvP = AP(1);
             obj.KcN = AN(2);
             obj.KvN = AN(1);
+        end
+        
+        %% Remove from data offset from wrong models
+        function obj = setToCenter(obj)
+            if obj.KcP < 0
+                obj.torque = -obj.torque;
+                obj.KcP = -obj.KcP;
+                obj.KcN = -obj.KcN;
+                obj.KvP = -obj.KvP;
+                obj.KvN = -obj.KvN;
+            end
+            obj.offset = mean(obj.torque);
+            %Scaled Kc and Kv
+            obj.offset = obj.KcP - obj.KcN;
+            obj.torque = obj.torque-(obj.KcP-obj.offset/2);
+            obj.KcP = obj.offset/2;
+            obj.KcN = -obj.offset/2;
         end
         
         %% Evaluate friction model
@@ -131,7 +143,7 @@ classdef Friction
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
         end
-        
+        %% Get original data: Velocity and torque
         function data = getInfo(obj)
             data = struct;
             data.velocity = obj.velocity;
@@ -140,6 +152,7 @@ classdef Friction
     end
     
     methods (Access = protected, Static)
+        %% Linear regression to evalute coefficent for friction
         function a = linearRegression(x, y)
             N = size(x,1);
             % Add column of 1's to include constant term in regression
