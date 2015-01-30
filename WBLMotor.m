@@ -4,7 +4,7 @@ joint = Motor('20150126','iCubGenova03','leg','left','hip','pitch','');
 Time =60;
 
 %% 
-%name = 'idle';
+name = 'ref';
 
 %%% Reference configuration
 Reference = struct;
@@ -14,7 +14,7 @@ if strcmp(name,'idle')
     Reference.sinFreq = 0;
     Reference.sinBias = 0;
 elseif strcmp(name,'ref')
-    Reference.sinAmp = 5;
+    Reference.sinAmp = 3;
     Reference.sinFreq = 0.05;
     Reference.sinBias = 0;
 end
@@ -50,8 +50,8 @@ if exist('tout','var')
     time = tout;
     clear tout;
 end
-save([joint.folder_path name_file '.mat'],'logsout','time');
-disp(['SAVED ON ' joint.folder_path name_file '.mat']);
+save([joint.path name '.mat'],'logsout','time');
+disp(['SAVED ON ' joint.path name '.mat']);
 
 %% Clear Data
 clear Reference name_file;

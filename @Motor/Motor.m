@@ -60,6 +60,7 @@ classdef Motor
             joint = joint.buildFolder();
         end
         
+        %% Set part avaiable on robot
         function joint = setPart(joint, varargin)           
             if nargin ~= 0
                 if strcmp(varargin{1},'number_joint')
@@ -92,15 +93,15 @@ classdef Motor
             end
             joint.friction = Friction(position, velocity, torque, time, threshold);
         end
-        
+        %% Load data from mat file
         function joint = loadIdleMeasure(joint, file, threshold)
             if ~exist('file','var')
-                file = 'idle.mat';
+                file = 'idle';
             end
             if ~exist('threshold','var')
                 threshold = 1;
             end
-            data = load([joint.path file]);
+            data = load([joint.path file '.mat']);
             if size(data.logsout.get('q').Values.Data,2) == 25
                 numb = joint.number;
             else
@@ -114,16 +115,23 @@ classdef Motor
         
         function joint = loadReference(joint, file)
             if ~exist('file','var')
-                file = 'reference.mat';
+                file = 'reference';
             end
-            data = load([joint.path file]);
-            joint.q = data.logsout.get('q').Values.Data(:,joint.number);
-            joint.qdot = data.logsout.get('qD').Values.Data(:,joint.number);
-            joint.torque = data.logsout.get('tau').Values.Data(:,joint.number);
-            joint.pwm = data.logsout.get('pwm').Values.Data(:,joint.number_part);
-            joint.current = data.logsout.get('current').Values.Data(:,joint.number_part);
+            data = load([joint.path file '.mat']);
+            if size(data.logsout.get('q').Values.Data,2) == 1
+                numberJ = 1;
+                number_cbd = 1;
+            else
+                numberJ = joint.number;
+                number_cbd = joint.number_part;
+            end
+            joint.q = data.logsout.get('q').Values.Data(:,numberJ);
+            joint.qdot = data.logsout.get('qD').Values.Data(:,numberJ);
+            joint.torque = data.logsout.get('tau').Values.Data(:,numberJ);
+            joint.pwm = data.logsout.get('pwm').Values.Data(:,number_cbd);
+            joint.current = data.logsout.get('current').Values.Data(:,number_cbd);
             joint.time = data.logsout.get('q').Values.Time;
-            joint.friction_model = joint.friction.getFriction(joint.measure.qdot);
+            joint.friction_model = joint.friction.getFriction(joint.qdot);
         end
         
         function joint = plotFrVsMeasure(joint)
@@ -141,10 +149,10 @@ classdef Motor
             ylabel('\tau','Interpreter','tex');
             grid;
             hold on
-            joint.a = lineRegress(joint.current,joint.torque-joint.friction_model);
-            %measure.a = lineRegress(measure.pwm,measure.torque-measure.friction_model);
-            %plot(measure.pwm,measure.pwm*measure.a(1),'r-','LineWidth',3);
-            plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
+            %joint.a = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
+            joint.a = joint.linearRegression(joint.pwm,joint.torque-joint.friction_model);
+            plot(joint.pwm,joint.pwm*joint.a(1),'r-','LineWidth',3);
+            %plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
         end
     end
     

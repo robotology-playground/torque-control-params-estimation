@@ -2,7 +2,7 @@ classdef Friction
     %FRICTION Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties (SetAccess=private,GetAccess=private)
+    properties(SetAccess=private, GetAccess=private)
         position;
         velocity;
         torque;
@@ -143,6 +143,7 @@ classdef Friction
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
         end
+        
         %% Get original data: Velocity and torque
         function data = getInfo(obj)
             data = struct;
