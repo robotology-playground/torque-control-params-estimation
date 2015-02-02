@@ -8,6 +8,7 @@ classdef Friction
         torque;
         time;
         step;
+        noise;
     end
     
     properties
@@ -16,17 +17,26 @@ classdef Friction
         KcN;
         KvP;
         KvN;
+        KsP;
+        KsN;
         offset = 0;
+        cutoff;
     end
     
     methods
-        function obj = Friction(position,velocity,torque,time,th_velocity)
+        function obj = Friction(position,velocity,torque,time,th_velocity, cutoff)
             obj.position = position;
             obj.velocity = velocity;
             obj.torque = torque;
             obj.time = time;
             obj.step = time(2)-time(1);
-
+            
+            if ~exist('cutoff','var')
+                obj.cutoff = 1/obj.step;
+            else
+                obj.cutoff = cutoff;
+            end
+            
             obj = obj.evaluateCoeff(th_velocity);
 
         end
@@ -40,16 +50,34 @@ classdef Friction
                 obj.th_velocity = th_velocity;
             end
             
+            if obj.cutoff ~= 0
+                fc = obj.cutoff;
+                Fs = size(obj.time,1);
+                Wn = (2/Fs)*fc;
+                b = fir1(20,Wn,'low',kaiser(21,3));
+                obj.torque = filter(b,1,obj.torque);
+                obj.velocity = filter(b,1,obj.velocity);
+            end
+            
             % Evaluate fricition
-            AP = obj.linearRegression(obj.velocity(obj.velocity > th_velocity), ...
-                                                obj.torque(obj.velocity > th_velocity));
-            AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity), ...
-                                                obj.torque(obj.velocity < -th_velocity));
-                                            
+            AP = obj.linearRegression(obj.velocity(obj.velocity > th_velocity/2), ...
+                obj.torque(obj.velocity > th_velocity/2));
+            AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
+                obj.torque(obj.velocity < -th_velocity/2));
+            
             obj.KcP = AP(2);
             obj.KvP = AP(1);
             obj.KcN = AN(2);
             obj.KvN = AN(1);
+            
+            % if obj.cutoff ~= 0
+            %     obj.noise = filter(b,1, obj.torque-obj.getFriction(obj.velocity));
+            % else
+            obj.noise = obj.torque-obj.getFriction(obj.velocity);
+            % end
+            obj.KsP = max(obj.noise);
+            obj.KsN = min(obj.noise);
+            
         end
         
         %% Remove from data offset from wrong models
@@ -72,8 +100,9 @@ classdef Friction
         %% Evaluate friction model
         function friction = getFriction(obj, qdot)
             friction = zeros(size(qdot,1),1);
-            friction(qdot < -obj.th_velocity) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity);
-            friction(qdot > obj.th_velocity) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity);
+            friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
+            friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
+            friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
         end
         
         %% Plot Friction Model
@@ -88,6 +117,7 @@ classdef Friction
             x = min(obj.velocity):obj.step:0;
             plot(x, x*obj.KvN + obj.KcN,option,'LineWidth',3);
             plot([0 0], [obj.KcP obj.KcN] ,option,'LineWidth',3);
+            %plot([0 0], [obj.KsP obj.KsN] ,option,'LineWidth',3);
             hold off;
         end
         
@@ -96,7 +126,7 @@ classdef Friction
             if ~exist('option','var')
                 option = '.';
             end
-            plot(obj.velocity,obj.torque-obj.getFriction(obj.velocity),option);
+            plot(obj.velocity,obj.noise,option);
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
         end
