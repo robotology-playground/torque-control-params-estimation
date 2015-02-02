@@ -24,7 +24,7 @@ plot.x = [-1500 1500];
 plot.y = [-10 10];
 
 %% Load from file measure of friction
-joint = joint.loadIdleMeasure(name,10);
+joint = joint.loadIdleMeasure('idle',10);
 
 %% Plot Friction
 hFig = figure(1);
