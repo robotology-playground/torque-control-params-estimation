@@ -174,6 +174,32 @@ classdef Friction
             ylabel('\tau','Interpreter','tex');
         end
         
+        %% Save Friction picture
+        function savePictureToFile(obj, path, counter, figureName)
+            % FIGURE - Friction data and estimation
+            if ~exist('counter','var')
+                counter = 1;
+            end
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            grid;
+            obj.plotFriction();
+            obj.plotFrictionModel();
+            clear friction_data;
+            hold off
+            % Save image
+            currentFolder = pwd;
+            cd(path);
+            if ~exist('figureName','var')
+                figureName = 'friction';
+            end
+            saveas(hFig,[figureName '.fig'],'fig');
+            saveas(hFig,[figureName '.png'],'png');
+            cd(currentFolder);
+            clear currentFolder;
+        end
+        
         %% Get original data: Velocity and torque
         function data = getInfo(obj)
             data = struct;

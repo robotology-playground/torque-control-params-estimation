@@ -24,6 +24,8 @@ classdef Motor
         info1;
         info2;
         robot_dof = 0;
+        measure;
+        friction_model;
     end
     
     properties
@@ -34,10 +36,7 @@ classdef Motor
         group_select;
         friction;
         select;
-        measure;
-        friction_model;
-        
-        a;
+        Kt;
     end
     
     methods
@@ -139,46 +138,27 @@ classdef Motor
             joint.friction_model = joint.friction.getFriction(joint.qdot);
         end
         
+        function joint = evaluateCoeff(joint)
+            A = joint.linearRegression(joint.pwm,joint.torque-joint.friction_model);
+            %A = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
+            joint.Kt = A(2);
+        end
+        
         %% Plot measure versus friction estimation
-        function joint = plotFrVsMeasure(joint)
-            
-            subplot(1,2,1);
-            hold on
-            joint.friction.plotFriction();
-            grid;
-            joint.friction.plotFrictionModel();
-            hold off
-            
-            subplot(1,2,2);
-            plot(joint.pwm, joint.torque-joint.friction_model,'.');
+        function joint = plotCoeff(joint, option)
+            if ~exist('option','var')
+                option = '.';
+            end
+            plot(joint.pwm, joint.torque-joint.friction_model, option);
             xlabel('PWM','Interpreter','tex');
-            ylabel('\tau','Interpreter','tex');
-            grid;
-            hold on
-            %joint.a = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
-            joint.a = joint.linearRegression(joint.pwm,joint.torque-joint.friction_model);
-            plot(joint.pwm,joint.pwm*joint.a(1),'r-','LineWidth',3);
+            ylabel('\tau-\tau_{f}','Interpreter','tex');
+            
+            plot(joint.pwm , joint.pwm*joint.Kt,'r-','LineWidth',3);
             %plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
         end
         
         %% Save Friction picture
-        function savePictureToFile(joint,counter,hFig,figureName)
-            if ~exist('hFig','var')
-                % FIGURE - Friction data and estimation
-                if ~exist('counter','var')
-                    counter = 1;
-                end
-                hFig = figure(counter);
-                set(hFig, 'Position', [0 0 800 600]);
-                hold on
-                grid;
-                %friction_data = joint.friction.setToCenter();
-                friction_data = joint.friction;
-                friction_data.plotFriction();
-                friction_data.plotFrictionModel();
-                clear friction_data;
-                hold off
-            end
+        function savePictureToFile(joint,hFig,figureName)
             %% Save image
             currentFolder = pwd;
             cd(joint.path);
