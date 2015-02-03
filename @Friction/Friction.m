@@ -41,9 +41,8 @@ classdef Friction
 
         end
         
-        %% Evaluate Coefficent
         function obj = evaluateCoeff(obj, th_velocity)
-            
+            %% Evaluate Coefficent
             if ~exist('th_velocity','var')
                 obj.th_velocity = 1;
             else
@@ -80,8 +79,8 @@ classdef Friction
             
         end
         
-        %% Remove from data offset from wrong models
         function obj = setToCenter(obj)
+            %% Remove from data offset from wrong models
             if obj.KcP < 0
                 obj.torque = -obj.torque;
                 obj.KcP = -obj.KcP;
@@ -97,16 +96,16 @@ classdef Friction
             obj.KcN = -obj.offset/2;
         end
         
-        %% Evaluate friction model
         function friction = getFriction(obj, qdot)
+            %% Evaluate friction model
             friction = zeros(size(qdot,1),1);
             friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
             friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
             friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
         end
         
-        %% Plot Friction Model
         function plotFrictionModel(obj, option)
+            %% Plot Friction Model
             if ~exist('option','var')
                 option = 'r';
             end
@@ -121,8 +120,44 @@ classdef Friction
             hold off;
         end
         
-        %% Plot noise
+        function saveToFile(joint, fileID)
+            %% Save information about friction on file
+            fprintf(fileID,'\n----------> Friction <----------\n');
+            % Coefficients
+            fprintf(fileID,'KcP: %12.8f [Nm] - KcN: %12.8f [Nm]\n',joint.friction.KcP, joint.friction.KcN);
+            fprintf(fileID,'KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',joint.friction.KvP, joint.friction.KvN);
+            %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
+            
+            fprintf(fileID,'\n---- Friction -> Latex ----\n');
+            % To latex
+            fprintf(fileID,'\\begin{equation}\n');
+            fprintf(fileID,'\\label{eq:%sFrictionCoeffCoulomb}\n',joint.path);
+            fprintf(fileID,'\\begin{array}{cccl}\n');
+            fprintf(fileID,'\\bar K_{c+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KcP,'\\');
+            fprintf(fileID,'\\bar K_{c-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KcN);
+            fprintf(fileID,'\\end{array}\n');
+            fprintf(fileID,'\\end{equation}\n');
+            
+            fprintf(fileID,'\n\\begin{equation}\n');
+            fprintf(fileID,'\\label{eq:%sFrictionCoeffViscous}\n',joint.path);
+            fprintf(fileID,'\\begin{array}{cccl}\n');
+            fprintf(fileID,'\\bar K_{v+} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]} %s\n',joint.friction.KvP,'\\');
+            fprintf(fileID,'\\bar K_{v-} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]}\n',joint.friction.KvN);
+            fprintf(fileID,'\\end{array}\n');
+            fprintf(fileID,'\\end{equation}\n');
+            
+%             fprintf(fileID,'\n\\begin{equation}\n');
+%             fprintf(fileID,'\\label{eq:%sFrictionCoeffStiction}\n',joint.path);
+%             fprintf(fileID,'\\begin{array}{cccl}\n');
+%             fprintf(fileID,'\\bar K_{s+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KsP,'\\');
+%             fprintf(fileID,'\\bar K_{s-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KsN);
+%             fprintf(fileID,'\\end{array}\n');
+%             fprintf(fileID,'\\end{equation}\n');
+        end
+        
+        
         function plotNoise(obj, option)
+            %% Plot noise
             if ~exist('option','var')
                 option = '.';
             end
@@ -131,8 +166,8 @@ classdef Friction
             ylabel('\tau','Interpreter','tex');
         end
         
-        %% Plot Parts
         function plotParts(obj, option)
+            %% Plot Parts
             if ~exist('option','var')
                 option = '-';
             end
@@ -162,9 +197,9 @@ classdef Friction
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');
         end
-        
-        %% Plot friction
+
         function plotFriction(obj, option)
+            %% Plot friction
             if ~exist('option','var')
                 option = '.';
             end
@@ -174,8 +209,8 @@ classdef Friction
             ylabel('\tau','Interpreter','tex');
         end
         
-        %% Save Friction picture
         function savePictureToFile(obj, path, counter, figureName)
+            %% Save Friction picture
             % FIGURE - Friction data and estimation
             if ~exist('counter','var')
                 counter = 1;

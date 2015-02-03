@@ -28,6 +28,8 @@ classdef CoupledJoints
             coupled.pitch = coupled.pitch.setPart('number_joint',1);
             coupled.roll = coupled.roll.setPart('number_joint',1);
             coupled.yaw = coupled.yaw.setPart('number_joint',1);
+            % Wiki reference
+            % http://wiki.icub.org/wiki/ICub_coupled_joints
             if strcmp(part,'torso')
                 R = 0.04;
                 r = 0.022;
@@ -64,10 +66,61 @@ classdef CoupledJoints
             end
             data = load([coupled.path file '.mat']);
             
-            coupled.pitch.loadIdleMeasureData(data.logsout.get('q').Values.Data(:,numb), ...
-                data.logsout.get('qD').Values.Data(:,numb), ...
-                data.logsout.get('tau').Values.Data(:,numb), ...
-                data.time, threshold);
+            q_data = data.logsout.get('q').Values.Data;
+            qdot_data = data.logsout.get('qD').Values.Data;
+            %qddot_data = data.logsout.get('qDD').Values.Data;
+            tau_data = data.logsout.get('tau').Values.Data;
+            
+            m     = (coupled.T^-1*q_data')';
+            md    = (coupled.T^-1*qdot_data')';
+            %mdd    = (coupled.T^-1*qddot_data')';
+            tau_m = (coupled.T'*tau_data')';
+
+            numb_pitch = coupled.pitch.number_part;
+            numb_roll = coupled.roll.number_part;
+            numb_yaw = coupled.yaw.number_part;
+            if ~exist('cutoff','var')
+                coupled.pitch = coupled.pitch.loadIdleMeasureData(m(:,numb_pitch), ...
+                    md(:,numb_pitch), ...
+                    tau_m(:,numb_pitch), ...
+                    data.time, threshold);
+                coupled.roll = coupled.roll.loadIdleMeasureData(m(:,numb_roll), ...
+                    md(:,numb_roll), ...
+                    tau_m(:,numb_roll), ...
+                    data.time, threshold);
+                coupled.yaw = coupled.yaw.loadIdleMeasureData(m(:,numb_yaw), ...
+                    md(:,numb_yaw), ...
+                    tau_m(:,numb_yaw), ...
+                    data.time, threshold);
+            else
+                coupled.pitch = coupled.pitch.loadIdleMeasureData(m(:,numb_pitch), ...
+                    md(:,numb_pitch), ...
+                    tau_m(:,numb_pitch), ...
+                    data.time, threshold, cutoff);
+                coupled.roll = coupled.roll.loadIdleMeasureData(m(:,numb_roll), ...
+                    md(:,numb_roll), ...
+                    tau_m(:,numb_roll), ...
+                    data.time, threshold, cutoff);
+                coupled.yaw = coupled.yaw.loadIdleMeasureData(m(:,numb_yaw), ...
+                    md(:,numb_yaw), ...
+                    tau_m(:,numb_yaw), ...
+                    data.time, threshold, cutoff);
+            end
+        end
+        
+        function saveToFile(coupled,name)
+            %% Save on file
+            if ~exist('name','var')
+                name = 'data';
+            end
+            coupled.pitch.saveToFile(name);
+            coupled.roll.saveToFile(name);
+            coupled.yaw.saveToFile(name);
+        end
+        
+        function command = getWBIlist(joint)
+            %% Get string to start ControlBoardDumper
+            command = ['JOINT_FRICTION = (' joint.pitch.WBIname ', ' joint.roll.WBIname, ', ' joint.yaw.WBIname ')'];
         end
         
         function command = getControlBoardCommand(joint, rate)

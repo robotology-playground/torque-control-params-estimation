@@ -69,12 +69,18 @@ switch(part_number)
         joint.group_select = joint.part;
         joint.path = [joint.path '/' joint.part '/' joint.type];
         joint.path_before = [joint.path_before '/' joint.part];
+        joint.WBIname = [joint.part '_' joint.type];
         joint.number = DOF_START_TORSO + type_number;
         joint.number_part = type_number;
     case 3      % Arm
         joint.group_select = [joint.type '_' joint.part];
         joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
         joint.path_before = [joint.path_before '/' joint.part '/' joint.type];
+        if strcmp(joint.info1,'elbow')
+            joint.WBIname = [joint.type(1:1) '_' joint.info1];
+        else
+            joint.WBIname = [joint.type(1:1) '_shoulder_' joint.info1];
+        end
         joint.number = info1_number;
         joint.number_part = info1_number;
         switch(type_number)
@@ -89,14 +95,17 @@ switch(part_number)
             case 1     % Case Hip
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
+                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1 '_' joint.info2];
                 joint.number = info2_number;
             case 3     % Case ankle
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
+                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1 '_' joint.info2];
                 joint.number = joint.ANKLE_START + info2_number;
             case 4     % Case knee
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type];
+                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1];
                 joint.number = info1_number;
         end
         joint.number_part = joint.number;

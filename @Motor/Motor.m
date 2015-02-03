@@ -38,6 +38,7 @@ classdef Motor
         friction;
         select;
         Kt;
+        WBIname;
     end
     
     methods
@@ -88,11 +89,14 @@ classdef Motor
             joint = joint.JointStructure(); % Build path
         end
         
-        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold)
+        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold, cutoff)
             if ~exist('threshold','var')
-                joint.friction = Friction(position, velocity, torque, time);
-            else
+                threshold = 1;
+            end
+            if ~exist('cutoff','var')
                 joint.friction = Friction(position, velocity, torque, time, threshold);
+            else
+                joint.friction = Friction(position, velocity, torque, time, threshold, cutoff);
             end
         end
         
@@ -119,7 +123,6 @@ classdef Motor
                 joint.friction = Friction(position_data, velocity_data, torque_data, data.time, threshold);
             end
         end
-        
         
         function joint = loadReference(joint, file)
             %% Load reference from file
@@ -194,12 +197,25 @@ classdef Motor
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
         
-        function joint = saveToFile(joint, name)
-            %% Save information to txt file
+        function command = getWBIlist(joint)
+            %% Get string to start ControlBoardDumper
+            command = ['JOINT_FRICTION = (' joint.WBIname ')'];
+        end
+        
+        function saveToFile(joint, name)
+            %% Save on file
             if ~exist('name','var')
                 name = 'data';
             end
             fileID = fopen([joint.path name '.txt'],'w');
+            joint.saveCoeffToFile(fileID);
+            % Close
+            fclose(fileID);
+        end
+        
+        function saveCoeffToFile(joint, fileID)
+            %% Write information to txt file
+            
             % Information joint estimation
             fprintf(fileID,'Name: %s\n',joint.robot);
             fprintf(fileID,'Part: %s\n',joint.part);
@@ -212,51 +228,16 @@ classdef Motor
             if(joint.info2 ~= 0)
                 fprintf(fileID,'Info2: %s\n',joint.info2);
             end
-            fprintf(fileID,'\nFriction\n');
-            % Coefficients
-            fprintf(fileID,'KcP: %12.8f [Nm] - KcN: %12.8f [Nm]\n',joint.friction.KcP, joint.friction.KcN);
-            fprintf(fileID,'KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',joint.friction.KvP, joint.friction.KvN);
-            %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
-            if(joint.Kt ~= 0)
-                fprintf(fileID,'Kt: %12.8f [Nm]/[V]\n',joint.Kt);
-            end
-            
-            fprintf(fileID,'\n---- Latex ----\n');
-            % To latex
-            fprintf(fileID,'\\begin{equation}\n');
-            fprintf(fileID,'\\label{eq:%sFrictionCoeffCoulomb}\n',joint.path);
-            fprintf(fileID,'\\begin{array}{cccl}\n');
-            fprintf(fileID,'\\bar K_{c+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KcP,'\\');
-            fprintf(fileID,'\\bar K_{c-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KcN);
-            fprintf(fileID,'\\end{array}\n');
-            fprintf(fileID,'\\end{equation}\n');
-            
+            joint.friction.saveToFile(fileID);
+            fprintf(fileID,'\n----------> Kt <----------\n');
+            fprintf(fileID,'Kt: %12.8f [Nm]/[V]\n',joint.Kt);
+            fprintf(fileID,'\n---- Kt -> Latex ----\n');
             fprintf(fileID,'\n\\begin{equation}\n');
-            fprintf(fileID,'\\label{eq:%sFrictionCoeffViscous}\n',joint.path);
+            fprintf(fileID,'\\label{eq:%sCoeffPWM}\n',joint.path);
             fprintf(fileID,'\\begin{array}{cccl}\n');
-            fprintf(fileID,'\\bar K_{v+} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]} %s\n',joint.friction.KvP,'\\');
-            fprintf(fileID,'\\bar K_{v-} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]}\n',joint.friction.KvN);
+            fprintf(fileID,'\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP);
             fprintf(fileID,'\\end{array}\n');
             fprintf(fileID,'\\end{equation}\n');
-            
-%             fprintf(fileID,'\n\\begin{equation}\n');
-%             fprintf(fileID,'\\label{eq:%sFrictionCoeffStiction}\n',joint.path);
-%             fprintf(fileID,'\\begin{array}{cccl}\n');
-%             fprintf(fileID,'\\bar K_{s+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KsP,'\\');
-%             fprintf(fileID,'\\bar K_{s-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KsN);
-%             fprintf(fileID,'\\end{array}\n');
-%             fprintf(fileID,'\\end{equation}\n');
-
-            if(joint.Kt ~= 0)
-                fprintf(fileID,'\n\\begin{equation}\n');
-                fprintf(fileID,'\\label{eq:%sCoeffPWM}\n',joint.path);
-                fprintf(fileID,'\\begin{array}{cccl}\n');
-                fprintf(fileID,'\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP);
-                fprintf(fileID,'\\end{array}\n');
-                fprintf(fileID,'\\end{equation}\n');
-            end
-            % Close
-            fclose(fileID);
         end
         
         function joint = saveControlToFile(joint, name)
