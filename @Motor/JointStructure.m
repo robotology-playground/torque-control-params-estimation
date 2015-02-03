@@ -31,7 +31,7 @@ if strcmp(joint.type,'left')
     type_number = 1;
 elseif strcmp(joint.type,'right')
     type_number = 2;
-elseif(joint.info1 ~= 0)
+elseif(joint.type ~= 0)
     type_number = joint.pitchRollYawNumber(joint.type);
 end
 
@@ -62,16 +62,19 @@ DOF_START_LEG_LEFT = DOF_START_ARM_RIGHT + joint.N_HAND;
 DOF_START_LEG_RIGHT = DOF_START_LEG_LEFT + joint.N_LEG;
 joint.number = 0;       % For ROBOT_DOF = 25
 joint.path = [joint.start_folder '/' joint.robot];
+joint.path_before = [joint.start_folder '/' joint.robot];
 joint.number_part = 0;
 switch(part_number)
     case 2      % Torso
         joint.group_select = joint.part;
         joint.path = [joint.path '/' joint.part '/' joint.type];
+        joint.path_before = [joint.path_before '/' joint.part];
         joint.number = DOF_START_TORSO + type_number;
         joint.number_part = type_number;
     case 3      % Arm
         joint.group_select = [joint.type '_' joint.part];
         joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
+        joint.path_before = [joint.path_before '/' joint.part '/' joint.type];
         joint.number = info1_number;
         joint.number_part = info1_number;
         switch(type_number)
@@ -85,12 +88,15 @@ switch(part_number)
         switch(info1_number)
             case 1     % Case Hip
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
+                joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
                 joint.number = info2_number;
             case 3     % Case ankle
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
+                joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
                 joint.number = joint.ANKLE_START + info2_number;
             case 4     % Case knee
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
+                joint.path_before = [joint.path_before '/' joint.part '/' joint.type];
                 joint.number = info1_number;
         end
         joint.number_part = joint.number;
@@ -102,6 +108,7 @@ switch(part_number)
         end
 end
 joint.path = [joint.path '/'];
+joint.path_before = [joint.path_before '/'];
 % Select column
 I_matrix = eye(joint.robot_dof);
 if joint.robot_dof > 1

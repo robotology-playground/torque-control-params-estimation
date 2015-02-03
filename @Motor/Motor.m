@@ -15,6 +15,7 @@ classdef Motor
         pwm;
         current;
         time;
+        path_before;
     end
     
     properties (Access = protected)
@@ -266,6 +267,11 @@ classdef Motor
             
             % Close
             fclose(fileID);
+        end
+        
+        %% Get path type
+        function path = getPathType(joint)
+            path = joint.path_before;
         end
     end
     
