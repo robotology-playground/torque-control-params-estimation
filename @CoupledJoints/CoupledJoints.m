@@ -25,6 +25,9 @@ classdef CoupledJoints
                 coupled.roll = Motor(start_folder, robotName, part, type, 'roll');
                 coupled.yaw = Motor(start_folder, robotName, part, type, 'yaw');
             end
+            coupled.pitch = coupled.pitch.setPart('number_joint',1);
+            coupled.roll = coupled.roll.setPart('number_joint',1);
+            coupled.yaw = coupled.yaw.setPart('number_joint',1);
             if strcmp(part,'torso')
                 R = 0.04;
                 r = 0.022;
@@ -52,7 +55,32 @@ classdef CoupledJoints
         end
         
         function coupled = loadIdleMeasure(coupled, file, threshold, cutoff)
+            %% Load data from mat file
+            if ~exist('file','var')
+                file = 'idle';
+            end
+            if ~exist('threshold','var')
+                threshold = 1;
+            end
+            data = load([coupled.path file '.mat']);
             
+            coupled.pitch.loadIdleMeasureData(data.logsout.get('q').Values.Data(:,numb), ...
+                data.logsout.get('qD').Values.Data(:,numb), ...
+                data.logsout.get('tau').Values.Data(:,numb), ...
+                data.time, threshold);
+        end
+        
+        function command = getControlBoardCommand(joint, rate)
+            %% Get string to start ControlBoardDumper
+            if ~exist('rate','var')
+                rate = 10;
+            end
+            command = ['controlBoardDumper'...
+                ' --robot icub'...
+                ' --part ' joint.pitch.group_select ...
+                ' --rate ' num2str(rate) ...
+                ' --joints "(0 1 2)"' ...
+                ' --dataToDump "(getOutputs getCurrents)"'];
         end
     end
 end
