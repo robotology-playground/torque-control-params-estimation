@@ -9,7 +9,7 @@ joint = joint.setPart('number_joint',1);
 
 %% Load from file measure of friction
 joint = joint.loadIdleMeasure('idle',1,100);
-joint = joint.loadReference('ref');
+joint = joint.loadRefFile('ref');
 %% Save information in file
 joint.saveToFile();
 joint.saveControlToFile();

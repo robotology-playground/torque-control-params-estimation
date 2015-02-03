@@ -65,8 +65,10 @@ classdef Motor
         function joint = setPart(joint, varargin)
             %% Set part avaiable on robot
             if nargin ~= 0
+                joint = joint.JointStructure(); % Build path
                 if strcmp(varargin{1},'number_joint')
                     joint.robot_dof = varargin{2};
+                    joint.number = varargin{2};
                 end
             else
                 for i=1:nargin
@@ -85,8 +87,8 @@ classdef Motor
                         joint.robot_dof = joint.robot_dof + joint.H_LEG;
                     end
                 end
+                joint = joint.JointStructure(); % Build path
             end
-            joint = joint.JointStructure(); % Build path
         end
         
         function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold, cutoff)
@@ -124,28 +126,46 @@ classdef Motor
             end
         end
         
-        function joint = loadReference(joint, file)
+        function joint = loadReference(joint, measure_data, time, numberJ)
+            if ~exist('numberJ','var')
+                numberJ = joint.number_part;
+            end
+            joint.q = measure_data.q(:,numberJ);
+            joint.qdot = measure_data.qdot(:,numberJ);
+            joint.torque = measure_data.torque(:,numberJ);
+            joint.pwm = measure_data.pwm(:,numberJ);
+            joint.current = measure_data.current(:,numberJ);
+            joint.time = time;
+            joint.friction_model = joint.friction.getFriction(joint.qdot);
+            joint = joint.evaluateCoeff();
+        end
+        
+        function joint = loadRefFile(joint, file)
             %% Load reference from file
             if ~exist('file','var')
                 file = 'reference';
             end
             data = load([joint.path file '.mat']);
-            if size(data.logsout.get('q').Values.Data,2) == 1
-                numberJ = 1;
-                number_cbd = 1;
-            else
-                numberJ = joint.number;
-                number_cbd = joint.number_part;
-            end
-            joint.q = data.logsout.get('q').Values.Data(:,numberJ);
-            joint.qdot = data.logsout.get('qD').Values.Data(:,numberJ);
-            joint.torque = data.logsout.get('tau').Values.Data(:,numberJ);
-            joint.pwm = data.logsout.get('pwm').Values.Data(:,number_cbd);
-            joint.current = data.logsout.get('current').Values.Data(:,number_cbd);
-            joint.time = data.logsout.get('q').Values.Time;
-            joint.friction_model = joint.friction.getFriction(joint.qdot);
             
-            joint = joint.evaluateCoeff();
+            measure_data = struct;
+            measure_data.q = data.logsout.get('q').Values.Data;
+            measure_data.qdot = data.logsout.get('qD').Values.Data;
+            if data.logsout.get('qDD') ~= 0
+                measure_data.qddot = data.logsout.get('qDD').Values.Data;
+            end
+            measure_data.torque = data.logsout.get('tau').Values.Data;
+            measure_data.pwm = data.logsout.get('pwm').Values.Data;
+            measure_data.current = data.logsout.get('current').Values.Data;
+            
+            if size(data.logsout.get('q').Values.Data,2) == 1
+                joint = joint.loadReference(measure_data, ...
+                    data.logsout.get('q').Values.Time, 1);
+            else
+                joint = joint.loadReference(measure_data, ...
+                    data.logsout.get('q').Values.Time);
+            end
+            
+            
         end
         
         function joint = evaluateCoeff(joint)
@@ -200,6 +220,7 @@ classdef Motor
         function command = getWBIlist(joint)
             %% Get string to start ControlBoardDumper
             command = ['JOINT_FRICTION = (' joint.WBIname ')'];
+            assignin('base', 'ROBOT_DOF', joint.number);
         end
         
         function saveToFile(joint, name)
@@ -208,36 +229,36 @@ classdef Motor
                 name = 'data';
             end
             fileID = fopen([joint.path name '.txt'],'w');
-            joint.saveCoeffToFile(fileID);
+            fprintf(fileID,'%s',joint.saveCoeffToFile());
             % Close
             fclose(fileID);
         end
         
-        function saveCoeffToFile(joint, fileID)
+        function text = saveCoeffToFile(joint)
             %% Write information to txt file
             
             % Information joint estimation
-            fprintf(fileID,'Name: %s\n',joint.robot);
-            fprintf(fileID,'Part: %s\n',joint.part);
+            text = sprintf('Name: %s\n',joint.robot);
+            text = [text, sprintf('Part: %s\n',joint.part)];
             if(joint.type ~= 0)
-                fprintf(fileID,'Type: %s\n',joint.type);
+                text = [text, sprintf('Type: %s\n',joint.type)];
             end
             if(joint.info1 ~= 0)
-                fprintf(fileID,'Info1: %s\n',joint.info1);
+                text = [text, sprintf('Info1: %s\n',joint.info1)];
             end
             if(joint.info2 ~= 0)
-                fprintf(fileID,'Info2: %s\n',joint.info2);
+                text = [text, sprintf('Info2: %s\n',joint.info2)];
             end
-            joint.friction.saveToFile(fileID);
-            fprintf(fileID,'\n----------> Kt <----------\n');
-            fprintf(fileID,'Kt: %12.8f [Nm]/[V]\n',joint.Kt);
-            fprintf(fileID,'\n---- Kt -> Latex ----\n');
-            fprintf(fileID,'\n\\begin{equation}\n');
-            fprintf(fileID,'\\label{eq:%sCoeffPWM}\n',joint.path);
-            fprintf(fileID,'\\begin{array}{cccl}\n');
-            fprintf(fileID,'\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP);
-            fprintf(fileID,'\\end{array}\n');
-            fprintf(fileID,'\\end{equation}\n');
+            text = [text, sprintf('%s\n',joint.friction.saveToFile(joint.path))];
+            text = [text, sprintf('\n----------> Kt <----------\n')];
+            text = [text, sprintf('Kt: %12.8f [Nm]/[V]\n',joint.Kt)];
+            text = [text, sprintf('\n---- Kt -> Latex ----\n')];
+            text = [text, sprintf('\n\\begin{equation}\n')];
+            text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
+            text = [text, sprintf('\\begin{array}{cccl}\n')];
+            text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP)];
+            text = [text, sprintf('\\end{array}\n')];
+            text = [text, sprintf('\\end{equation}\n')];
         end
         
         function joint = saveControlToFile(joint, name)

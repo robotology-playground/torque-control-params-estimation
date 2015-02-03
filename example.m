@@ -8,20 +8,19 @@
 joint = Motor('experiments','iCubGenova03','arm','right','elbow');
 % Set number of joint you want control and read
 joint = joint.setPart('number_joint',1);
+% List to load in ---
+disp(joint.getWBIlist());
+% Start Control board dumper
+disp(joint.getControlBoardCommand());
 
 %% Set variable environment
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
 localName = 'simulink_joint_friction';
 setenv('YARP_ROBOT_NAME', joint.robot);
 
-ROBOT_DOF = 1;
 robotName = 'icub';
 Ts = 0.01;
 name = 'idle';
-
-plot = struct;
-plot.x = [-1500 1500];
-plot.y = [-10 10];
 
 %% Load from file measure of friction
 joint = joint.loadIdleMeasure('idle',10);

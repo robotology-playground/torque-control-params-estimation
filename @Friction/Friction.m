@@ -120,39 +120,39 @@ classdef Friction
             hold off;
         end
         
-        function saveToFile(joint, fileID)
+        function text = saveToFile(obj, path)
             %% Save information about friction on file
-            fprintf(fileID,'\n----------> Friction <----------\n');
+            text = sprintf('\n----------> Friction <----------\n');
             % Coefficients
-            fprintf(fileID,'KcP: %12.8f [Nm] - KcN: %12.8f [Nm]\n',joint.friction.KcP, joint.friction.KcN);
-            fprintf(fileID,'KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',joint.friction.KvP, joint.friction.KvN);
-            %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
+            text = [text, sprintf('KcP: %12.8f [Nm] - KcN: %12.8f [Nm]\n',obj.KcP, obj.KcN)];
+            text = [text, sprintf('KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',obj.KvP, obj.KvN)];
+            %text = [text, sprintf('KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',obj.KsP, obj.KsN)];
             
-            fprintf(fileID,'\n---- Friction -> Latex ----\n');
+            text = [text, sprintf('\n---- Friction -> Latex ----\n')];
             % To latex
-            fprintf(fileID,'\\begin{equation}\n');
-            fprintf(fileID,'\\label{eq:%sFrictionCoeffCoulomb}\n',joint.path);
-            fprintf(fileID,'\\begin{array}{cccl}\n');
-            fprintf(fileID,'\\bar K_{c+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KcP,'\\');
-            fprintf(fileID,'\\bar K_{c-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KcN);
-            fprintf(fileID,'\\end{array}\n');
-            fprintf(fileID,'\\end{equation}\n');
+            text = [text, sprintf('\\begin{equation}\n')];
+            text = [text, sprintf('\\label{eq:%sFrictionCoeffCoulomb}\n',path)];
+            text = [text, sprintf('\\begin{array}{cccl}\n')];
+            text = [text, sprintf('\\bar K_{c+} & \\simeq & %12.8f & [Nm] %s\n',obj.KcP,'\\')];
+            text = [text, sprintf('\\bar K_{c-} & \\simeq & %12.8f & [Nm]\n',obj.KcN)];
+            text = [text, sprintf('\\end{array}\n')];
+            text = [text, sprintf('\\end{equation}\n')];
             
-            fprintf(fileID,'\n\\begin{equation}\n');
-            fprintf(fileID,'\\label{eq:%sFrictionCoeffViscous}\n',joint.path);
-            fprintf(fileID,'\\begin{array}{cccl}\n');
-            fprintf(fileID,'\\bar K_{v+} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]} %s\n',joint.friction.KvP,'\\');
-            fprintf(fileID,'\\bar K_{v-} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]}\n',joint.friction.KvN);
-            fprintf(fileID,'\\end{array}\n');
-            fprintf(fileID,'\\end{equation}\n');
+            text = [text, sprintf('\n\\begin{equation}\n')];
+            text = [text, sprintf('\\label{eq:%sFrictionCoeffViscous}\n',path)];
+            text = [text, sprintf('\\begin{array}{cccl}\n')];
+            text = [text, sprintf('\\bar K_{v+} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]} %s\n',obj.KvP,'\\')];
+            text = [text, sprintf('\\bar K_{v-} & \\simeq & %12.8f & \\frac{[Nm][s]}{[deg]}\n',obj.KvN)];
+            text = [text, sprintf('\\end{array}\n')];
+            text = [text, sprintf('\\end{equation}\n')];
             
-%             fprintf(fileID,'\n\\begin{equation}\n');
-%             fprintf(fileID,'\\label{eq:%sFrictionCoeffStiction}\n',joint.path);
-%             fprintf(fileID,'\\begin{array}{cccl}\n');
-%             fprintf(fileID,'\\bar K_{s+} & \\simeq & %12.8f & [Nm] %s\n',joint.friction.KsP,'\\');
-%             fprintf(fileID,'\\bar K_{s-} & \\simeq & %12.8f & [Nm]\n',joint.friction.KsN);
-%             fprintf(fileID,'\\end{array}\n');
-%             fprintf(fileID,'\\end{equation}\n');
+%             text = [text, sprintf('\n\\begin{equation}\n')];
+%             text = [text, sprintf('\\label{eq:%sFrictionCoeffStiction}\n',path)];
+%             text = [text, sprintf('\\begin{array}{cccl}\n')];
+%             text = [text, sprintf('\\bar K_{s+} & \\simeq & %12.8f & [Nm] %s\n',obj.KsP,'\\')];
+%             text = [text, sprintf('\\bar K_{s-} & \\simeq & %12.8f & [Nm]\n',obj.KsN)];
+%             text = [text, sprintf('\\end{array}\n')];
+%             text = [text, sprintf('\\end{equation}\n')];
         end
         
         

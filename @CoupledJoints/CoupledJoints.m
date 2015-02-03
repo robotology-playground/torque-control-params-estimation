@@ -3,15 +3,17 @@ classdef CoupledJoints
     %   Detailed explanation goes here
     
     properties (Access = protected)
-        pitch;
-        roll;
-        yaw;
         T;
+        part;
     end
     
     properties
         robot;
         path;
+        group_select;
+        pitch;
+        roll;
+        yaw;
     end
     
     methods
@@ -48,8 +50,10 @@ classdef CoupledJoints
                         0 -t t];
                 end
             end
+            coupled.part = part;
             coupled.path = coupled.pitch.getPathType();
             coupled.robot = robotName;
+            coupled.group_select = coupled.pitch.group_select;
         end
         
         function coupled = changeTmatrix(coupled, T)
@@ -108,6 +112,30 @@ classdef CoupledJoints
             end
         end
         
+        function coupled = loadRefFile(coupled, file)
+            %% Load reference from file
+            if ~exist('file','var')
+                file = 'ref';
+            end
+            data = load([coupled.path file '.mat']);
+            
+            measure_data = struct;
+            measure_data.q = data.logsout.get('q').Values.Data;
+            measure_data.qdot = data.logsout.get('qD').Values.Data;
+            if size(data.logsout.get('qDD'),1) ~= 0
+                measure_data.qddot = data.logsout.get('qDD').Values.Data;
+            end
+            measure_data.torque = data.logsout.get('tau').Values.Data;
+            measure_data.pwm = data.logsout.get('pwm').Values.Data;
+            measure_data.current = data.logsout.get('current').Values.Data;
+            
+            time = data.logsout.get('q').Values.Time;
+            
+            coupled.pitch = coupled.pitch.loadReference(measure_data, time);
+            coupled.roll = coupled.roll.loadReference(measure_data, time);
+            coupled.yaw = coupled.yaw.loadReference(measure_data, time);
+        end
+        
         function saveToFile(coupled,name)
             %% Save on file
             if ~exist('name','var')
@@ -118,9 +146,14 @@ classdef CoupledJoints
             coupled.yaw.saveToFile(name);
         end
         
-        function command = getWBIlist(joint)
+        function command = getWBIlist(coupled)
             %% Get string to start ControlBoardDumper
-            command = ['JOINT_FRICTION = (' joint.pitch.WBIname ', ' joint.roll.WBIname, ', ' joint.yaw.WBIname ')'];
+            if strcmp(coupled.part,'torso')
+                command = ['JOINT_FRICTION = (' coupled.yaw.WBIname ', ' coupled.roll.WBIname, ', ' coupled.pitch.WBIname ')'];
+            else
+                command = ['JOINT_FRICTION = (' coupled.pitch.WBIname ', ' coupled.roll.WBIname, ', ' coupled.yaw.WBIname ')'];
+            end
+            assignin('base', 'ROBOT_DOF', 3);
         end
         
         function command = getControlBoardCommand(joint, rate)
@@ -134,6 +167,87 @@ classdef CoupledJoints
                 ' --rate ' num2str(rate) ...
                 ' --joints "(0 1 2)"' ...
                 ' --dataToDump "(getOutputs getCurrents)"'];
+        end
+        
+        function plotFriction(coupled, counter)
+            %% Plot Friction
+            %Counter figures
+            if ~exist('counter','var')
+                counter = 1;
+            end
+            % --------------- PITCH ------------------
+            % FIGURE - Friction data and estimation
+            coupled.pitch.friction.savePictureToFile(coupled.pitch.path, counter);
+            counter = counter + 1;
+            
+            % FIGURE - Noise on data
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.pitch.friction.plotNoise();
+            grid;
+            hold off
+            coupled.pitch.savePictureToFile(hFig,'Noise');
+            counter = counter + 1;
+            
+            % FIGURE - PWM vs Torque
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.pitch.plotCoeff();
+            grid;
+            hold off
+            coupled.pitch.savePictureToFile(hFig,'PWMVsTorque');
+            counter = counter + 1;
+            
+            % --------------- ROLL ------------------
+            % FIGURE - Friction data and estimation
+            coupled.roll.friction.savePictureToFile(coupled.roll.path, counter);
+            counter = counter + 1;
+            
+            % FIGURE - Noise on data
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.roll.friction.plotNoise();
+            grid;
+            hold off
+            coupled.roll.savePictureToFile(hFig,'Noise');
+            counter = counter + 1;
+            
+            % FIGURE - PWM vs Torque
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.roll.plotCoeff();
+            grid;
+            hold off
+            coupled.roll.savePictureToFile(hFig,'PWMVsTorque');
+            counter = counter + 1;
+            
+            % --------------- YAW ------------------
+            % FIGURE - Friction data and estimation
+            coupled.yaw.friction.savePictureToFile(coupled.yaw.path, counter);
+            counter = counter + 1;
+            
+            % FIGURE - Noise on data
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.yaw.friction.plotNoise();
+            grid;
+            hold off
+            coupled.yaw.savePictureToFile(hFig,'Noise');
+            counter = counter + 1;
+            
+            % FIGURE - PWM vs Torque
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            hold on
+            coupled.yaw.plotCoeff();
+            grid;
+            hold off
+            coupled.yaw.savePictureToFile(hFig,'PWMVsTorque');
         end
     end
 end
