@@ -60,8 +60,9 @@ classdef Motor
             joint = joint.buildFolder();
         end
         
-        %% Set part avaiable on robot
-        function joint = setPart(joint, varargin)           
+        
+        function joint = setPart(joint, varargin)
+            %% Set part avaiable on robot
             if nargin ~= 0
                 if strcmp(varargin{1},'number_joint')
                     joint.robot_dof = varargin{2};
@@ -87,14 +88,16 @@ classdef Motor
             joint = joint.JointStructure(); % Build path
         end
         
-        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold, offset)
+        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold)
             if ~exist('threshold','var')
-                threshold = 1;
+                joint.friction = Friction(position, velocity, torque, time);
+            else
+                joint.friction = Friction(position, velocity, torque, time, threshold);
             end
-            joint.friction = Friction(position, velocity, torque, time, threshold);
         end
-        %% Load data from mat file
+        
         function joint = loadIdleMeasure(joint, file, threshold, cutoff)
+            %% Load data from mat file
             if ~exist('file','var')
                 file = 'idle';
             end
@@ -117,8 +120,9 @@ classdef Motor
             end
         end
         
-        %% Load reference from file
+        
         function joint = loadReference(joint, file)
+            %% Load reference from file
             if ~exist('file','var')
                 file = 'reference';
             end
@@ -147,8 +151,9 @@ classdef Motor
             joint.Kt = A(1);
         end
         
-        %% Plot measure versus friction estimation
+        
         function joint = plotCoeff(joint, option)
+            %% Plot measure versus friction estimation
             if ~exist('option','var')
                 option = '.';
             end
@@ -161,9 +166,10 @@ classdef Motor
             %plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
         end
         
-        %% Save Friction picture
+        
         function savePictureToFile(joint,hFig,figureName)
-            %% Save image
+            %% Save Friction picture
+            % Save image
             currentFolder = pwd;
             cd(joint.path);
             if ~exist('figureName','var')
@@ -175,8 +181,21 @@ classdef Motor
             clear currentFolder;
         end
         
-        %% Save information to txt file
+        function command = getControlBoardCommand(joint, rate)
+            %% Get string to start ControlBoardDumper
+            if ~exist('rate','var')
+                rate = 10;
+            end
+            command = ['controlBoardDumper'...
+                ' --robot icub'...
+                ' --part ' joint.group_select ...
+                ' --rate ' num2str(rate) ...
+                ' --joints "(' num2str(joint.number_part-1) ')"' ...
+                ' --dataToDump "(getOutputs getCurrents)"'];
+        end
+        
         function joint = saveToFile(joint, name)
+            %% Save information to txt file
             if ~exist('name','var')
                 name = 'data';
             end
@@ -199,7 +218,7 @@ classdef Motor
             fprintf(fileID,'KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',joint.friction.KvP, joint.friction.KvN);
             %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
             if(joint.Kt ~= 0)
-                fprintf(fileID,'Kt: %12.8f [Nm]\n',joint.Kt);
+                fprintf(fileID,'Kt: %12.8f [Nm]/[V]\n',joint.Kt);
             end
             
             fprintf(fileID,'\n---- Latex ----\n');
@@ -232,15 +251,16 @@ classdef Motor
                 fprintf(fileID,'\n\\begin{equation}\n');
                 fprintf(fileID,'\\label{eq:%sCoeffPWM}\n',joint.path);
                 fprintf(fileID,'\\begin{array}{cccl}\n');
-                fprintf(fileID,'\\bar Kt & \\simeq & %12.8f & [Nm]\n',joint.friction.KvP);
+                fprintf(fileID,'\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP);
                 fprintf(fileID,'\\end{array}\n');
                 fprintf(fileID,'\\end{equation}\n');
             end
             % Close
             fclose(fileID);
         end
-        %% Save information to txt file
+        
         function joint = saveControlToFile(joint, name)
+            %% Save information to txt file
             if ~exist('name','var')
                 name = 'control';
             end
@@ -258,26 +278,27 @@ classdef Motor
                 fprintf(fileID,'Info2: %s\n',joint.info2);
             end
             fprintf(fileID,'\nFriction\n');
-            fprintf(fileID,'kc+: %12.8f - kc-: %12.8f \n',joint.friction.KcP/joint.Kt, joint.friction.KcN/joint.Kt);
-            fprintf(fileID,'ks+: %12.8f [s]/[deg] - kv-: %12.8f [s]/[deg]\n',joint.friction.KvP/joint.Kt, joint.friction.KvN/joint.Kt);
+            fprintf(fileID,'kc+: %12.8f [V] - kc-: %12.8f [V] \n',joint.friction.KcP/joint.Kt, joint.friction.KcN/joint.Kt);
+            fprintf(fileID,'ks+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',joint.friction.KvP/joint.Kt, joint.friction.KvN/joint.Kt);
             %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
             if(joint.Kt ~= 0)
-                fprintf(fileID,'kt: %12.8f 1/[Nm]\n',1/joint.Kt);
+                fprintf(fileID,'kt: %12.8f [V]/[Nm]\n',1/joint.Kt);
             end
             
             % Close
             fclose(fileID);
         end
         
-        %% Get path type
+        
         function path = getPathType(joint)
+            %% Get path type
             path = joint.path_before;
         end
     end
     
     methods (Access = protected)
         function joint = buildFolder(joint)
-            % Build a folder path and if doesn't exist a folder build a
+            %% Build a folder path and if doesn't exist a folder build a
             % selected forlder from information type of joint
             joint = joint.JointStructure(); % Build path
             if ~exist(joint.path,'dir') % Build folder
