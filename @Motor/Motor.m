@@ -95,10 +95,10 @@ classdef Motor
             if ~exist('threshold','var')
                 threshold = 1;
             end
-            if ~exist('cutoff','var')
-                joint.friction = Friction(position, velocity, torque, time, threshold);
-            else
+            if exist('cutoff','var')
                 joint.friction = Friction(position, velocity, torque, time, threshold, cutoff);
+            else
+                joint.friction = Friction(position, velocity, torque, time, threshold);
             end
         end
         
@@ -111,31 +111,23 @@ classdef Motor
                 threshold = 1;
             end
             data = load([joint.path file '.mat']);
-            if size(data.logsout.get('q').Values.Data,2) == 25
-                numb = joint.number;
-            else
-                numb = 1;
-            end
-            position_data = data.logsout.get('q').Values.Data(:,numb);
-            velocity_data = data.logsout.get('qD').Values.Data(:,numb);
-            torque_data = data.logsout.get('tau').Values.Data(:,numb);
             if exist('cutoff','var')
-                joint.friction = Friction(position_data, velocity_data, torque_data, data.time, threshold, cutoff);
+                joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold, cutoff);
             else
-                joint.friction = Friction(position_data, velocity_data, torque_data, data.time, threshold);
+                joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold);
             end
         end
         
-        function joint = loadReference(joint, measure_data, time, numberJ)
-            if ~exist('numberJ','var')
-                numberJ = joint.number_part;
+        function joint = loadReference(joint, data)
+            joint.q = data.q;
+            joint.qdot = data.qD;
+            joint.torque = data.tau;
+            temp_pwm = data.PWM.(joint.group_select);
+            joint.pwm = temp_pwm(:,joint.number_part);
+            if isfield(data,'current')
+                joint.current = data.current;
             end
-            joint.q = measure_data.q(:,numberJ);
-            joint.qdot = measure_data.qdot(:,numberJ);
-            joint.torque = measure_data.torque(:,numberJ);
-            joint.pwm = measure_data.pwm(:,numberJ);
-            joint.current = measure_data.current(:,numberJ);
-            joint.time = time;
+            joint.time = data.time;
             joint.friction_model = joint.friction.getFriction(joint.qdot);
             joint = joint.evaluateCoeff();
         end
@@ -146,35 +138,7 @@ classdef Motor
                 file = 'reference';
             end
             data = load([joint.path file '.mat']);
-            measure_data = struct;
-            if isfield(data,'out')
-                measure_data.q = data.out(:,1);
-                measure_data.qdot = data.out(:,2);
-                measure_data.torque = data.out(:,3);
-                measure_data.pwm = data.out(:,4);
-                measure_data.current = zeros(size(data.out,1),1);
-                size_d = 1;
-                time_d = data.time;
-            else
-                measure_data.q = data.logsout.get('q').Values.Data;
-                measure_data.qdot = data.logsout.get('qD').Values.Data;
-                if data.logsout.get('qDD') ~= 0
-                    measure_data.qddot = data.logsout.get('qDD').Values.Data;
-                end
-                measure_data.torque = data.logsout.get('tau').Values.Data;
-                measure_data.pwm = data.logsout.get('pwm').Values.Data;
-                measure_data.current = data.logsout.get('current').Values.Data;
-                size_d = size(data.logsout.get('q').Values.Data,2);
-                time_d = data.logsout.get('q').Values.Time;
-            end
-            
-            if size_d == 1
-                joint = joint.loadReference(measure_data, time_d, 1);
-            else
-                joint = joint.loadReference(measure_data, time_d);
-            end
-            
-            
+            joint = joint.loadReference(data);
         end
         
         function joint = evaluateCoeff(joint)
@@ -229,7 +193,7 @@ classdef Motor
         function command = getWBIlist(joint)
             %% Get string to start ControlBoardDumper
             command = ['JOINT_FRICTION = (' joint.WBIname ')'];
-            assignin('base', 'ROBOT_DOF', joint.number);
+            assignin('base', 'ROBOT_DOF', 1);
         end
         
         function saveToFile(joint, name)

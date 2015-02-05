@@ -43,10 +43,10 @@ elseif strcmp(joint.info1,'knee')
     info1_number = 4;
 elseif strcmp(joint.info1,'ankle')
     info1_number = 3;
-elseif(joint.info1 ~= 0)
-    info1_number = joint.pitchRollYawNumber(joint.info1);
 elseif strcmp(joint.info1,'elbow')
     info1_number = 4;
+elseif(joint.info1 ~= 0)
+    info1_number = joint.pitchRollYawNumber(joint.info1);
 end
 
 %Convert info2 in number
@@ -95,17 +95,17 @@ switch(part_number)
             case 1     % Case Hip
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
-                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1 '_' joint.info2];
+                joint.WBIname = [joint.type(1:1) '_' joint.info1 '_' joint.info2];
                 joint.number = info2_number;
             case 3     % Case ankle
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1 '/' joint.info2];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type '/' joint.info1];
-                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1 '_' joint.info2];
+                joint.WBIname = [joint.type(1:1) '_' joint.info1 '_' joint.info2];
                 joint.number = joint.ANKLE_START + info2_number;
             case 4     % Case knee
                 joint.path = [joint.path '/' joint.part '/' joint.type '/' joint.info1];
                 joint.path_before = [joint.path_before '/' joint.part '/' joint.type];
-                joint.WBIname = [joint.type(1:1) '_' joint.type '_' joint.info1];
+                joint.WBIname = [joint.type(1:1) '_' joint.info1];
                 joint.number = info1_number;
         end
         joint.number_part = joint.number;
