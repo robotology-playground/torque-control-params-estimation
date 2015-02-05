@@ -16,4 +16,7 @@ joint.saveToFile();
 %joint.saveControlToFile();
 
 %% Plot Friction
-joint.plotFriction();
+joint.savePictureToFile(joint.plotFriction(1));
+
+%% Plot Kt estimation
+joint.savePictureToFile(joint.plotKtEstimation(2),'PWMVsTorque');

@@ -3,9 +3,9 @@
 %% Load object Motor
 % Set all information about motor and robot when you would like to
 % experiments
-joint = Motor('experiments','iCubGenova04','leg','left','ankle','roll');
+joint = Motor('experiments','iCubGenova03','leg','right','ankle','roll');
 % Set number of joint you want control and read
-joint = joint.setPart('number_joint',1);
+%joint = joint.setPart('number_joint',1);
 
 %% Load from file measure of friction
 joint = joint.loadIdleMeasure('idle',1,100);
@@ -22,7 +22,7 @@ end
 joint.friction.savePictureToFile(joint.path, counter);
 counter = counter + 1;
 joint.friction  % print information about friction
-
+%%
 % FIGURE - Noise on data
 hFig = figure(counter);
 set(hFig, 'Position', [0 0 800 600]);

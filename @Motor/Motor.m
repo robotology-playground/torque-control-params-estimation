@@ -146,23 +146,32 @@ classdef Motor
                 file = 'reference';
             end
             data = load([joint.path file '.mat']);
-            
             measure_data = struct;
-            measure_data.q = data.logsout.get('q').Values.Data;
-            measure_data.qdot = data.logsout.get('qD').Values.Data;
-            if data.logsout.get('qDD') ~= 0
-                measure_data.qddot = data.logsout.get('qDD').Values.Data;
-            end
-            measure_data.torque = data.logsout.get('tau').Values.Data;
-            measure_data.pwm = data.logsout.get('pwm').Values.Data;
-            measure_data.current = data.logsout.get('current').Values.Data;
-            
-            if size(data.logsout.get('q').Values.Data,2) == 1
-                joint = joint.loadReference(measure_data, ...
-                    data.logsout.get('q').Values.Time, 1);
+            if isfield(data,'out')
+                measure_data.q = data.out(:,1);
+                measure_data.qdot = data.out(:,2);
+                measure_data.torque = data.out(:,3);
+                measure_data.pwm = data.out(:,4);
+                measure_data.current = zeros(size(data.out,1),1);
+                size_d = 1;
+                time_d = data.time;
             else
-                joint = joint.loadReference(measure_data, ...
-                    data.logsout.get('q').Values.Time);
+                measure_data.q = data.logsout.get('q').Values.Data;
+                measure_data.qdot = data.logsout.get('qD').Values.Data;
+                if data.logsout.get('qDD') ~= 0
+                    measure_data.qddot = data.logsout.get('qDD').Values.Data;
+                end
+                measure_data.torque = data.logsout.get('tau').Values.Data;
+                measure_data.pwm = data.logsout.get('pwm').Values.Data;
+                measure_data.current = data.logsout.get('current').Values.Data;
+                size_d = size(data.logsout.get('q').Values.Data,2);
+                time_d = data.logsout.get('q').Values.Time;
+            end
+            
+            if size_d == 1
+                joint = joint.loadReference(measure_data, time_d, 1);
+            else
+                joint = joint.loadReference(measure_data, time_d);
             end
             
             
@@ -256,7 +265,7 @@ classdef Motor
             text = [text, sprintf('\n\\begin{equation}\n')];
             text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
             text = [text, sprintf('\\begin{array}{cccl}\n')];
-            text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \frac{[Nm]}{[V]}\n',joint.friction.KvP)];
+            text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',joint.friction.KvP)];
             text = [text, sprintf('\\end{array}\n')];
             text = [text, sprintf('\\end{equation}\n')];
         end

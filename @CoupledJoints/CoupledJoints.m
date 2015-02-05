@@ -168,87 +168,166 @@ classdef CoupledJoints
                 ' --joints "(0 1 2)"' ...
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
-        
-        function plotFriction(coupled, counter)
-            %% Plot Friction
+
+        function hFig = plotKtEstimation(coupled, counter)
+            
             %Counter figures
             if ~exist('counter','var')
                 counter = 1;
             end
-            % --------------- PITCH ------------------
-            % FIGURE - Friction data and estimation
-            coupled.pitch.friction.savePictureToFile(coupled.pitch.path, counter);
-            counter = counter + 1;
-            
-            % FIGURE - Noise on data
             hFig = figure(counter);
             set(hFig, 'Position', [0 0 800 600]);
+            
+            subplot(1,3,1);
             hold on
-            coupled.pitch.friction.plotNoise();
             grid;
-            hold off
-            coupled.pitch.savePictureToFile(hFig,'Noise');
-            counter = counter + 1;
-            
-            % FIGURE - PWM vs Torque
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
-            hold on
             coupled.pitch.plotCoeff();
-            grid;
+            title('Pitch');
             hold off
-            coupled.pitch.savePictureToFile(hFig,'PWMVsTorque');
-            counter = counter + 1;
             
-            % --------------- ROLL ------------------
-            % FIGURE - Friction data and estimation
-            coupled.roll.friction.savePictureToFile(coupled.roll.path, counter);
-            counter = counter + 1;
-            
-            % FIGURE - Noise on data
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
+            subplot(1,3,2);
             hold on
-            coupled.roll.friction.plotNoise();
             grid;
-            hold off
-            coupled.roll.savePictureToFile(hFig,'Noise');
-            counter = counter + 1;
-            
-            % FIGURE - PWM vs Torque
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
-            hold on
             coupled.roll.plotCoeff();
-            grid;
+            title('Roll');
             hold off
-            coupled.roll.savePictureToFile(hFig,'PWMVsTorque');
-            counter = counter + 1;
             
-            % --------------- YAW ------------------
-            % FIGURE - Friction data and estimation
-            coupled.yaw.friction.savePictureToFile(coupled.yaw.path, counter);
-            counter = counter + 1;
-            
-            % FIGURE - Noise on data
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
+            subplot(1,3,3);
             hold on
-            coupled.yaw.friction.plotNoise();
             grid;
-            hold off
-            coupled.yaw.savePictureToFile(hFig,'Noise');
-            counter = counter + 1;
-            
-            % FIGURE - PWM vs Torque
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
-            hold on
             coupled.yaw.plotCoeff();
-            grid;
+            title('Yaw');
             hold off
-            coupled.yaw.savePictureToFile(hFig,'PWMVsTorque');
         end
+        
+        function hFig = plotFriction(coupled, counter)
+            
+            %Counter figures
+            if ~exist('counter','var')
+                counter = 1;
+            end
+            hFig = figure(counter);
+            set(hFig, 'Position', [0 0 800 600]);
+            
+            subplot(1,3,1);
+            hold on
+            grid;
+            coupled.pitch.friction.plotFriction();
+            coupled.pitch.friction.plotFrictionModel();
+            title('Pitch');
+            hold off
+            
+            subplot(1,3,2);
+            hold on
+            grid;
+            coupled.roll.friction.plotFriction();
+            coupled.roll.friction.plotFrictionModel();
+            title('Roll');
+            hold off
+            
+            subplot(1,3,3);
+            hold on
+            grid;
+            coupled.yaw.friction.plotFriction();
+            coupled.yaw.friction.plotFrictionModel();
+            title('Yaw');
+            hold off
+        end
+        
+        function savePictureToFile(coupled,hFig,figureName)
+            %% Save Friction picture
+            % Save image
+            currentFolder = pwd;
+            cd(coupled.path);
+            if ~exist('figureName','var')
+                figureName = 'friction';
+            end
+            saveas(hFig,[figureName '.fig'],'fig');
+            saveas(hFig,[figureName '.png'],'png');
+            cd(currentFolder);
+            clear currentFolder;
+        end
+        
+%         function plotFriction(coupled, counter)
+%             %% Plot Friction
+%             %Counter figures
+%             if ~exist('counter','var')
+%                 counter = 1;
+%             end
+%             % --------------- PITCH ------------------
+%             % FIGURE - Friction data and estimation
+%             coupled.pitch.friction.savePictureToFile(coupled.pitch.path, counter);
+%             counter = counter + 1;
+%             
+%             % FIGURE - Noise on data
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.pitch.friction.plotNoise();
+%             grid;
+%             hold off
+%             coupled.pitch.savePictureToFile(hFig,'Noise');
+%             counter = counter + 1;
+%             
+%             % FIGURE - PWM vs Torque
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.pitch.plotCoeff();
+%             grid;
+%             hold off
+%             coupled.pitch.savePictureToFile(hFig,'PWMVsTorque');
+%             counter = counter + 1;
+%             
+%             % --------------- ROLL ------------------
+%             % FIGURE - Friction data and estimation
+%             coupled.roll.friction.savePictureToFile(coupled.roll.path, counter);
+%             counter = counter + 1;
+%             
+%             % FIGURE - Noise on data
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.roll.friction.plotNoise();
+%             grid;
+%             hold off
+%             coupled.roll.savePictureToFile(hFig,'Noise');
+%             counter = counter + 1;
+%             
+%             % FIGURE - PWM vs Torque
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.roll.plotCoeff();
+%             grid;
+%             hold off
+%             coupled.roll.savePictureToFile(hFig,'PWMVsTorque');
+%             counter = counter + 1;
+%             
+%             % --------------- YAW ------------------
+%             % FIGURE - Friction data and estimation
+%             coupled.yaw.friction.savePictureToFile(coupled.yaw.path, counter);
+%             counter = counter + 1;
+%             
+%             % FIGURE - Noise on data
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.yaw.friction.plotNoise();
+%             grid;
+%             hold off
+%             coupled.yaw.savePictureToFile(hFig,'Noise');
+%             counter = counter + 1;
+%             
+%             % FIGURE - PWM vs Torque
+%             hFig = figure(counter);
+%             set(hFig, 'Position', [0 0 800 600]);
+%             hold on
+%             coupled.yaw.plotCoeff();
+%             grid;
+%             hold off
+%             coupled.yaw.savePictureToFile(hFig,'PWMVsTorque');
+%         end
     end
 end
 
