@@ -113,8 +113,10 @@ classdef Motor
             data = load([joint.path file '.mat']);
             if exist('cutoff','var')
                 joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold, cutoff);
+                joint.friction = joint.friction.setExperiment(file);
             else
                 joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold);
+                joint.friction = joint.friction.setExperiment(file);
             end
         end
         

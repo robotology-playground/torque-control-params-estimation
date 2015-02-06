@@ -5,6 +5,7 @@ classdef ExperCollector
     properties (Access = protected)
         path;
         joint_list;
+        path_motor;
     end
     
     properties
@@ -17,26 +18,40 @@ classdef ExperCollector
     methods
         function obj = ExperCollector(robot, date)
             obj.robot = robot;
-            obj.date = date;
+            if exist('date','var')
+                obj.date = date;
+            else
+                obj.date = '';
+            end
             obj.path = 'experiments';
-            obj.data_path = ['experiments/' date '/' robot '/'];
+            if strcmp(obj.date,'')
+                obj.data_path = ['experiments/' obj.robot '/'];
+                obj.path_motor = 'experiments';
+            else
+                obj.data_path = ['experiments/' obj.date '/' obj.robot '/'];
+                obj.path_motor = ['experiments/' obj.date];
+            end
             obj.joint_list = '';
         end
         
         function obj = setStartPath(obj,path)
             obj.path = path;
-            obj.data_path = [obj.path '/' obj.date '/' obj.robot '/'];
+            if strcmp(obj.date,'')
+                obj.data_path = [obj.path '/' obj.robot '/'];
+            else
+                obj.data_path = [obj.path '/' obj.date '/' obj.robot '/'];
+            end
         end
         
         function obj = addMotor(obj,part, type, info1, info2)
             if exist('type','var') && exist('info1','var') && exist('info2','var')
-                motor = Motor([ obj.path '/' obj.date], obj.robot, part, type, info1, info2);
+                motor = Motor(obj.path_motor, obj.robot, part, type, info1, info2);
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
-                motor = Motor([ obj.path '/' obj.date], obj.robot, part, type, info1);
+                motor = Motor(obj.path_motor, obj.robot, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor([ obj.path '/' obj.date], obj.robot, part, type);
+                motor = Motor(obj.path_motor, obj.robot, part, type);
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor([ obj.path '/' obj.date], obj.robot, part);
+                motor = Motor(obj.path_motor, obj.robot, part);
             end
             obj.joint = [obj.joint motor];
             

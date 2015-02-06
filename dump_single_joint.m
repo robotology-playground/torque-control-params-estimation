@@ -5,11 +5,11 @@
 %% Load object Motor
 % Set all information about motor and robot when you would like to
 % experiments
-joint = Motor('experiments','iCubGenova01','arm','left','elbow');
+joint = Motor('experiments','iCubGenova01','leg','left','hip','roll');
 % List to load in ---
 disp(joint.getWBIlist());
 % Start Control board dumper
-disp(joint.getControlBoardCommand());
+%disp(joint.getControlBoardCommand());
 
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
 localName = 'simulink_joint_friction';
@@ -19,7 +19,7 @@ robotName = 'icub';
 Ts = 0.01;
 
 %% Save in file
-name = 'idle';
+name = 'idle-1F';
 path = joint.path;
 SaveData;
 clear name path;
