@@ -91,14 +91,14 @@ classdef Motor
             end
         end
         
-        function joint = loadIdleMeasureData(joint, position, velocity, torque, time, threshold, cutoff)
+        function joint = loadIdleMeasureData(joint, position, velocity, acceleration, torque, time, threshold, cutoff)
             if ~exist('threshold','var')
                 threshold = 1;
             end
             if exist('cutoff','var')
-                joint.friction = Friction(position, velocity, torque, time, threshold, cutoff);
+                joint.friction = Friction(position, velocity, acceleration, torque, time, threshold, cutoff);
             else
-                joint.friction = Friction(position, velocity, torque, time, threshold);
+                joint.friction = Friction(position, velocity, acceleration, torque, time, threshold);
             end
         end
         
@@ -112,10 +112,10 @@ classdef Motor
             end
             data = load([joint.path file '.mat']);
             if exist('cutoff','var')
-                joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold, cutoff);
+                joint.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time, threshold, cutoff);
                 joint.friction = joint.friction.setExperiment(file);
             else
-                joint.friction = Friction(data.q, data.qD, data.tau, data.time, threshold);
+                joint.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time, threshold);
                 joint.friction = joint.friction.setExperiment(file);
             end
         end

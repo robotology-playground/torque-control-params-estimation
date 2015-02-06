@@ -5,10 +5,12 @@ classdef Friction
     properties(SetAccess=private, GetAccess=private)
         position;
         velocity;
+        acceleration;
         torque;
         time;
         step;
         noise;
+        experiment;
     end
     
     properties
@@ -24,9 +26,10 @@ classdef Friction
     end
     
     methods
-        function obj = Friction(position,velocity,torque,time,th_velocity, cutoff)
+        function obj = Friction(position, velocity, acceleration, torque, time, th_velocity, cutoff)
             obj.position = position;
             obj.velocity = velocity;
+            obj.acceleration = acceleration;
             obj.torque = torque;
             obj.time = time;
             obj.step = time(2)-time(1);
@@ -38,7 +41,7 @@ classdef Friction
             end
             
             obj = obj.evaluateCoeff(th_velocity);
-
+            obj.experiment = '';
         end
         
         function obj = evaluateCoeff(obj, th_velocity)
@@ -209,6 +212,10 @@ classdef Friction
             ylabel('\tau','Interpreter','tex');
         end
         
+        function obj = setExperiment(obj,experiment)
+            obj.experiment = experiment;
+        end
+        
         function savePictureToFile(obj, path, counter, figureName)
             %% Save Friction picture
             % FIGURE - Friction data and estimation
@@ -228,6 +235,9 @@ classdef Friction
             cd(path);
             if ~exist('figureName','var')
                 figureName = 'friction';
+            end
+            if ~strcmp(obj.experiment,'')
+                figureName = [figureName '-' obj.experiment];
             end
             saveas(hFig,[figureName '.fig'],'fig');
             saveas(hFig,[figureName '.png'],'png');
