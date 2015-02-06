@@ -19,7 +19,7 @@ robotName = 'icub';
 Ts = 0.01;
 
 %% Save in file
-name = 'idle-1F';
+name = 'ref';
 path = joint.path;
 SaveData;
 clear name path;

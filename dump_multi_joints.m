@@ -5,6 +5,8 @@
 %% Load object Motor
 % Set all information about motor and robot when you would like to
 % experiments
+formatOut = 'yyyymmdd';
+date = datestr(now,formatOut);
 experiment = ExperCollector('iCubGenova01');
 % Load joints
 experiment = experiment.addMotor('leg','left','ankle','pitch');

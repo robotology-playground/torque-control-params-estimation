@@ -13,6 +13,7 @@ classdef Motor
         qdot;
         torque;
         pwm;
+        voltage;
         current;
         time;
         path_before;
@@ -27,6 +28,7 @@ classdef Motor
         robot_dof = 0;
         measure;
         friction_model;
+        ratio_V = 0;
     end
     
     properties
@@ -120,12 +122,17 @@ classdef Motor
             end
         end
         
+        function joint = setRatio(joint, Voltage, range_pwm)
+            joint.ratio_V = Voltage/range_pwm;
+        end
+        
         function joint = loadReference(joint, data)
             joint.q = data.q;
             joint.qdot = data.qD;
             joint.torque = data.tau;
             temp_pwm = data.PWM.(joint.group_select);
             joint.pwm = temp_pwm(:,joint.number_part);
+            joint.voltage = joint.ratio_V*joint.pwm;
             if isfield(data,'current')
                 joint.current = data.current;
             end
@@ -144,22 +151,22 @@ classdef Motor
         end
         
         function joint = evaluateCoeff(joint)
-            A = joint.linearRegression(joint.pwm,joint.torque-joint.friction_model);
+            A = joint.linearRegression(joint.voltage,joint.torque-joint.friction_model);
             %A = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
             joint.Kt = A(1);
         end
         
         
-        function joint = plotCoeff(joint, option)
+        function joint = plotKt(joint, option)
             %% Plot measure versus friction estimation
             if ~exist('option','var')
                 option = '.';
             end
-            plot(joint.pwm, joint.torque-joint.friction_model, option);
-            xlabel('PWM','Interpreter','tex');
+            plot(joint.voltage, joint.torque-joint.friction_model, option);
+            xlabel('Voltage','Interpreter','tex');
             ylabel('\tau-\tau_{f}','Interpreter','tex');
             hold on;
-            plot(joint.pwm , joint.pwm*joint.Kt,'r-','LineWidth',3);
+            plot(joint.voltage , joint.voltage*joint.Kt,'r-','LineWidth',3);
             hold off;
             %plot(joint.current,joint.current*joint.a(1),'r-','LineWidth',3);
         end

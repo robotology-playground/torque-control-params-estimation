@@ -84,19 +84,19 @@ classdef Friction
         
         function obj = setToCenter(obj)
             %% Remove from data offset from wrong models
-            if obj.KcP < 0
-                obj.torque = -obj.torque;
-                obj.KcP = -obj.KcP;
-                obj.KcN = -obj.KcN;
-                obj.KvP = -obj.KvP;
-                obj.KvN = -obj.KvN;
-            end
-            obj.offset = mean(obj.torque);
+%             if obj.KcP < 0
+%                 obj.torque = -obj.torque;
+%                 obj.KcP = -obj.KcP;
+%                 obj.KcN = -obj.KcN;
+%                 obj.KvP = -obj.KvP;
+%                 obj.KvN = -obj.KvN;
+%             end
+            %obj.offset = mean(obj.torque);
+            obj.offset = (obj.KcP-obj.KcN)/2 + obj.KcN;
             %Scaled Kc and Kv
-            obj.offset = obj.KcP - obj.KcN;
-            obj.torque = obj.torque-(obj.KcP-obj.offset/2);
-            obj.KcP = obj.offset/2;
-            obj.KcN = -obj.offset/2;
+            obj.torque = obj.torque-obj.offset;
+            obj.KcP = obj.KcP - obj.offset;
+            obj.KcN = obj.KcN - obj.offset;
         end
         
         function friction = getFriction(obj, qdot)
@@ -104,7 +104,7 @@ classdef Friction
             friction = zeros(size(qdot,1),1);
             friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
             friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
-            friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
+            %friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
         end
         
         function plotFrictionModel(obj, option)
