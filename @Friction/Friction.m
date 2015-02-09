@@ -26,7 +26,7 @@ classdef Friction
     end
     
     methods
-        function obj = Friction(position, velocity, acceleration, torque, time, th_velocity, cutoff)
+        function obj = Friction(position, velocity, acceleration, torque, time, cutoff, th_velocity)
             obj.position = position;
             obj.velocity = velocity;
             obj.acceleration = acceleration;
@@ -35,13 +35,43 @@ classdef Friction
             obj.step = time(2)-time(1);
             
             if ~exist('cutoff','var')
-                obj.cutoff = 1/obj.step;
+                %obj.cutoff = 1/obj.step;
+                obj.cutoff = 0;
             else
                 obj.cutoff = cutoff;
             end
             
-            obj = obj.evaluateCoeff(th_velocity);
+            if exist('th_velocity','var')
+                obj = obj.evaluateCoeff(th_velocity);
+            else
+                obj = obj.minTh_vel();
+            end
             obj.experiment = '';
+        end
+        
+        function obj = minTh_vel(obj, step, velMax)
+            if ~exist('step','var')
+                step = 0.1;
+            end
+            if ~exist('velMax','var')
+                velMax = 10;
+            end
+            obj = obj.evaluateCoeff(0);
+            varOld = var(obj.torque-obj.getFriction(obj.velocity));
+            varGood = 10;
+            for i=0:step:velMax
+                obj = obj.evaluateCoeff(i);
+                variance = var(obj.torque-obj.getFriction(obj.velocity));
+                if variance < varOld
+                    if variance < varGood;
+                        varGood = variance;
+                        obj.th_velocity = i;
+                    end
+                elseif variance > varGood;
+                    break;
+                end
+                varOld = variance;
+            end
         end
         
         function obj = evaluateCoeff(obj, th_velocity)
@@ -104,6 +134,7 @@ classdef Friction
             friction = zeros(size(qdot,1),1);
             friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
             friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
+            friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = (obj.KcP-obj.KcN)/2 + obj.KcN;
             %friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
         end
         
