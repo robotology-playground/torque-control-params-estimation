@@ -29,7 +29,11 @@ classdef Friction
         function obj = Friction(position, velocity, acceleration, torque, time, cutoff, th_velocity)
             obj.position = position;
             obj.velocity = velocity;
-            obj.acceleration = acceleration;
+            if size(acceleration,1) == 0
+                obj.acceleration = zeros(size(obj.velocity,1),1);
+            else
+                obj.acceleration = acceleration;
+            end
             obj.torque = torque;
             obj.time = time;
             obj.step = time(2)-time(1);
@@ -92,10 +96,15 @@ classdef Friction
             end
             
             % Evaluate fricition
-            AP = obj.linearRegression(obj.velocity(obj.velocity > th_velocity/2), ...
-                obj.torque(obj.velocity > th_velocity/2));
-            AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
-                obj.torque(obj.velocity < -th_velocity/2));
+%             AP = obj.linearRegression(obj.velocity(obj.velocity > th_velocity/2), ...
+%                 obj.torque(obj.velocity > th_velocity/2));
+%             AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
+%                 obj.torque(obj.velocity < -th_velocity/2));
+
+            AP = obj.linearRegression(obj.velocity((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)), ...
+                obj.torque((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)));
+            AN = obj.linearRegression(obj.velocity((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)), ...
+                obj.torque((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)));
             
             obj.KcP = AP(2);
             obj.KvP = AP(1);
@@ -132,10 +141,13 @@ classdef Friction
         function friction = getFriction(obj, qdot)
             %% Evaluate friction model
             friction = zeros(size(qdot,1),1);
-            friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
-            friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
-            friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = (obj.KcP-obj.KcN)/2 + obj.KcN;
+%             friction(qdot < -obj.th_velocity/2) = obj.KcN + obj.KvN*qdot(qdot < -obj.th_velocity/2);
+%             friction(qdot > obj.th_velocity/2) = obj.KcP + obj.KvP*qdot(qdot > obj.th_velocity/2);
+%             friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = (obj.KcP-obj.KcN)/2 + obj.KcN;
             %friction(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2) = obj.torque(qdot >= -obj.th_velocity/2 & qdot <= obj.th_velocity/2);
+            friction(qdot > 0) = obj.KcP + obj.KvP*qdot(qdot > 0);
+            friction(qdot == 0) = (obj.KcP-obj.KcN)/2 + obj.KcN;
+            friction(qdot < 0) = obj.KcN + obj.KvN*qdot(qdot < 0);
         end
         
         function plotFrictionModel(obj, option)
@@ -237,7 +249,15 @@ classdef Friction
             if ~exist('option','var')
                 option = '.';
             end
-            plot(obj.velocity, obj.torque, option);
+            qD_d = obj.velocity((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
+            qD_d = [qD_d; obj.velocity((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
+            fr = obj.torque((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
+            fr = [fr; obj.torque((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
+            
+            plot(obj.velocity,obj.torque, option);
+            hold on;
+            plot(qD_d, fr,'g.');
+            hold off;
             title('Relation between torque, velocity');
             xlabel('qdot','Interpreter','tex');
             ylabel('\tau','Interpreter','tex');

@@ -151,7 +151,7 @@ classdef Motor
         end
         
         
-        function joint = plotKt(joint, option)
+        function plotKt(joint, option)
             %% Plot measure versus friction estimation
             if ~exist('option','var')
                 option = '.';
