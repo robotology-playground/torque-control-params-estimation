@@ -199,6 +199,16 @@ classdef Motor
             assignin('base', 'ROBOT_DOF', 1);
         end
         
+        function list = loadYarpWBI(joint, CODYCO_FOLDER)
+            list = joint.getWBIlist();
+            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
+            name_yarp_file = ['build/install/share/codyco/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
+            copyfile([CODYCO_FOLDER copy_yarp_file],[CODYCO_FOLDER name_yarp_file]);
+            fid = fopen([CODYCO_FOLDER name_yarp_file], 'a+');
+            fprintf(fid, '# TEST JOINT\n%s', list);
+            fclose(fid);
+        end
+        
         function saveToFile(joint, name)
             %% Save on file
             if ~exist('name','var')

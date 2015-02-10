@@ -14,8 +14,8 @@ experiment = experiment.addMotor('leg','left','hip','roll');
 experiment = experiment.addMotor('leg','right','hip','roll');
 experiment = experiment.addMotor('leg','left','ankle','roll');
 experiment = experiment.addMotor('leg','right','ankle','roll');
-% List to load in ---
-disp(experiment.getWBIlist());
+% List loaded in yarpWholeBodyInterface
+disp(experiment.loadYarpWBI('/Users/Raffaello/iit/codyco-superbuild/'));
 
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
 localName = 'simulink_joint_friction';

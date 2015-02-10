@@ -62,7 +62,7 @@ classdef Friction
             end
             obj = obj.evaluateCoeff(0);
             varOld = var(obj.torque-obj.getFriction(obj.velocity));
-            varGood = 10;
+            varGood = 1;
             for i=0:step:velMax
                 obj = obj.evaluateCoeff(i);
                 variance = var(obj.torque-obj.getFriction(obj.velocity));
@@ -76,6 +76,7 @@ classdef Friction
                 end
                 varOld = variance;
             end
+            obj = obj.evaluateCoeff(obj.th_velocity);
         end
         
         function obj = evaluateCoeff(obj, th_velocity)
