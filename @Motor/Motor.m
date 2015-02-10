@@ -120,6 +120,14 @@ classdef Motor
             joint.ratio_V = Voltage/range_pwm;
         end
         
+       function joint = setFrictionToCenter(joint)
+                joint.friction = joint.friction.setToCenter();
+       end
+        
+       function savePictureFriction(joint, counter)
+           joint.friction.savePictureToFile(joint.path, counter);
+       end
+        
         function joint = loadReference(joint, data)
             joint.q = data.q;
             joint.qdot = data.qD;
@@ -135,10 +143,10 @@ classdef Motor
             joint = joint.evaluateCoeff();
         end
         
-        function joint = loadRefFile(joint, file)
+        function joint = loadRefMeasure(joint, file)
             %% Load reference from file
             if ~exist('file','var')
-                file = 'reference';
+                file = 'ref';
             end
             data = load([joint.path file '.mat']);
             joint = joint.loadReference(data);

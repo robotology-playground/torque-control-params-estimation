@@ -8,7 +8,7 @@
 formatOut = 'yyyymmdd-HH:MM';
 date = datestr(now,formatOut);
 clear formatOut;
-experiment = ExperCollector('iCubGenova01');
+experiment = ExperimentCollector('iCubGenova01');
 % Load joints
 experiment = experiment.addMotor('leg','left','hip','roll');
 experiment = experiment.addMotor('leg','right','hip','roll');

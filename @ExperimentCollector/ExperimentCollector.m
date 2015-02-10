@@ -1,57 +1,40 @@
-classdef ExperCollector
+classdef ExperimentCollector
     %EXPERCOLLETOR Summary of this class goes here
     %   Detailed explanation goes here
     
     properties (Access = protected)
-        path;
+        start_path;
         joint_list;
-        path_motor;
     end
     
     properties
         robot;
-        date;
         joint;
-        data_path;
+        path;
     end
     
     methods
-        function obj = ExperCollector(robot, date)
+        function obj = ExperimentCollector(robot)
             obj.robot = robot;
-            if exist('date','var')
-                obj.date = date;
-            else
-                obj.date = '';
-            end
-            obj.path = 'experiments';
-            if strcmp(obj.date,'')
-                obj.data_path = ['experiments/' obj.robot '/'];
-                obj.path_motor = 'experiments';
-            else
-                obj.data_path = ['experiments/' obj.date '/' obj.robot '/'];
-                obj.path_motor = ['experiments/' obj.date];
-            end
+            obj.start_path = 'experiments';
+            obj.path = ['experiments/' obj.robot '/'];
             obj.joint_list = '';
         end
         
-        function obj = setStartPath(obj,path)
-            obj.path = path;
-            if strcmp(obj.date,'')
-                obj.data_path = [obj.path '/' obj.robot '/'];
-            else
-                obj.data_path = [obj.path '/' obj.date '/' obj.robot '/'];
-            end
+        function obj = setStartPath(obj,start_path)
+            obj.start_path = start_path;
+            obj.path = [obj.start_path '/' obj.robot '/'];
         end
         
         function obj = addMotor(obj,part, type, info1, info2)
             if exist('type','var') && exist('info1','var') && exist('info2','var')
-                motor = Motor(obj.path_motor, obj.robot, part, type, info1, info2);
+                motor = Motor(obj.start_path, obj.robot, part, type, info1, info2);
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
-                motor = Motor(obj.path_motor, obj.robot, part, type, info1);
+                motor = Motor(obj.start_path, obj.robot, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(obj.path_motor, obj.robot, part, type);
+                motor = Motor(obj.start_path, obj.robot, part, type);
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(obj.path_motor, obj.robot, part);
+                motor = Motor(obj.start_path, obj.robot, part);
             end
             obj.joint = [obj.joint motor];
             
@@ -68,10 +51,10 @@ classdef ExperCollector
             assignin('base', 'ROBOT_DOF', size(obj.joint,2));
         end
         
-        function list = loadYarpWBI(joint, CODYCO_FOLDER)
-            list = joint.getWBIlist();
-            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
-            name_yarp_file = ['build/install/share/codyco/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
+        function list = loadYarpWBI(obj, CODYCO_FOLDER)
+            list = obj.getWBIlist();
+            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' obj.robot '/yarpWholeBodyInterface.ini'];
+            name_yarp_file = ['build/install/share/codyco/robots/' obj.robot '/yarpWholeBodyInterface.ini'];
             copyfile([CODYCO_FOLDER copy_yarp_file],[CODYCO_FOLDER name_yarp_file]);
             fid = fopen([CODYCO_FOLDER name_yarp_file], 'a+');
             fprintf(fid, '# TEST JOINT\n%s', list);
@@ -94,30 +77,29 @@ classdef ExperCollector
             end
         end
         
-        function obj = loadIdleMeasure(obj, file, threshold, cutoff)
+        function obj = loadIdleMeasure(obj, file, cutoff)
             if ~exist('file','var')
                 file = 'idle';
             end
-            if ~exist('threshold','var')
-                threshold = 1;
-            end
             
-            data = load([obj.data_path file '.mat']);
+            data = load([obj.path file '.mat']);
             
             for i=1:size(obj.joint,2)
                 if exist('cutoff','var')
-                    obj.joint(i).friction = Friction(data.q(:,i), data.qD(:,i), data.tau(:,i), data.time, threshold, cutoff);
+                    obj.joint(i).friction = Friction(data.q(:,i), data.qD(:,i), data.qDD(:,i), data.tau(:,i), data.time, cutoff);
+                    obj.joint(i).friction = obj.joint(i).friction.setExperiment(file);
                 else
-                    obj.joint(i).friction = Friction(data.q(:,i), data.qD(:,i), data.tau(:,i), data.time, threshold);
+                    obj.joint(i).friction = Friction(data.q(:,i), data.qD(:,i), data.qDD(:,i), data.tau(:,i), data.time);
+                    obj.joint(i).friction = obj.joint(i).friction.setExperiment(file);
                 end
             end
         end
         
-        function obj = loadRefFile(obj, file)
+        function obj = loadRefMeasure(obj, file)
             if ~exist('file','var')
-                file = 'reference';
+                file = 'ref';
             end
-            data = load([obj.data_path file '.mat']);
+            data = load([obj.path file '.mat']);
             
             for i=1:size(obj.joint,2)
                 obj.joint(i) = obj.joint(i).loadReference(data);

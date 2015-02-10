@@ -9,7 +9,7 @@ joint = Motor('experiments','iCubGenova01','leg','right','hip','roll');
 joint = joint.setRatio(39,800);
 %% Load from file measure of friction
 joint = joint.loadIdleMeasure('idle-20150209-19:20');
-joint.friction = joint.friction.setToCenter();
+%joint = joint.setFrictionToCenter();
 %% Plot Friction
 %Counter figures
 if ~exist('counter','var')
@@ -34,7 +34,7 @@ disp(joint.friction);  % print information about friction
 %% Estimate and plot Kt
 name_ref = 'ref';
 if exist([joint.path name_ref '.mat'],'file')
-    joint = joint.loadRefFile(name_ref);
+    joint = joint.loadRefMeasure(name_ref);
     % FIGURE - PWM vs Torque
     hFig = figure(counter);
     set(hFig, 'Position', [0 0 800 600]);
