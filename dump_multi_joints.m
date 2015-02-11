@@ -26,13 +26,13 @@ Ts = 0.01;
 
 %% Save in file
 name = ['idle-' date];
-path = experiment.data_path;
+path = experiment.path;
 SaveData;
 %clear name path;
 
 %%% Split in more files
 for i=1:size(experiment.joint,2)
-    data = load([experiment.data_path name '.mat']);
+    data = load([experiment.path name '.mat']);
     time = data.time;
     q = data.q(:,i);
     qD = data.qD(:,i);

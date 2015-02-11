@@ -5,6 +5,7 @@ classdef CoupledJoints < ExperimentCollector
     properties
         T;
         name_experiment = '';
+        group_select;
     end
     
     methods
@@ -21,7 +22,8 @@ classdef CoupledJoints < ExperimentCollector
                 coupled = coupled.addMotor(part, type, 'yaw');
                 coupled.path = [coupled.path part '/' type '/'];
             end
-            
+            % Save group select
+            coupled.group_select = coupled.joint(1).group_select;
             if strcmp(part,'torso')
                 R = 0.04;
                 r = 0.022;

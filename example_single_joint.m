@@ -5,10 +5,10 @@
 %% Load object Motor
 % Set all information about motor and robot when you would like to
 % experiments
-joint = Motor('experiments','iCubGenova04','leg','left','hip','roll');
+joint = Motor('experiments','iCubGenova01','leg','left','hip','roll');
 joint = joint.setRatio(40,8000);
 %% Load from file measure of friction
-joint = joint.loadIdleMeasure('idle');
+joint = joint.loadIdleMeasure('idle-20150211-11:00');
 %joint = joint.setFrictionToCenter();
 %% Plot Friction
 %Counter figures
