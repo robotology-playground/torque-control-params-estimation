@@ -244,45 +244,50 @@ classdef Motor
                 text = [text, sprintf('Info2: %s\n',joint.info2)];
             end
             text = [text, sprintf('%s\n',joint.friction.saveToFile(joint.path))];
-            text = [text, sprintf('\n----------> Kt <----------\n')];
-            text = [text, sprintf('Kt: %12.8f [Nm]/[V]\n',joint.Kt)];
-            text = [text, sprintf('\n---- Kt -> Latex ----\n')];
-            text = [text, sprintf('\n\\begin{equation}\n')];
-            text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
-            text = [text, sprintf('\\begin{array}{cccl}\n')];
-            text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',joint.friction.KvP)];
-            text = [text, sprintf('\\end{array}\n')];
-            text = [text, sprintf('\\end{equation}\n')];
+            
+            if size(joint.Kt,1) ~= 0
+                text = [text, sprintf('\n----------> Kt <----------\n')];
+                text = [text, sprintf('Kt: %12.8f [Nm]/[V]\n',joint.Kt)];
+                text = [text, sprintf('\n---- Kt -> Latex ----\n')];
+                text = [text, sprintf('\n\\begin{equation}\n')];
+                text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
+                text = [text, sprintf('\\begin{array}{cccl}\n')];
+                text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',joint.friction.KvP)];
+                text = [text, sprintf('\\end{array}\n')];
+                text = [text, sprintf('\\end{equation}\n')];
+            end
         end
         
-        function joint = saveControlToFile(joint, name)
+        function saveControlToFile(joint, name)
             %% Save information to txt file
-            if ~exist('name','var')
-                name = 'control';
+            if size(joint.Kt,1) ~= 0
+                if ~exist('name','var')
+                    name = 'control';
+                end
+                fileID = fopen([joint.path name '.txt'],'w');
+                % Information joint estimation
+                fprintf(fileID,'Name: %s\n',joint.robot);
+                fprintf(fileID,'Part: %s\n',joint.part);
+                if(joint.type ~= 0)
+                    fprintf(fileID,'Type: %s\n',joint.type);
+                end
+                if(joint.info1 ~= 0)
+                    fprintf(fileID,'Info1: %s\n',joint.info1);
+                end
+                if(joint.info2 ~= 0)
+                    fprintf(fileID,'Info2: %s\n',joint.info2);
+                end
+                fprintf(fileID,'\nFriction\n');
+                fprintf(fileID,'kc+: %12.8f [V] - kc-: %12.8f [V] \n',joint.friction.KcP/joint.Kt, joint.friction.KcN/joint.Kt);
+                fprintf(fileID,'ks+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',joint.friction.KvP/joint.Kt, joint.friction.KvN/joint.Kt);
+                %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
+                if(joint.Kt ~= 0)
+                    fprintf(fileID,'kt: %12.8f [V]/[Nm]\n',1/joint.Kt);
+                end
+
+                % Close
+                fclose(fileID);
             end
-            fileID = fopen([joint.path name '.txt'],'w');
-            % Information joint estimation
-            fprintf(fileID,'Name: %s\n',joint.robot);
-            fprintf(fileID,'Part: %s\n',joint.part);
-            if(joint.type ~= 0)
-                fprintf(fileID,'Type: %s\n',joint.type);
-            end
-            if(joint.info1 ~= 0)
-                fprintf(fileID,'Info1: %s\n',joint.info1);
-            end
-            if(joint.info2 ~= 0)
-                fprintf(fileID,'Info2: %s\n',joint.info2);
-            end
-            fprintf(fileID,'\nFriction\n');
-            fprintf(fileID,'kc+: %12.8f [V] - kc-: %12.8f [V] \n',joint.friction.KcP/joint.Kt, joint.friction.KcN/joint.Kt);
-            fprintf(fileID,'ks+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',joint.friction.KvP/joint.Kt, joint.friction.KvN/joint.Kt);
-            %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
-            if(joint.Kt ~= 0)
-                fprintf(fileID,'kt: %12.8f [V]/[Nm]\n',1/joint.Kt);
-            end
-            
-            % Close
-            fclose(fileID);
         end
         
         
