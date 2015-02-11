@@ -21,7 +21,7 @@ experiments/
 
 # Simulink Code Generation
 slprj/
-
+*_grt_rtw/
 
 *.fig
 *.png
