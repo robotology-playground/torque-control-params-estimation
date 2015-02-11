@@ -268,7 +268,7 @@ classdef Friction
             obj.experiment = experiment;
         end
         
-        function savePictureToFile(obj, path, counter, figureName)
+        function hFig = savePictureToFile(obj, path, counter, figureName)
             %% Save Friction picture
             % FIGURE - Friction data and estimation
             if ~exist('counter','var')

@@ -124,8 +124,8 @@ classdef Motor
                 joint.friction = joint.friction.setToCenter();
        end
         
-       function savePictureFriction(joint, counter)
-           joint.friction.savePictureToFile(joint.path, counter);
+       function hFig = savePictureFriction(joint, counter)
+           hFig = joint.friction.savePictureToFile(joint.path, counter);
        end
         
         function joint = loadReference(joint, data)

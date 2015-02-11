@@ -4,6 +4,7 @@ classdef CoupledJoints < ExperimentCollector
     
     properties
         T;
+        name_experiment = '';
     end
     
     methods
@@ -52,17 +53,40 @@ classdef CoupledJoints < ExperimentCollector
         end
         
         function savePictureFriction(coupled, counter)
+            axes_data = [];
             for i=1:size(coupled.joint,2)
                 coupled.joint(i).savePictureFriction(counter);
+                axes_data = [axes_data gca];
                 counter = counter + 1;
             end
+            
+            hCollect = figure(counter); %create new figure
+            set(hCollect, 'Position', [0 0 800 600]);
+            for i=1:size(coupled.joint,2)
+                subPlotData = subplot(1,size(coupled.joint,2),i); %create and get handle to the subplot axes
+                figData = get(axes_data(i),'children');
+                title(coupled.joint(i).WBIname);
+                grid;
+                copyobj(figData,subPlotData);
+            end
+            currentFolder = pwd;
+            cd(coupled.path);
+            if ~exist('figureName','var')
+                figureName = 'friction';
+            end
+            if ~strcmp(coupled.name_experiment,'')
+                figureName = [figureName '-' coupled.name_experiment];
+            end
+            saveas(hCollect,[figureName '.fig'],'fig');
+            saveas(hCollect,[figureName '.png'],'png');
+            cd(currentFolder);
         end
         
         function coupled = loadIdleMeasure(coupled, file, cutoff)
             if ~exist('file','var')
                 file = 'idle';
             end
-            
+            coupled.name_experiment = file;
             data = load([coupled.path file '.mat']);
             data.m     = (coupled.T^-1*data.q')';
             data.mD    = (coupled.T^-1*data.qD')';
@@ -72,10 +96,10 @@ classdef CoupledJoints < ExperimentCollector
             for i=1:size(coupled.joint,2)
                 if exist('cutoff','var')
                     coupled.joint(i).friction = Friction(data.m(:,i), data.mD(:,i), data.mDD(:,i), data.tauM(:,i), data.time, cutoff);
-                    coupled.joint(i).friction = coupled.joint(i).friction.setExperiment(file);
+                    coupled.joint(i).friction = coupled.joint(i).friction.setExperiment(coupled.name_experiment);
                 else
                     coupled.joint(i).friction = Friction(data.m(:,i), data.mD(:,i), data.mDD(:,i), data.tauM(:,i), data.time);
-                    coupled.joint(i).friction = coupled.joint(i).friction.setExperiment(file);
+                    coupled.joint(i).friction = coupled.joint(i).friction.setExperiment(coupled.name_experiment);
                 end
             end
         end

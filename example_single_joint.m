@@ -47,4 +47,8 @@ if exist([joint.path name_ref '.mat'],'file')
 end
 clear name_ref hFig;
 
+%% Save information to file
+joint.saveToFile();
+joint.saveControlToFile();
+
 clear counter;

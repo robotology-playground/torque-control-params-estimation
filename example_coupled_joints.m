@@ -18,3 +18,5 @@ end
 %% FIGURE - Friction data and estimation
 joint.savePictureFriction(counter);
 counter = counter + 1;
+
+clear counter;
