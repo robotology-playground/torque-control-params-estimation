@@ -15,7 +15,6 @@ Download this repository
 ```
 git clone https://github.com/rbonghi/FrictionJoint/
 ```
-
 ## Initialization setup
 Before run scripts are important to:
 
@@ -24,17 +23,6 @@ Before run scripts are important to:
 3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
 4. Run `controlBoardDumper` to receive information about Voltage (PWM) and Current
 5. Run `matlab` 
-
-- In `codyco-superbuild/libraries/yarpWholeBodyInterface/app/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
-Under **[WBI_ID_LISTS]** add:
-```
-JOINT_FRICTION = (NAME_JOINT)
-```
-example:
-```
-JOINT_FRICTION = (l_hip_pitch)
-```
-Quickly way: `codyco-superbuild/build/install/share/codyco/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
 
 - In `codyco-superbuild/main/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
 set:
@@ -58,3 +46,15 @@ Finally go on `codyco-superbuild/build/` and `make`
 ### Other information
 In `scripts` folder you have other script to compare or analyze information about joint or single data.
 `codyco-superbuild/src/modules/wholeBodyDynamicsTree/app/robots/`**NAME_ROBOT**`/wholeBodyDynamicsTree.ini`
+
+## OLD information
+- In `codyco-superbuild/libraries/yarpWholeBodyInterface/app/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
+Under **[WBI_ID_LISTS]** add:
+```
+JOINT_FRICTION = (NAME_JOINT)
+```
+example:
+```
+JOINT_FRICTION = (l_hip_pitch)
+```
+Quickly way: `codyco-superbuild/build/install/share/codyco/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
