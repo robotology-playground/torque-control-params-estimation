@@ -9,7 +9,7 @@ joint = Motor('experiments','iCubGenova01','leg','right','ankle','roll');
 % List loaded in yarpWholeBodyInterface
 disp(joint.loadYarpWBI('/Users/Raffaello/iit/codyco-superbuild/'));
 % Start Control board dumper
-%disp(joint.getControlBoardCommand());
+disp(joint.getControlBoardCommand());
 
 
 setenv('YARP_DATA_DIRS', '/Users/Raffaello/iit/codyco-superbuild/build/install/share/codyco');
