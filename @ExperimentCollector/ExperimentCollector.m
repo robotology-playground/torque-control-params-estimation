@@ -45,22 +45,6 @@ classdef ExperimentCollector
             end
         end
         
-        function command = getWBIlist(obj)
-            %% Get string to start ControlBoardDumper
-            command = ['JOINT_FRICTION = (' obj.joint_list ')'];
-            assignin('base', 'ROBOT_DOF', size(obj.joint,2));
-        end
-        
-        function list = loadYarpWBI(obj, CODYCO_FOLDER)
-            list = obj.getWBIlist();
-            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' obj.robot '/yarpWholeBodyInterface.ini'];
-            name_yarp_file = ['build/install/share/codyco/robots/' obj.robot '/yarpWholeBodyInterface.ini'];
-            copyfile([CODYCO_FOLDER copy_yarp_file],[CODYCO_FOLDER name_yarp_file]);
-            fid = fopen([CODYCO_FOLDER name_yarp_file], 'a+');
-            fprintf(fid, '# TEST JOINT\n%s', list);
-            fclose(fid);
-        end
-        
         function plotAllFriction(obj)
             for i=1:size(obj.joint,2)
             % FIGURE - Friction data and estimation

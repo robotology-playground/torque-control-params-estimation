@@ -19,6 +19,8 @@ setenv('YARP_ROBOT_NAME', joint.robot);
 robotName = 'icub';
 Ts = 0.01;
 
+open('FrictionIdentification.slx');
+
 %% Save in file
 formatOut = 'yyyymmdd-HH:MM';
 date = datestr(now,formatOut);
