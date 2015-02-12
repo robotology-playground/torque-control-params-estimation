@@ -280,7 +280,6 @@ classdef Friction
             grid;
             obj.plotFriction();
             obj.plotFrictionModel();
-            clear friction_data;
             hold off
             % Save image
             currentFolder = pwd;

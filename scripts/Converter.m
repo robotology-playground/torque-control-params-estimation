@@ -30,29 +30,44 @@
 %     clear q qD qDD tau PWM Current;
 % end
 
-robot = 'iCubGenova04';
+robot = 'iCubGenova03';
 name = 'idle';
 
 type = 'leg';
 part = 'right';
-joint = Motor('experiments/OLD',robot,type,part,'knee');
+joint = Motor('experiments/OLD/20150127',robot,type,part,'knee');
 data = load([joint.path name '.mat']);
 
 jointN = Motor('experiments',robot,type,part,'knee');
+%%
+jointN = CoupledJoints('iCubGenova03','torso');
+name = 'ref-11:36';
+data = struct;
+data.logsout = logsout;
+data.time = time;
 
+q = zeros(size(data.logsout.get('q').Values.Data,1),3);
+qD = zeros(size(data.logsout.get('q').Values.Data,1),3);
+qDD = zeros(size(data.logsout.get('q').Values.Data,1),3);
+tau = zeros(size(data.logsout.get('q').Values.Data,1),3);
 time = data.time;
-q = data.logsout.get('q').Values.Data;%(:,joint.number);
-qD = data.logsout.get('qD').Values.Data;%(:,joint.number);
-if data.logsout.get('qDD') ~= 0
-    qDD = data.logsout.get('qDD').Values.Data;%(:,joint.number);
-else
-    qDD = [];
+for i=3:-1:1
+    q(:,4-i) = data.logsout.get('q').Values.Data(:,i);
+    qD(:,4-i) = data.logsout.get('qD').Values.Data(:,i);
+%     if data.logsout.get('qDD') ~= 0
+%         qDD = data.logsout.get('qDD').Values.Data(:,i);
+%     else
+%         qDD = [];
+%     end
+    tau(:,4-i) = data.logsout.get('tau').Values.Data(:,i);
 end
-tau = data.logsout.get('tau').Values.Data;%(:,joint.number);
 PWM = struct;
-temp_pwm = zeros(size(q,1),5);
-temp_pwm(:,joint.number_part) = data.logsout.get('pwm').Values.Data;
-PWM.(joint.group_select) = temp_pwm;
+PWM.torso = data.logsout.get('pwm').Values.Data;
+Current = struct;
+Current.torso = data.logsout.get('current').Values.Data;
+% temp_pwm = zeros(size(q,1),5);
+% temp_pwm(:,joint.number_part) = data.logsout.get('pwm').Values.Data;
+% PWM.(joint.group_select) = temp_pwm;
 if exist('Current','var')
     save([jointN.path name '.mat'],'q','qD','qDD','tau','PWM','Current','time');
 else

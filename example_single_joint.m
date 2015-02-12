@@ -16,7 +16,7 @@ if ~exist('counter','var')
     counter = 1;
 end
 %% FIGURE - Friction data and estimation
-joint.friction.savePictureToFile(joint.path, counter);
+joint.savePictureFriction(counter);
 counter = counter + 1;
 
 %% FIGURE - Noise on data
@@ -36,14 +36,7 @@ name_ref = 'ref';
 if exist([joint.path name_ref '.mat'],'file')
     joint = joint.loadRefMeasure(name_ref);
     % FIGURE - PWM vs Torque
-    hFig = figure(counter);
-    set(hFig, 'Position', [0 0 800 600]);
-    hold on
-    joint.plotKt();
-    grid;
-    hold off
-    joint.savePictureToFile(hFig,'PWMVsTorque');
-    counter = counter + 1;
+    joint.savePictureKt(counter);
 end
 clear name_ref hFig;
 
