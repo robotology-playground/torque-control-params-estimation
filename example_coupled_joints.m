@@ -24,14 +24,6 @@ if exist([joint.path name_ref '.mat'],'file')
     joint = joint.loadRefMeasure(name_ref);
     % FIGURE - PWM vs Torque
     joint.savePictureKt(counter);
-%     hFig = figure(counter);
-%     set(hFig, 'Position', [0 0 800 600]);
-%     hold on
-%     joint.plotKt();
-%     grid;
-%     hold off
-%     joint.savePictureToFile(hFig,'PWMVsTorque');
-%     counter = counter + 1;
 end
 
 clear counter;

@@ -9,12 +9,13 @@ classdef CoupledJoints < ExperimentCollector
     end
     
     methods
-        function coupled = CoupledJoints(robotName, part, type)
+        function coupled = CoupledJoints(start_folder, robotName, part, type)
             coupled = coupled@ExperimentCollector(robotName);
+            coupled = coupled.setStartPath(start_folder);
             if ~exist('type','var')
-                coupled = coupled.addMotor(part, 'pitch');
-                coupled = coupled.addMotor(part, 'roll');
                 coupled = coupled.addMotor(part, 'yaw');
+                coupled = coupled.addMotor(part, 'roll');
+                coupled = coupled.addMotor(part, 'pitch');
                 coupled.path = [coupled.path part '/'];
             else
                 coupled = coupled.addMotor(part, type, 'pitch');

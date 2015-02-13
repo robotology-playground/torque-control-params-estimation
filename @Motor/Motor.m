@@ -63,36 +63,6 @@ classdef Motor
             joint = joint.buildFolder();
         end
         
-        
-        function joint = setPart(joint, varargin)
-            %% Set part avaiable on robot
-            if nargin ~= 0
-                joint = joint.JointStructure(); % Build path
-                if strcmp(varargin{1},'number_joint')
-                    joint.robot_dof = varargin{2};
-                    joint.number = varargin{2};
-                end
-            else
-                for i=1:nargin
-                    type_arg = varargin{i};
-                    if strcmp(type_arg,'head')
-                        joint.robot_dof = joint.robot_dof + joint.N_HEAD;
-                    elseif strcmp(type_arg,'torso')
-                        joint.robot_dof = joint.robot_dof + joint.N_TORSO;
-                    elseif strcmp(type_arg,'left_arm')
-                        joint.robot_dof = joint.robot_dof + joint.N_HAND;
-                    elseif strcmp(type_arg,'left_leg')
-                        joint.robot_dof = joint.robot_dof + joint.N_LEG;
-                    elseif strcmp(type_arg,'right_arm')
-                        joint.robot_dof = joint.robot_dof + joint.N_HAND;
-                    elseif strcmp(type_arg,'right_leg')
-                        joint.robot_dof = joint.robot_dof + joint.H_LEG;
-                    end
-                end
-                joint = joint.JointStructure(); % Build path
-            end
-        end
-        
         function joint = loadIdleMeasureData(joint, position, velocity, acceleration, torque, time, cutoff)
             if exist('cutoff','var')
                 joint.friction = Friction(position, velocity, acceleration, torque, time, cutoff);
@@ -209,35 +179,6 @@ classdef Motor
             saveas(hFig,[figureName '.png'],'png');
             cd(currentFolder);
             clear currentFolder;
-        end
-        
-        function command = getControlBoardCommand(joint, rate)
-            %% Get string to start ControlBoardDumper
-            if ~exist('rate','var')
-                rate = 10;
-            end
-            command = ['controlBoardDumper'...
-                ' --robot icub'...
-                ' --part ' joint.group_select ...
-                ' --rate ' num2str(rate) ...
-                ' --joints "(' num2str(joint.number_part-1) ')"' ...
-                ' --dataToDump "(getOutputs getCurrents)"'];
-        end
-        
-        function command = getWBIlist(joint)
-            %% Get string to start ControlBoardDumper
-            command = ['JOINT_FRICTION = (' joint.WBIname ')'];
-            assignin('base', 'ROBOT_DOF', 1);
-        end
-        
-        function list = loadYarpWBI(joint, CODYCO_FOLDER)
-            list = joint.getWBIlist();
-            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
-            name_yarp_file = ['build/install/share/codyco/robots/' joint.robot '/yarpWholeBodyInterface.ini'];
-            copyfile([CODYCO_FOLDER copy_yarp_file],[CODYCO_FOLDER name_yarp_file]);
-            fid = fopen([CODYCO_FOLDER name_yarp_file], 'a+');
-            fprintf(fid, '# TEST JOINT\n%s', list);
-            fclose(fid);
         end
         
         function saveToFile(joint, name)
