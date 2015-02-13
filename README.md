@@ -21,33 +21,19 @@ Before run scripts are important to:
 1. Plug the PC in icub local area network
 2. Run `robotInterface` on **pc104**
 3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
-4. Run `controlBoardDumper` to receive information about Voltage (PWM) and Current
+4. Run `controlBoardDumper` to receive information about Voltage (PWM) and Current **OPTIONAL**
 5. Run `matlab` 
 
-- In `codyco-superbuild/main/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
-set:
-```
-robot          icubGazeboSim
-localName      simulink
-worldRefFrame  root_link
-robot_fixed    true
-wbi_id_list    JOINT_FRICION
-wbi_config_file yarpWholeBodyInterface.ini
-```
-Finally go on `codyco-superbuild/build/` and `make`
+## In Matlab
+- Open and set the script `dump_joints_robot.m` to load on matlab environment all variables and read all information
+- Run the script `dump_joints_robot.m` to load on matlab environment all variables and read all information
 
-## On Matlab
-- Run the script `example.m` to load on matlab environment all variables and read all information
-- Open *simunlink* to dump all information about experiment
-  - Open `MotorIdent.slx` to dump measure for single joint
-  - Open `MotorCoupledIdent.slx` to dump measure for coupled joints
-- To see all plots about data dumped run `FrictionTest`
+--------
 
-### Other information
+## Other information and OLD information
 In `scripts` folder you have other script to compare or analyze information about joint or single data.
 `codyco-superbuild/src/modules/wholeBodyDynamicsTree/app/robots/`**NAME_ROBOT**`/wholeBodyDynamicsTree.ini`
 
-## OLD information
 - In `codyco-superbuild/libraries/yarpWholeBodyInterface/app/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
 Under **[WBI_ID_LISTS]** add:
 ```
@@ -58,3 +44,15 @@ example:
 JOINT_FRICTION = (l_hip_pitch)
 ```
 Quickly way: `codyco-superbuild/build/install/share/codyco/robots/`**NAME_ROBOT**`/yarpWholeBodyInterface.ini`
+
+- In `codyco-superbuild/main/WBIToolbox/libraries/wbInterface/conf/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini`
+set:
+```
+robot          icubGazeboSim
+localName      simulink
+worldRefFrame  root_link
+robot_fixed    true
+wbi_id_list    JOINT_FRICTION
+wbi_config_file yarpWholeBodyInterface.ini
+```
+Finally go on `codyco-superbuild/build/` and `make`
