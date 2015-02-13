@@ -19,6 +19,7 @@ classdef Robot
         path;
         Ts = 0.01;
         joints;
+        coupledjoints;
     end
     
     methods
@@ -70,6 +71,21 @@ classdef Robot
             end
         end
         
+        function robot = addCoupledJoints(robot, part, type)
+            if exist('type','var')
+                motor = CoupledJoints(robot.path_experiment, robot.nameRobot, part, type);
+            else
+                motor = CoupledJoints(robot.path_experiment, robot.nameRobot, part);
+            end
+            robot.coupledjoints = [robot.coupledjoints motor];
+            
+            if strcmp(robot.joint_list,'')
+                robot.joint_list = motor.WBIname;
+            else
+                robot.joint_list = [robot.joint_list ', ' motor.WBIname];
+            end
+        end
+        
         function command = getControlBoardCommand(robot, rate)
             %% Get string to start ControlBoardDumper
             if ~exist('rate','var')
@@ -90,10 +106,16 @@ classdef Robot
                 build_folder = 'build';
             end
             text = '';
-            [~,namespace] = system(['yarp namespace ' robot.nameSpace]);
-            text = [text namespace];
-            [~,detect] = system('yarp detect --write');
-            text = [text detect];
+            
+            [~,name_set] = system('yarp namespace');
+            if strcmp(name_set(17:end-1),robot.nameSpace) == 0
+                [~,namespace] = system(['yarp namespace ' robot.nameSpace]);
+                text = [text namespace];
+                [~,detect] = system('yarp detect --write');
+                text = [text detect];
+            else
+                text = [text name_set];
+            end
             % Add configuration WBI
             robot.setupWBI(codyco_folder, build_folder);
             % Add JOINT FRICTION in yarpWholeBodyInterface.ini
@@ -104,7 +126,7 @@ classdef Robot
             %assignin('base', 'YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
             disp(text);
             else
-                disp('You does not load motor!');
+                disp('You does not load anything motors!');
             end
         end
     end

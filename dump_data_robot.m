@@ -6,6 +6,8 @@
 % Set all information about motor and robot when you would like to
 % experiments
 robot = Robot('iCubGenova03');
+% Setup robot configuration:
+% First variable
 robot = robot.setConfiguration('root_link','true');
 
 robot = robot.addMotor('leg','left','hip','roll');
@@ -13,11 +15,10 @@ robot = robot.addMotor('leg','right','hip','roll');
 robot = robot.addMotor('leg','left','ankle','roll');
 robot = robot.addMotor('leg','right','ankle','roll');
 
+robot = robot.addCoupledJoints('torso');
+
 %% Configure computer
 %robot.configure('/Users/Raffaello/iit/codyco-superbuild');
 
-%% Configure experiment
-robot.setupExperiment('idle');
-
 %% Open Simulink
-open('FrictionIdentification.slx');
+%open('FrictionIdentification.slx');
