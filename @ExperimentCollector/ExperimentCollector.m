@@ -45,6 +45,10 @@ classdef ExperimentCollector
             end
         end
         
+        function list = getJointList(obj)
+            list = obj.joint_list;
+        end
+        
         function plotAllFriction(obj)
             for i=1:size(obj.joint,2)
             % FIGURE - Friction data and estimation

@@ -8,17 +8,16 @@
 robot = Robot('iCubGenova03');
 % Setup robot configuration:
 % First variable
-robot = robot.setConfiguration('root_link','true');
+robot = robot.setConfiguration('l_sole','false');
+robot = robot.setNameList('ROBOT_TORQUE_CONTROL_JOINTS');
 
 robot = robot.addMotor('leg','left','hip','roll');
 robot = robot.addMotor('leg','right','hip','roll');
 robot = robot.addMotor('leg','left','ankle','roll');
 robot = robot.addMotor('leg','right','ankle','roll');
 
-%robot = robot.addCoupledJoints('torso');
-
 %% Configure computer
 robot.configure('/Users/Raffaello/iit/codyco-superbuild');
 
 %% Open Simulink
-open('FrictionIdentification.slx');
+open('FrictionIdentificationImproved.slx');
