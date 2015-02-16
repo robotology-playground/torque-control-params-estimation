@@ -53,6 +53,13 @@ classdef Friction
             obj.experiment = '';
         end
         
+%         function obj = addData(obj, velocity, acceleration, torque, time)
+%             
+%             obj = obj.minTh_vel();
+%             obj = obj.setToCenter();
+%             
+%         end
+        
         function obj = minTh_vel(obj, step, velMax)
             if ~exist('step','var')
                 step = 0.1;

@@ -6,10 +6,16 @@
 % Set all information about motor and robot when you would like to
 % experiments
 joint = Motor('experiments','iCubGenova01','leg','left','hip','roll');
-joint = joint.setRatio(40,8000);
+name_parameters = 'parameters';
+if ~exist([joint.path name_parameters '.mat'],'file')
+    joint = joint.setRatio(40,800);
+else
+    joint = joint.loadParameters(name_parameters);
+end
+clear name_parameters;
 %% Load from file measure of friction
-joint = joint.loadIdleMeasure('idle-20150211-11:00');
-%joint = joint.setFrictionToCenter();
+joint = joint.loadIdleMeasure('idle-20150206-19:07');
+joint = joint.setFrictionToCenter();
 %% Plot Friction
 %Counter figures
 if ~exist('counter','var')
@@ -32,7 +38,7 @@ counter = counter + 1;
 disp(joint.friction);  % print information about friction
 
 %% Estimate and plot Kt
-name_ref = 'ref';
+name_ref = 'ref-20150213-17:47';
 if exist([joint.path name_ref '.mat'],'file')
     joint = joint.loadRefMeasure(name_ref);
     % FIGURE - PWM vs Torque

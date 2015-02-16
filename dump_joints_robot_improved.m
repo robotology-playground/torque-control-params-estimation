@@ -6,7 +6,7 @@
 % Set all information about motor and robot when you would like to
 % experiments
 experiment_type = 'FrictionIdentificationImproved';
-robot = Robot('iCubGenova03');
+robot = Robot('iCubGenova01');
 % Setup robot configuration:
 % First variable
 robot = robot.setConfiguration('l_sole','false');

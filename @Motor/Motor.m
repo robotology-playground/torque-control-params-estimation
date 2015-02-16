@@ -8,6 +8,8 @@ classdef Motor
         N_HAND = 5;
         N_LEG = 6;
         ANKLE_START = 4;
+        Voltage;
+        range_pwm;
         
         q;
         qdot;
@@ -86,19 +88,40 @@ classdef Motor
             end
         end
         
+        function saveParameters(joint, file)
+            if ~exist('file','var')
+                file = 'parameters';
+            end
+            m = matfile([joint.path file '.mat'],'Writable',true);
+            m.Voltage = joint.Voltage;
+            m.range_pwm = joint.range_pwm;
+        end
+        
+        function joint = loadParameters(joint, file)
+            if ~exist('file','var')
+                file = 'parameters';
+            end
+            m = load([joint.path file '.mat']);
+            joint.Voltage = m.Voltage;
+            joint.range_pwm = m.range_pwm;
+            joint = joint.setRatio(joint.Voltage, joint.range_pwm);
+        end
+        
         function joint = setRatio(joint, Voltage, range_pwm)
+            joint.Voltage = Voltage;
+            joint.range_pwm = range_pwm;
             joint.ratio_V = Voltage/range_pwm;
         end
         
-       function joint = setFrictionToCenter(joint)
-                joint.friction = joint.friction.setToCenter();
-       end
+        function joint = setFrictionToCenter(joint)
+            joint.friction = joint.friction.setToCenter();
+        end
         
-       function hFig = savePictureFriction(joint, counter)
-           hFig = joint.friction.savePictureToFile(joint.path, counter);
-       end
-       
-       function hFig = savePictureKt(joint, counter)
+        function hFig = savePictureFriction(joint, counter)
+            hFig = joint.friction.savePictureToFile(joint.path, counter);
+        end
+        
+        function hFig = savePictureKt(joint, counter)
             %% Save Friction picture
             % FIGURE - Friction data and estimation
             if ~exist('counter','var')
@@ -119,7 +142,7 @@ classdef Motor
             saveas(hFig,[figureName '.fig'],'fig');
             saveas(hFig,[figureName '.png'],'png');
             cd(currentFolder);
-       end
+        end
         
         function joint = loadReference(joint, data)
             joint.q = data.q;
@@ -248,7 +271,7 @@ classdef Motor
                 if(joint.Kt ~= 0)
                     fprintf(fileID,'kt: %12.8f [V]/[Nm]\n',1/joint.Kt);
                 end
-
+                
                 % Close
                 fclose(fileID);
             end

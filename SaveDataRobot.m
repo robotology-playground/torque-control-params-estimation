@@ -3,7 +3,7 @@ if exist('tout','var')
     clear tout;
 end
 
-for i=1:size(robot.size,2)
+for i=1:size(robot.joints,2)
     if isWBIFrictionJoint(robot)
         number = i;
     else
