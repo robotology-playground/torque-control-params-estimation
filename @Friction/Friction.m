@@ -312,9 +312,9 @@ classdef Friction
     end
     
     methods (Access = protected, Static)
-        %% Linear regression to evalute coefficent for friction
-        % Line equal y = a(1)*x + a(2)
         function a = linearRegression(x, y)
+            %% Linear regression to evalute coefficent for friction
+            % Line equal y = a(1)*x + a(2)
             a = zeros(2,1);
             r = corrcoef(x,y); % Corr coeff is the off-diagonal (1,2) element
             r = r(1,2);  % Sample regression coefficient
