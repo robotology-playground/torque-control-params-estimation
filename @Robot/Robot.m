@@ -6,7 +6,6 @@ classdef Robot
         JOINT_FRICTION = 'JOINT_FRICTION';
 
         path_experiment;
-        joint_list = '';
         nameSpace;
         formatOut = 'yyyymmdd-HH:MM';
         worldRefFrame = 'root_link';
@@ -17,6 +16,7 @@ classdef Robot
     end
     
     properties
+        joint_list = '';
         WBI_LIST;
         localName = 'simulink_joint_friction';
         path;
@@ -144,7 +144,7 @@ classdef Robot
         
         function configure(robot, codyco_folder, build_folder)
             %% Configure PC end set YARP NAMESPACE
-            if size(robot.joints,2) ~= 0
+            if size(robot.joint_list,2) ~= 0
             if ~exist('build_folder','var')
                 build_folder = 'build';
             end
