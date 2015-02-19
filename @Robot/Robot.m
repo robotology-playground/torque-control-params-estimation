@@ -84,6 +84,28 @@ classdef Robot
             end
         end
         
+        function [robot, counter] = plotAndPrintAllData(robot, name)
+            if ~strcmp(name(1:3),'ref')
+                type_idle = 1;
+            else
+                type_idle = 0;  
+            end
+            counter = 1;
+            for i=1:size(robot.joints,2)
+                if type_idle == 1
+                    robot.joints(i) = robot.joints(i).loadIdleMeasure(name);
+                    [ ~, counter] = robot.joints(i).savePictureFriction(counter);
+                else
+                    robot.joints(i) = robot.joints(i).loadRefMeasure(name);
+                    % FIGURE - PWM vs Torque
+                    [ ~, counter] = robot.joints(i).savePictureKt(counter);
+                    robot.joints(i).saveControlToFile();
+                end
+                % Save information to file
+                robot.joints(i).saveToFile();
+            end
+        end
+        
         function bool = isWBIFrictionJoint(robot)
             bool = strcmp(robot.WBI_LIST, robot.JOINT_FRICTION);
         end
@@ -178,7 +200,7 @@ classdef Robot
                 text = [text name_set];
             end
             % Add configuration WBI
-            text = [text robot.setupWBI(codyco_folder, build_folder)];
+            text = [text  '\n' robot.setupWBI(codyco_folder, build_folder)];
             % Add JOINT FRICTION in yarpWholeBodyInterface.ini
             if isWBIFrictionJoint(robot)
                 robot.loadYarpWBI(codyco_folder, build_folder);

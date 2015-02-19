@@ -117,11 +117,13 @@ classdef Motor
             joint.friction = joint.friction.setToCenter();
         end
         
-        function hFig = savePictureFriction(joint, counter)
-            hFig = joint.friction.savePictureToFile(joint.path, counter);
+        function [hFig, counter] = savePictureFriction(joint, counter)
+            name = [upper(joint.part) ' ' upper(joint.type) ' ' upper(joint.info1) ' ' upper(joint.info2)];
+            hFig = joint.friction.savePictureToFile(joint.path, name, counter);
+            counter = counter + 1;
         end
         
-        function hFig = savePictureKt(joint, counter)
+        function [hFig, counter] = savePictureKt(joint, counter)
             %% Save Friction picture
             % FIGURE - Friction data and estimation
             if ~exist('counter','var')
@@ -142,6 +144,7 @@ classdef Motor
             saveas(hFig,[figureName '.fig'],'fig');
             saveas(hFig,[figureName '.png'],'png');
             cd(currentFolder);
+            counter = counter + 1;
         end
         
         function joint = loadReference(joint, data)
@@ -183,6 +186,8 @@ classdef Motor
             plot(joint.voltage, joint.torque-joint.friction_model, option);
             xlabel('Voltage','Interpreter','tex');
             ylabel('\tau-\tau_{f}','Interpreter','tex');
+            name = [upper(joint.part) ' ' upper(joint.type) ' ' upper(joint.info1) ' ' upper(joint.info2)];
+            title(['Kt: ' name]);
             hold on;
             plot(joint.voltage , joint.voltage*joint.Kt,'r-','LineWidth',3);
             hold off;

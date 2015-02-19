@@ -266,16 +266,15 @@ classdef Friction
             hold on;
             plot(qD_d, fr,'g.');
             hold off;
-            title('Relation between torque, velocity');
-            xlabel('qdot','Interpreter','tex');
-            ylabel('\tau','Interpreter','tex');
+            xlabel('qdot [deg]/[s] (Velocity)','Interpreter','tex');
+            ylabel('\tau [Nm] (Torque)','Interpreter','tex');
         end
         
         function obj = setExperiment(obj,experiment)
             obj.experiment = experiment;
         end
         
-        function hFig = savePictureToFile(obj, path, counter, figureName)
+        function hFig = savePictureToFile(obj, path, name, counter, figureName)
             %% Save Friction picture
             % FIGURE - Friction data and estimation
             if ~exist('counter','var')
@@ -287,6 +286,7 @@ classdef Friction
             grid;
             obj.plotFriction();
             obj.plotFrictionModel();
+            title(['Friction: ' name]);
             hold off
             % Save image
             currentFolder = pwd;
