@@ -4,6 +4,7 @@ classdef Robot
     
     properties (Access = private)
         JOINT_FRICTION = 'JOINT_FRICTION';
+        SIMULATOR = 'icubGazeboSim';
 
         path_experiment;
         nameSpace;
@@ -23,21 +24,21 @@ classdef Robot
         Ts = 0.01;
         joints;
         coupledjoints;
-        name_robot;
-        robotName = 'icub';
+        robotName;
+        typeRobot = 'icub';
     end
     
     methods
-        function robot = Robot(name_robot, path_experiment)
+        function robot = Robot(robotName, path_experiment)
             robot.WBI_LIST = robot.JOINT_FRICTION;
-            robot.name_robot = name_robot;
-            robot.nameSpace = [ '/' robot.robotName name_robot(end-1:end)];
+            robot.robotName = robotName;
+            robot.nameSpace = [ '/' robot.typeRobot robotName(end-1:end)];
             if ~exist('path_experiment','var')
                 robot.path_experiment = 'experiments';
             else
                 robot.path_experiment = path_experiment;
             end
-            robot.path = [robot.path_experiment '/' robot.name_robot '/'];
+            robot.path = [robot.path_experiment '/' robot.robotName '/'];
         end
         
         function robot = setNameSpace(nameSpace)
@@ -76,13 +77,13 @@ classdef Robot
         function robot = addMotor(robot, part, type, info1, info2)
             %% Add motor in robot
             if exist('type','var') && exist('info1','var') && exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.name_robot, part, type, info1, info2);
+                motor = Motor(robot.path_experiment, robot.robotName, part, type, info1, info2);
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.name_robot, part, type, info1);
+                motor = Motor(robot.path_experiment, robot.robotName, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.name_robot, part, type);
+                motor = Motor(robot.path_experiment, robot.robotName, part, type);
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.name_robot, part);
+                motor = Motor(robot.path_experiment, robot.robotName, part);
             end
             robot.joints = [robot.joints motor];
             
@@ -116,9 +117,9 @@ classdef Robot
         
         function robot = addCoupledJoints(robot, part, type)
             if exist('type','var')
-                motor = CoupledJoints(robot.path_experiment, robot.name_robot, part, type);
+                motor = CoupledJoints(robot.path_experiment, robot.robotName, part, type);
             else
-                motor = CoupledJoints(robot.path_experiment, robot.name_robot, part);
+                motor = CoupledJoints(robot.path_experiment, robot.robotName, part);
             end
             robot.coupledjoints = [robot.coupledjoints motor];
             
@@ -142,7 +143,7 @@ classdef Robot
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
         
-        function configure(robot, codyco_folder, build_folder)
+        function configure(robot, check_yarp, codyco_folder, build_folder)
             %% Configure PC end set YARP NAMESPACE
             if size(robot.joint_list,2) ~= 0
             if ~exist('build_folder','var')
@@ -151,11 +152,13 @@ classdef Robot
             text = '';
             
             [~,name_set] = system('yarp namespace');
-            if strcmp(name_set(17:end-1),robot.nameSpace) == 0
-                [~,namespace] = system(['yarp namespace ' robot.nameSpace]);
-                text = [text namespace];
-                [~,detect] = system('yarp detect --write');
-                text = [text detect];
+            if strcmp(check_yarp,'true')
+                if strcmp(name_set(17:end-1),robot.nameSpace) == 0
+                    [~,namespace] = system(['yarp namespace ' robot.nameSpace]);
+                    text = [text namespace];
+                    [~,detect] = system('yarp detect --write');
+                    text = [text detect];
+                end
             else
                 text = [text name_set];
             end
@@ -167,11 +170,11 @@ classdef Robot
             end
             % Set variables environment
             assignin('base', 'Ts', robot.Ts);
-            assignin('base', 'robotName', robot.robotName);
+            assignin('base', 'typeRobot', robot.typeRobot);
             assignin('base', 'localName', robot.localName);
             assignin('base', 'ROBOT_DOF', robot.ROBOT_DOF);
             setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
-            setenv('YARP_ROBOT_NAME', robot.name_robot);
+            setenv('YARP_ROBOT_NAME', robot.robotName);
             disp(text);
             else
                 disp('You does not load anything motors!');
@@ -183,7 +186,11 @@ classdef Robot
         function text = setupWBI(robot, codyco_folder, build_folder)
             %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
             name_yarp_file = [build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
-            text = sprintf('robot          %s\n',robot.name_robot);
+            if ~strcmp(robot.robotName, robot.SIMULATOR)
+                text = sprintf('robot          %s\n',robot.typeRobot);
+            else
+                text = sprintf('robot          %s\n',robot.robotName);
+            end
             text = [text sprintf('localName      %s\n',robot.localName)];
             text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
             text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
@@ -196,8 +203,8 @@ classdef Robot
         
         function loadYarpWBI(robot, codyco_folder, build_folder)
             %% Load and save in BUILD directory configuraton
-            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' robot.name_robot '/yarpWholeBodyInterface.ini'];
-            name_yarp_file = [build_folder '/install/share/codyco/robots/' robot.name_robot '/yarpWholeBodyInterface.ini'];
+            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
+            name_yarp_file = [build_folder '/install/share/codyco/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
             copyfile([codyco_folder '/' copy_yarp_file],[codyco_folder '/' name_yarp_file]);
             fid = fopen([codyco_folder '/' name_yarp_file], 'a+');
             command = [robot.WBI_LIST ' = (' robot.joint_list ')'];
