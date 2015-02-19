@@ -65,8 +65,23 @@ classdef Robot
             end
         end
         
-        function name = setupExperiment(robot, type)
+        function name = setupExperiment(robot, type, logsout, time)
             name = [type '-' datestr(now,robot.formatOut)];
+            for i=1:size(robot.joints,2)
+                m = matfile([robot.joints(i).path name '.mat'],'Writable',true);
+                if robot.isWBIFrictionJoint(robot)
+                    number = i;
+                else
+                    number = robot.joints(i).number;
+                end
+                m.time = time;
+                m.q = logsout.get('q').Values.Data(:,number);
+                m.qD = logsout.get('qD').Values.Data(:,number);
+                m.qDD = logsout.get('qDD').Values.Data(:,number);
+                m.tau = logsout.get('tau').Values.Data(:,number);
+                m.PWM.(robot.joints(i).group_select) = logsout.get(['pwm_' robot.joints(i).group_select]).Values.Data;
+                m.Current.(robot.joints(i).group_select) = logsout.get(['current_' robot.joints(i).group_select]).Values.Data;
+            end
         end
         
         function bool = isWBIFrictionJoint(robot)

@@ -20,15 +20,12 @@ for i=1:size(robot.joints,2)
         fext = logsout.get('fext').Values.Data;
     end
     PWM.(robot.joints(i).group_select) = logsout.get(['pwm_' robot.joints(i).group_select]).Values.Data;
-    %Current.(robot.joints(i).group_select) = logsout.get(['current_' robot.joints(i).group_select]).Values.Data;
-    %save([robot.joints(i).path name '.mat'],'q','qD','qDD','tau','PWM','Current','time');
+    Current.(robot.joints(i).group_select) = logsout.get(['current_' robot.joints(i).group_select]).Values.Data;
     if strcmp(experiment_type,'FrictionIdentificationImproved')
-        save([robot.joints(i).path name '.mat'],'q','qD','qDD','tau','PWM','time','Mq','hqdq','g','fext');
+        save([robot.joints(i).path name '.mat'],'q','qD','qDD','tau','PWM','Current','time','Mq','hqdq','g','fext');
     else
-        save([robot.joints(i).path name '.mat'],'q','qD','qDD','tau','PWM','time');
+        save([robot.joints(i).path name '.mat'],'q','qD','qDD','tau','PWM','Current','time');
     end
     disp(['SAVED ON ' robot.joints(i).path name '.mat']);
     clear q qD qDD tau PWM Current Mq hqdq g fext;
 end
-
-clear name path;
