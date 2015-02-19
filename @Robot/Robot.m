@@ -84,13 +84,15 @@ classdef Robot
             end
         end
         
-        function [robot, counter] = plotAndPrintAllData(robot, name)
+        function [robot, counter] = plotAndPrintAllData(robot, name, counter)
             if ~strcmp(name(1:3),'ref')
                 type_idle = 1;
             else
                 type_idle = 0;  
             end
-            counter = 1;
+            if ~exist('counter','var')
+                counter = 1;
+            end
             for i=1:size(robot.joints,2)
                 if type_idle == 1
                     robot.joints(i) = robot.joints(i).loadIdleMeasure(name);
@@ -132,6 +134,22 @@ classdef Robot
             if isWBIFrictionJoint(robot)
                 robot.ROBOT_DOF = size(robot.joints,2);
             end
+            
+            if exist([robot.joints(end).path 'parameters.mat'],'file')
+                robot.joints(end) = robot.joints(end).loadParameters('parameters');
+            end
+        end
+        
+        function robot = setInLastRatio(robot, Voltage, range_pwm)
+            if exist('Voltage','var') && exist('range_pwm','var')
+                robot.joints(end) = robot.joints(end).setRatio(Voltage, range_pwm);
+            else
+                robot.joints(end) = robot.joints(end).loadParameters(name_parameters);
+            end
+        end
+        
+        function saveInLastParameters(robot)
+            robot.joints(end).saveParameters();
         end
         
         function robot = addParts(robot, part, type)
@@ -200,17 +218,17 @@ classdef Robot
                 text = [text name_set];
             end
             % Add configuration WBI
-            text = [text  '\n' robot.setupWBI(codyco_folder, build_folder)];
+            text = [text  robot.setupWBI(codyco_folder, build_folder)];
             % Add JOINT FRICTION in yarpWholeBodyInterface.ini
             if isWBIFrictionJoint(robot)
                 robot.loadYarpWBI(codyco_folder, build_folder);
             end
             % Set variables environment
             assignin('base', 'Ts', robot.Ts);
-            assignin('base', 'typeRobot', robot.typeRobot);
-            assignin('base', 'localName', robot.localName);
+            %assignin('base', 'nameRobot', robot.typeRobot);
+            %assignin('base', 'localName', robot.localName);
             assignin('base', 'ROBOT_DOF', robot.ROBOT_DOF);
-            setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
+            %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
             setenv('YARP_ROBOT_NAME', robot.robotName);
             disp(text);
             else
