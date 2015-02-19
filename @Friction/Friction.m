@@ -313,12 +313,19 @@ classdef Friction
     
     methods (Access = protected, Static)
         %% Linear regression to evalute coefficent for friction
+        % Line equal y = a(1)*x + a(2)
         function a = linearRegression(x, y)
-            N = size(x,1);
-            % Add column of 1's to include constant term in regression
-            X = [x ones(N,1)]; 
-            % = [a1; a0]
-            a = regress(y,X);
+            a = zeros(2,1);
+            r = corrcoef(x,y); % Corr coeff is the off-diagonal (1,2) element
+            r = r(1,2);  % Sample regression coefficient
+            xbar = mean(x);
+            ybar = mean(y);
+            sigx = std(x);
+            sigy = std(y);
+            a1 = r*sigy/sigx;   % Regression line slope
+            %yfit = ybar - a1*xbar + a1*x;
+            a(1) = a1;
+            a(2) = ybar - a1*xbar;
         end
     end
     
