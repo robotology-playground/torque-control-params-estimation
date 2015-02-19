@@ -5,7 +5,6 @@
 %% Load object Motor
 % Set all information about motor and robot when you would like to
 % experiments
-experiment_type = 'FrictionIdentification';
 robot = Robot('iCubGenova03');
 % Setup robot configuration:
 % Variables:
@@ -38,4 +37,4 @@ robot.saveInLastParameters();
 robot.configure('false','/Users/Raffaello/iit/codyco-superbuild');
 
 %% Open Simulink
-open([experiment_type '.slx']);
+open('FrictionIdentification.slx');
