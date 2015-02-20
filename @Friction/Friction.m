@@ -316,6 +316,7 @@ classdef Friction
             %% Linear regression to evalute coefficent for friction
             % Line equal y = a(1)*x + a(2)
             a = zeros(2,1);
+            if size(x,1) > 1 && size(y,1) > 1
             r = corrcoef(x,y); % Corr coeff is the off-diagonal (1,2) element
             r = r(1,2);  % Sample regression coefficient
             xbar = mean(x);
@@ -326,6 +327,7 @@ classdef Friction
             %yfit = ybar - a1*xbar + a1*x;
             a(1) = a1;
             a(2) = ybar - a1*xbar;
+            end
         end
     end
     

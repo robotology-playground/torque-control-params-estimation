@@ -12,6 +12,10 @@ classdef (Abstract) Joint
         obj = loadRefMeasure(obj, file);
         obj = setRatio(obj, Voltage, range_pwm);
         list = getJointList(obj);
+        [hFig, counter] = savePictureFriction(obj, counter);
+        [hFig, counter] = savePictureKt(obj, counter);
+        saveToFile(obj, name);
+        saveControlToFile(obj, name);
     end
     
 end

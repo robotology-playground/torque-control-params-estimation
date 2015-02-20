@@ -70,58 +70,18 @@ classdef CoupledJoints < ExperimentCollector & Joint
             end
         end
         
-        function savePictureKt(coupled, counter)
-            axes_data = [];
-            for i=1:size(coupled.joint,2)
-                coupled.joint(i).savePictureKt(counter);
-                axes_data = [axes_data gca];
-                counter = counter + 1;
-            end
-            
+        function hCollect = plotCollect(coupled, counter, axes_data, figureName)
             hCollect = figure(counter); %create new figure
             set(hCollect, 'Position', [0 0 800 600]);
             for i=1:size(coupled.joint,2)
                 subPlotData = subplot(1,size(coupled.joint,2),i); %create and get handle to the subplot axes
                 figData = get(axes_data(i),'children');
-                title(coupled.joint(i).WBIname);
+                title(coupled.joint(i).getJointList());
                 grid;
                 copyobj(figData,subPlotData);
             end
             currentFolder = pwd;
             cd(coupled.path);
-            if ~exist('figureName','var')
-                figureName = 'PWMVsTorque';
-            end
-            if ~strcmp(coupled.name_experiment,'')
-                figureName = [figureName '-' coupled.name_experiment];
-            end
-            saveas(hCollect,[figureName '.fig'],'fig');
-            saveas(hCollect,[figureName '.png'],'png');
-            cd(currentFolder);
-        end
-        
-        function savePictureFriction(coupled, counter)
-            axes_data = [];
-            for i=1:size(coupled.joint,2)
-                coupled.joint(i).savePictureFriction(counter);
-                axes_data = [axes_data gca];
-                counter = counter + 1;
-            end
-            
-            hCollect = figure(counter); %create new figure
-            set(hCollect, 'Position', [0 0 800 600]);
-            for i=1:size(coupled.joint,2)
-                subPlotData = subplot(1,size(coupled.joint,2),i); %create and get handle to the subplot axes
-                figData = get(axes_data(i),'children');
-                title(coupled.joint(i).WBIname);
-                grid;
-                copyobj(figData,subPlotData);
-            end
-            currentFolder = pwd;
-            cd(coupled.path);
-            if ~exist('figureName','var')
-                figureName = 'friction';
-            end
             if ~strcmp(coupled.name_experiment,'')
                 figureName = [figureName '-' coupled.name_experiment];
             end

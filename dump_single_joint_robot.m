@@ -16,20 +16,6 @@ robot = robot.setConfiguration('root_link','true');
 robot = robot.addMotor('leg','left','hip','roll');
 robot = robot.setInLastRatio(40,8000);
 robot.saveInLastParameters();
-robot = robot.addMotor('leg','right','hip','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-robot = robot.addMotor('leg','left','ankle','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-robot = robot.addMotor('leg','right','ankle','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-
-% Example with coupled joint
-robot = robot.addMotor('torso');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
 
 %% Configure computer
 % Set all variables:

@@ -24,21 +24,21 @@ classdef Robot
         path;
         Ts = 0.01;
         joints;
-        robotName;
-        typeRobot = 'icub';
+        nameThisRobot;
+        robotName = 'icub';
     end
     
     methods
-        function robot = Robot(robotName, path_experiment)
+        function robot = Robot(nameThisRobot, path_experiment)
             robot.WBI_LIST = robot.JOINT_FRICTION;
-            robot.robotName = robotName;
-            robot.nameSpace = [ '/' robot.typeRobot robotName(end-1:end)];
+            robot.nameThisRobot = nameThisRobot;
+            robot.nameSpace = [ '/' robot.robotName nameThisRobot(end-1:end)];
             if ~exist('path_experiment','var')
                 robot.path_experiment = 'experiments';
             else
                 robot.path_experiment = path_experiment;
             end
-            robot.path = [robot.path_experiment '/' robot.robotName '/'];
+            robot.path = [robot.path_experiment '/' robot.nameThisRobot '/'];
         end
         
         function robot = setNameSpace(nameSpace)
@@ -67,13 +67,15 @@ classdef Robot
         
         function name = setupExperiment(robot, type, logsout, time)
             name = [type '-' datestr(now,robot.formatOut)];
+            number = 0;
             for i=1:size(robot.joints,2)
                 m = matfile([robot.joints{i}.path name '.mat'],'Writable',true);
-                if robot.isWBIFrictionJoint(robot)
+                if robot.isWBIFrictionJoint()
                     if isa(robot.joints{i},'CoupledJoints')
-                        number = (i:i+size(robot.joints{i}.joint,2));
+                        number = (1:size(robot.joints{i}.joint,2));
+                        number = number + (i-1);
                     else
-                        number = i;
+                        number = number(end) + 1;
                     end
                 else
                     number = robot.joints{i}.number;
@@ -83,8 +85,12 @@ classdef Robot
                 m.qD = logsout.get('qD').Values.Data(:,number);
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
-                m.PWM.(robot.joints{i}.group_select) = logsout.get(['pwm_' robot.joints{i}.group_select]).Values.Data;
-                m.Current.(robot.joints{i}.group_select) = logsout.get(['current_' robot.joints{i}.group_select]).Values.Data;
+                PWM = struct;
+                PWM.(robot.joints{i}.group_select) = logsout.get(['pwm_' robot.joints{i}.group_select]).Values.Data;
+                m.PWM = PWM;
+                Current = struct;
+                Current.(robot.joints{i}.group_select) = logsout.get(['current_' robot.joints{i}.group_select]).Values.Data;
+                m.Current = Current;
             end
         end
         
@@ -120,20 +126,20 @@ classdef Robot
         function robot = addMotor(robot, part, type, info1, info2)
             %% Add motor in robot
             if exist('type','var') && exist('info1','var') && exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.robotName, part, type, info1, info2);
+                motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type, info1, info2);
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.robotName, part, type, info1);
+                motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
                 if strcmp(type,'arm')
-                    motor = CoupledJoints(robot.path_experiment, robot.robotName, part, type);
+                    motor = CoupledJoints(robot.path_experiment, robot.nameThisRobot, part, type);
                 else
-                    motor = Motor(robot.path_experiment, robot.robotName, part, type);
+                    motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type);
                 end
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
                 if strcmp(part,'torso')
-                    motor = CoupledJoints(robot.path_experiment, robot.robotName, part);
+                    motor = CoupledJoints(robot.path_experiment, robot.nameThisRobot, part);
                 else
-                    motor = Motor(robot.path_experiment, robot.robotName, part);
+                    motor = Motor(robot.path_experiment, robot.nameThisRobot, part);
                 end
                 
             end
@@ -230,11 +236,11 @@ classdef Robot
             end
             % Set variables environment
             assignin('base', 'Ts', robot.Ts);
-            %assignin('base', 'nameRobot', robot.typeRobot);
+            %assignin('base', 'nameRobot', robot.robotName);
             %assignin('base', 'localName', robot.localName);
             assignin('base', 'ROBOT_DOF', robot.ROBOT_DOF);
             %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
-            setenv('YARP_ROBOT_NAME', robot.robotName);
+            setenv('YARP_ROBOT_NAME', robot.nameThisRobot);
             disp(text);
             else
                 disp('You does not load anything motors!');
@@ -250,32 +256,32 @@ classdef Robot
                 name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini']);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
             end
-            if ~strcmp(robot.robotName, robot.SIMULATOR)
-                text = sprintf('robot          %s\n',robot.typeRobot);
-            else
+            if ~strcmp(robot.nameThisRobot, robot.SIMULATOR)
                 text = sprintf('robot          %s\n',robot.robotName);
+            else
+                text = sprintf('robot          %s\n',robot.nameThisRobot);
             end
             text = [text sprintf('localName      %s\n',robot.localName)];
             text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
             text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
             text = [text sprintf('wbi_id_list    %s\n',robot.WBI_LIST)];
             text = [text sprintf('wbi_config_file %s', robot.configFile)];
-            fid = fopen([codyco_folder '/' name_yarp_file],'w');
+            fid = fopen(name_yarp_file,'w');
             fprintf(fid, '%s', text);
             fclose(fid);
         end
         
         function loadYarpWBI(robot, codyco_folder, build_folder)
             %% Load and save in BUILD directory configuraton
-            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile]);
+            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile]);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.configFile];
+                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.nameThisRobot '/' robot.configFile];
             end
-            copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
+            copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.nameThisRobot '/yarpWholeBodyInterface.ini'];
             copyfile(copy_yarp_file, name_yarp_file);
             
             fid = fopen(name_yarp_file, 'a+');
