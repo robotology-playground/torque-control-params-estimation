@@ -11,8 +11,7 @@ classdef Robot
         formatOut = 'yyyymmdd-HH:MM';
         worldRefFrame = 'root_link';
         robot_fixed = 'true';
-        configFile = 'yarpWholeBodyInterface.ini';
-        robot_configFile = 'yarpWholeBodyInterface_friction.ini';
+        configFile = 'yarpWholeBodyInterface_friction.ini';
         
         ROBOT_DOF = 0;
     end
@@ -265,11 +264,11 @@ classdef Robot
         
         function loadYarpWBI(robot, codyco_folder, build_folder)
             %% Load and save in BUILD directory configuraton
-            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile]);
+            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile]);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.robot_configFile];
+                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.configFile];
             end
             copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
             copyfile(copy_yarp_file, name_yarp_file);
