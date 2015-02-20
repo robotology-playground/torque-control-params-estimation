@@ -12,6 +12,7 @@ classdef Robot
         worldRefFrame = 'root_link';
         robot_fixed = 'true';
         configFile = 'yarpWholeBodyInterface.ini';
+        robot_configFile = 'yarpWholeBodyInterface_friction.ini';
         
         ROBOT_DOF = 0;
     end
@@ -264,16 +265,16 @@ classdef Robot
         
         function loadYarpWBI(robot, codyco_folder, build_folder)
             %% Load and save in BUILD directory configuraton
-            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/yarpWholeBodyInterface_friction.ini'],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/yarpWholeBodyInterface_friction.ini']);
+            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile]);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [build_folder '/install/share/codyco/robots/' robot.robotName '/yarpWholeBodyInterface_friction.ini'];
+                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.robot_configFile];
             end
-            % TODO VERIFY
-            copy_yarp_file = ['libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
-            copyfile([codyco_folder '/' copy_yarp_file],[codyco_folder '/' name_yarp_file]);
-            fid = fopen([codyco_folder '/' name_yarp_file], 'a+');
+            copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
+            copyfile(copy_yarp_file, name_yarp_file);
+            
+            fid = fopen(name_yarp_file, 'a+');
             command = [robot.WBI_LIST ' = (' robot.joint_list ')'];
             fprintf(fid, '# TEST JOINT\n%s', command);
             fclose(fid);
