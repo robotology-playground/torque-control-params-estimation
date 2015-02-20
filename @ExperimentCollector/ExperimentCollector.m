@@ -39,9 +39,9 @@ classdef ExperimentCollector
             obj.joint = [obj.joint motor];
             
             if strcmp(obj.joint_list,'')
-                obj.joint_list = motor.WBIname;
+                obj.joint_list = motor.getJointList();
             else
-                obj.joint_list = [obj.joint_list ', ' motor.WBIname];
+                obj.joint_list = [obj.joint_list ', ' motor.getJointList()];
             end
         end
         

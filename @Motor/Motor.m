@@ -1,4 +1,4 @@
-classdef Motor
+classdef Motor < Joint
     %MOTOR Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -19,6 +19,7 @@ classdef Motor
         current;
         time;
         path_before;
+        WBIname;
     end
     
     properties (Access = protected)
@@ -42,7 +43,6 @@ classdef Motor
         friction;
         select;
         Kt;
-        WBIname;
     end
     
     methods
@@ -71,40 +71,6 @@ classdef Motor
             else
                 joint.friction = Friction(position, velocity, acceleration, torque, time);
             end
-        end
-        
-        function joint = loadIdleMeasure(joint, file, cutoff)
-            %% Load data from mat file
-            if ~exist('file','var')
-                file = 'idle';
-            end
-            data = load([joint.path file '.mat']);
-            if exist('cutoff','var')
-                joint.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time, cutoff);
-                joint.friction = joint.friction.setExperiment(file);
-            else
-                joint.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time);
-                joint.friction = joint.friction.setExperiment(file);
-            end
-        end
-        
-        function saveParameters(joint, file)
-            if ~exist('file','var')
-                file = 'parameters';
-            end
-            m = matfile([joint.path file '.mat'],'Writable',true);
-            m.Voltage = joint.Voltage;
-            m.range_pwm = joint.range_pwm;
-        end
-        
-        function joint = loadParameters(joint, file)
-            if ~exist('file','var')
-                file = 'parameters';
-            end
-            m = load([joint.path file '.mat']);
-            joint.Voltage = m.Voltage;
-            joint.range_pwm = m.range_pwm;
-            joint = joint.setRatio(joint.Voltage, joint.range_pwm);
         end
         
         function joint = setRatio(joint, Voltage, range_pwm)
@@ -162,21 +128,11 @@ classdef Motor
             joint = joint.evaluateCoeff();
         end
         
-        function joint = loadRefMeasure(joint, file)
-            %% Load reference from file
-            if ~exist('file','var')
-                file = 'ref';
-            end
-            data = load([joint.path file '.mat']);
-            joint = joint.loadReference(data);
-        end
-        
         function joint = evaluateCoeff(joint)
             A = joint.linearRegression(joint.voltage,joint.torque-joint.friction_model);
             %A = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
             joint.Kt = A(1);
         end
-        
         
         function plotKt(joint, option)
             %% Plot measure versus friction estimation

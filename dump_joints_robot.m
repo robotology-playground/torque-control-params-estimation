@@ -26,9 +26,10 @@ robot = robot.addMotor('leg','right','ankle','roll');
 robot = robot.setInLastRatio(40,8000);
 robot.saveInLastParameters();
 
-%%% TODO
-% Add coupled joints
-%robot = robot.addCoupledJoints('torso');
+% Example with coupled joint
+robot = robot.addMotor('torso');
+robot = robot.setInLastRatio(40,8000);
+robot.saveInLastParameters();
 
 %% Configure computer
 % Set all variables:
