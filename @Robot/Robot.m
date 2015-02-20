@@ -70,7 +70,11 @@ classdef Robot
             for i=1:size(robot.joints,2)
                 m = matfile([robot.joints{i}.path name '.mat'],'Writable',true);
                 if robot.isWBIFrictionJoint(robot)
-                    number = i;
+                    if isa(robot.joints{i},'CoupledJoints')
+                        number = (i:i+size(robot.joints{i}.joint,2));
+                    else
+                        number = i;
+                    end
                 else
                     number = robot.joints{i}.number;
                 end
@@ -120,7 +124,11 @@ classdef Robot
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
                 motor = Motor(robot.path_experiment, robot.robotName, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.robotName, part, type);
+                if strcmp(type,'arm')
+                    motor = CoupledJoints(robot.path_experiment, robot.robotName, part, type);
+                else
+                    motor = Motor(robot.path_experiment, robot.robotName, part, type);
+                end
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
                 if strcmp(part,'torso')
                     motor = CoupledJoints(robot.path_experiment, robot.robotName, part);
@@ -129,9 +137,14 @@ classdef Robot
                 end
                 
             end
-            if isWBIFrictionJoint(robot)
+            if isprop(motor,'joint')
+                robot.ROBOT_DOF = robot.ROBOT_DOF + size(motor.joint,2);
+            else
                 robot.ROBOT_DOF = robot.ROBOT_DOF + 1;
-                robot.joints{robot.ROBOT_DOF} = motor;
+            end
+            
+            if isWBIFrictionJoint(robot)
+                robot.joints{size(robot.joints,2)+1} = motor;
             else
                 robot.joints{motor.number} = motor;
             end

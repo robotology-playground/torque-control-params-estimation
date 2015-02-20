@@ -6,9 +6,11 @@ classdef (Abstract) Joint
     end
     
     methods (Abstract)
-        %loadParameters(obj);
-        %obj = loadIdleMeasure(obj, file, cutoff);
-        %obj = loadRefMeasure(obj, file);
+        saveParameters(obj);
+        obj = loadParameters(obj, file);
+        obj = loadIdleMeasure(obj, file, cutoff);
+        obj = loadRefMeasure(obj, file);
+        obj = setRatio(obj, Voltage, range_pwm);
         list = getJointList(obj);
     end
     
