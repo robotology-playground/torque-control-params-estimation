@@ -11,8 +11,7 @@ classdef Robot
         formatOut = 'yyyymmdd-HH:MM';
         worldRefFrame = 'root_link';
         robot_fixed = 'true';
-        configFile = 'yarpWholeBodyInterface.ini';
-        robot_configFile = 'yarpWholeBodyInterface_friction.ini';
+        configFile = 'yarpWholeBodyInterface_friction.ini';
         
         ROBOT_DOF = 0;
         counter_joints = 0;
@@ -69,19 +68,19 @@ classdef Robot
         function name = setupExperiment(robot, type, logsout, time)
             name = [type '-' datestr(now,robot.formatOut)];
             for i=1:size(robot.joints,2)
-                m = matfile([robot.joints(i).path name '.mat'],'Writable',true);
+                m = matfile([robot.joints{i}.path name '.mat'],'Writable',true);
                 if robot.isWBIFrictionJoint(robot)
                     number = i;
                 else
-                    number = robot.joints(i).number;
+                    number = robot.joints{i}.number;
                 end
                 m.time = time;
                 m.q = logsout.get('q').Values.Data(:,number);
                 m.qD = logsout.get('qD').Values.Data(:,number);
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
-                m.PWM.(robot.joints(i).group_select) = logsout.get(['pwm_' robot.joints(i).group_select]).Values.Data;
-                m.Current.(robot.joints(i).group_select) = logsout.get(['current_' robot.joints(i).group_select]).Values.Data;
+                m.PWM.(robot.joints{i}.group_select) = logsout.get(['pwm_' robot.joints{i}.group_select]).Values.Data;
+                m.Current.(robot.joints{i}.group_select) = logsout.get(['current_' robot.joints{i}.group_select]).Values.Data;
             end
         end
         
@@ -96,16 +95,16 @@ classdef Robot
             end
             for i=1:size(robot.joints,2)
                 if type_idle == 1
-                    robot.joints(i) = robot.joints(i).loadIdleMeasure(name);
-                    [ ~, counter] = robot.joints(i).savePictureFriction(counter);
+                    robot.joints{i} = robot.joints{i}.loadIdleMeasure(name);
+                    [ ~, counter] = robot.joints{i}.savePictureFriction(counter);
                 else
-                    robot.joints(i) = robot.joints(i).loadRefMeasure(name);
+                    robot.joints{i} = robot.joints{i}.loadRefMeasure(name);
                     % FIGURE - PWM vs Torque
-                    [ ~, counter] = robot.joints(i).savePictureKt(counter);
-                    robot.joints(i).saveControlToFile();
+                    [ ~, counter] = robot.joints{i}.savePictureKt(counter);
+                    robot.joints{i}.saveControlToFile();
                 end
                 % Save information to file
-                robot.joints(i).saveToFile();
+                robot.joints{i}.saveToFile();
             end
         end
         
@@ -123,7 +122,12 @@ classdef Robot
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
                 motor = Motor(robot.path_experiment, robot.robotName, part, type);
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.robotName, part);
+                if strcmp(part,'torso')
+                    motor = CoupledJoints(robot.path_experiment, robot.robotName, part);
+                else
+                    motor = Motor(robot.path_experiment, robot.robotName, part);
+                end
+                
             end
             if isWBIFrictionJoint(robot)
                 robot.ROBOT_DOF = robot.ROBOT_DOF + 1;
@@ -133,26 +137,26 @@ classdef Robot
             end
             
             if strcmp(robot.joint_list,'')
-                robot.joint_list = motor.WBIname;
+                robot.joint_list = motor.getJointList();
             else
-                robot.joint_list = [robot.joint_list ', ' motor.WBIname];
+                robot.joint_list = [robot.joint_list ', ' motor.getJointList()];
             end
             
-            if exist([robot.joints(end).path 'parameters.mat'],'file')
-                robot.joints(end) = robot.joints(end).loadParameters('parameters');
+            if exist([robot.joints{end}.path 'parameters.mat'],'file')
+                robot.joints{end} = robot.joints{end}.loadParameters('parameters');
             end
         end
         
         function robot = setInLastRatio(robot, Voltage, range_pwm)
             if exist('Voltage','var') && exist('range_pwm','var')
-                robot.joints(end) = robot.joints(end).setRatio(Voltage, range_pwm);
+                robot.joints{end} = robot.joints{end}.setRatio(Voltage, range_pwm);
             else
-                robot.joints(end) = robot.joints(end).loadParameters(name_parameters);
+                robot.joints{end} = robot.joints{end}.loadParameters(name_parameters);
             end
         end
         
         function saveInLastParameters(robot)
-            robot.joints(end).saveParameters();
+            robot.joints{end}.saveParameters();
         end
         
         function robot = addParts(robot, part, type)
@@ -170,21 +174,6 @@ classdef Robot
 %                 robot = robot.addMotor(part, type,'elbow');
 %             elseif strcmp(part,'torso')
 %                 
-            end
-        end
-        
-        function robot = addCoupledJoints(robot, part, type)
-            if exist('type','var')
-                motor = CoupledJoints(robot.path_experiment, robot.robotName, part, type);
-            else
-                motor = CoupledJoints(robot.path_experiment, robot.robotName, part);
-            end
-            robot.coupledjoints = [robot.coupledjoints motor];
-            
-            if strcmp(robot.joint_list,'')
-                robot.joint_list = motor.WBIname;
-            else
-                robot.joint_list = [robot.joint_list ', ' motor.getJointList()];
             end
         end
         
@@ -267,11 +256,11 @@ classdef Robot
         
         function loadYarpWBI(robot, codyco_folder, build_folder)
             %% Load and save in BUILD directory configuraton
-            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.robot_configFile]);
+            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.robotName '/' robot.configFile]);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.robot_configFile];
+                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.robotName '/' robot.configFile];
             end
             copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.robotName '/yarpWholeBodyInterface.ini'];
             copyfile(copy_yarp_file, name_yarp_file);

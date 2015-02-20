@@ -19,6 +19,7 @@ classdef Motor < Joint
         current;
         time;
         path_before;
+        WBIname;
     end
     
     properties (Access = protected)
@@ -42,7 +43,6 @@ classdef Motor < Joint
         friction;
         select;
         Kt;
-        WBIname;
     end
     
     methods
@@ -111,6 +111,10 @@ classdef Motor < Joint
             joint.Voltage = Voltage;
             joint.range_pwm = range_pwm;
             joint.ratio_V = Voltage/range_pwm;
+        end
+        
+         function list = getJointList(joint)
+            list = joint.WBIname;
         end
         
         function joint = setFrictionToCenter(joint)
