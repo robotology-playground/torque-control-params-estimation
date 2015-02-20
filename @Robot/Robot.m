@@ -15,6 +15,7 @@ classdef Robot
         robot_configFile = 'yarpWholeBodyInterface_friction.ini';
         
         ROBOT_DOF = 0;
+        counter_joints = 0;
     end
     
     properties
@@ -24,7 +25,6 @@ classdef Robot
         path;
         Ts = 0.01;
         joints;
-        coupledjoints;
         robotName;
         typeRobot = 'icub';
     end
@@ -125,15 +125,17 @@ classdef Robot
             elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
                 motor = Motor(robot.path_experiment, robot.robotName, part);
             end
-            robot.joints = [robot.joints motor];
+            if isWBIFrictionJoint(robot)
+                robot.ROBOT_DOF = robot.ROBOT_DOF + 1;
+                robot.joints{robot.ROBOT_DOF} = motor;
+            else
+                robot.joints{motor.number} = motor;
+            end
             
             if strcmp(robot.joint_list,'')
                 robot.joint_list = motor.WBIname;
             else
                 robot.joint_list = [robot.joint_list ', ' motor.WBIname];
-            end
-            if isWBIFrictionJoint(robot)
-                robot.ROBOT_DOF = size(robot.joints,2);
             end
             
             if exist([robot.joints(end).path 'parameters.mat'],'file')

@@ -1,4 +1,4 @@
-classdef Motor
+classdef Motor < Joint
     %MOTOR Summary of this class goes here
     %   Detailed explanation goes here
     
