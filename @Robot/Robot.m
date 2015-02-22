@@ -130,7 +130,7 @@ classdef Robot
             elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
                 motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type, info1);
             elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                if strcmp(type,'arm')
+                if strcmp(part,'arm')
                     motor = CoupledJoints(robot.path_experiment, robot.nameThisRobot, part, type);
                 else
                     motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type);
