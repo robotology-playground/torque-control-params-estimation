@@ -225,9 +225,8 @@ classdef Robot
                     [~,detect] = system('yarp detect --write');
                     text = [text detect];
                 end
-            else
-                text = [text name_set];
             end
+            text = [text name_set];
             % Add configuration WBI
             text = [text  robot.setupWBI(codyco_folder, build_folder)];
             % Add JOINT FRICTION in yarpWholeBodyInterface.ini
