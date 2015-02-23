@@ -25,6 +25,7 @@ classdef Robot
 %         Ts = 0.01;
 %         joints;
         realNameRobot;
+        list_joint;
 %         robotName = 'icub';
     end
     
@@ -39,7 +40,11 @@ classdef Robot
             
             % Parse file and build robot
             text = parseFile(robot, copy_yarp_file, 'WBI_YARP_JOINTS');
-
+            for i=1:size(text,2)
+                [mat,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
+                list = tok{:};
+                robot.list_joint = [robot.list_joint Joint(list{1},list{2},list{3})];
+            end
 %             robot.nameSpace = [ '/' robot.robotName nameThisRobot(end-1:end)];
 %             if ~exist('path_experiment','var')
 %                 robot.path_experiment = 'experiments';

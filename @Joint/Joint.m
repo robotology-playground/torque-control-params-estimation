@@ -1,23 +1,32 @@
-classdef (Abstract) Joint
+classdef Joint
     %JOINT Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
+        name;
+        number;
+        part;
     end
     
-    methods (Abstract)
-        saveParameters(obj);
-        obj = loadParameters(obj, file);
-        obj = loadIdleMeasure(obj, file, cutoff);
-        obj = loadRefMeasure(obj, file);
-        obj = setRatio(obj, Voltage, range_pwm);
-        list = getJointList(obj);
-        [hFig, counter] = savePictureFriction(obj, counter);
-        [hFig, counter] = savePictureKt(obj, counter);
-        saveToFile(obj, name);
-        saveControlToFile(obj, name);
+    methods
+        function joint = Joint(name, part, number)
+            joint.name = name;
+            joint.number = number;
+            joint.part = part;
+        end
+%         saveParameters(obj);
+%         obj = loadParameters(obj, file);
+%         obj = loadIdleMeasure(obj, file, cutoff);
+%         obj = loadRefMeasure(obj, file);
+%         obj = setRatio(obj, Voltage, range_pwm);
+%         list = getJointList(obj);
+%         [hFig, counter] = savePictureFriction(obj, counter);
+%         [hFig, counter] = savePictureKt(obj, counter);
+%         saveToFile(obj, name);
+%         saveControlToFile(obj, name);
     end
-        methods (Access = public, Static)
+
+    methods (Access = public, Static)
         function a = linearRegression(x, y)
             %% Linear regression to evalute coefficent for friction
             % Line equal y = a(1)*x + a(2)

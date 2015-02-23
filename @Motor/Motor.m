@@ -10,12 +10,15 @@ classdef Motor < Joint
         voltage;
         current;
         time;
+        Kt;
+        friction;
     end
     
     properties
-        Kt;
-        friction;
-        name_motor;
+        name_joint;
+        number_motor;
+        joint_number;
+        part;
     end
     
     methods
