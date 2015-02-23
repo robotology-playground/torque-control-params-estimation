@@ -20,6 +20,7 @@ classdef Motor < Joint
         time;
         path_before;
         WBIname;
+        ratio_V = 1;
     end
     
     properties (Access = protected)
@@ -31,7 +32,6 @@ classdef Motor < Joint
         robot_dof = 0;
         measure;
         friction_model;
-        ratio_V = 0;
     end
     
     properties
@@ -110,10 +110,14 @@ classdef Motor < Joint
                 option = '.';
             end
             plot(joint.voltage, joint.torque-joint.friction_model, option);
-            xlabel('Voltage','Interpreter','tex');
+            if joint.ratio_V == 1
+                xlabel('PWM','Interpreter','tex');
+            else 
+                xlabel('Voltage','Interpreter','tex');
+            end
             ylabel('\tau-\tau_{f}','Interpreter','tex');
             name = [upper(joint.part) ' ' upper(joint.type) ' ' upper(joint.info1) ' ' upper(joint.info2)];
-            title(['Kt: ' name]);
+            title(['Kt: ' joint.Kt ' - motor:' name ]);
             hold on;
             plot(joint.voltage , joint.voltage*joint.Kt,'r-','LineWidth',3);
             hold off;
@@ -153,16 +157,22 @@ classdef Motor < Joint
             text = [text, sprintf('%s\n',joint.friction.saveToFile(joint.path))];
             
             if size(joint.Kt,1) ~= 0
+                
                 text = [text, sprintf('\n----------> Kt <----------\n')];
+                text = [text, sprintf('tau_m = Kt*PWM \n')];
                 text = [text, sprintf('Kt: %12.8f [Nm]/[V]\n',joint.Kt)];
-                text = [text, sprintf('\n---- Kt -> Latex ----\n')];
-                text = [text, sprintf('\n\\begin{equation}\n')];
-                text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
-                text = [text, sprintf('\\begin{array}{cccl}\n')];
-                text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',joint.friction.KvP)];
-                text = [text, sprintf('\\end{array}\n')];
-                text = [text, sprintf('\\end{equation}\n')];
             end
+        end
+        
+        function text = saveLatexCoeffToFile(joint)
+            text = sprintf('\n---- Kt -> Latex ----\n');
+            
+            text = [text, sprintf('\n\\begin{equation}\n')];
+            text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',joint.path)];
+            text = [text, sprintf('\\begin{array}{cccl}\n')];
+            text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',joint.friction.KvP)];
+            text = [text, sprintf('\\end{array}\n')];
+            text = [text, sprintf('\\end{equation}\n')];
         end
         
         function path = getPathType(joint)

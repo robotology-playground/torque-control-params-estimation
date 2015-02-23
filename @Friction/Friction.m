@@ -178,12 +178,23 @@ classdef Friction
             %% Save information about friction on file
             text = sprintf('\n----------> Friction <----------\n');
             % Coefficients
-            text = [text, sprintf('KcP: %12.8f [Nm] - KcN: %12.8f [Nm]\n',obj.KcP, obj.KcN)];
-            text = [text, sprintf('KsP: %12.8f [Nm][s]/[deg] - KvN: %12.8f [Nm][s]/[deg]\n',obj.KvP, obj.KvN)];
+            text = [text, sprintf('Voltage = s(q)(BAR-KcP + BAR-KvP*qdot) + s(-q)(BAR-KcN + BAR-KvN*qdot)\n')];
+            text = [text, sprintf('BAR-KcP: %12.8f [Nm] - BAR-KcN: %12.8f [Nm]\n',obj.KcP, obj.KcN)];
+            text = [text, sprintf('BAR-KvP: %12.8f [Nm][s]/[deg] - BAR-KvN: %12.8f [Nm][s]/[deg]\n',obj.KvP, obj.KvN)];
             %text = [text, sprintf('KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',obj.KsP, obj.KsN)];
-            
-            text = [text, sprintf('\n---- Friction -> Latex ----\n')];
+        end
+        
+        function text = saveLatexToFile(obj, path)
+            %% Save information about friction on file
+            text = sprintf('\n---- Friction -> Latex ----\n');
             % To latex
+            text = [text, sprintf('\\begin{equation}\n')];
+            text = [text, sprintf('\\label{eq:Friction}\n')];
+            text = [text, sprintf('\\begin{array}{ccc}\n')];
+            text = [text, sprintf('\\tau_f & = & s(q)\\left(\\bar K_{c+} + \\bar K_{v+}\\dot q\\right) + s(-q)\\left(\\bar K_{c-} + \\bar K_{v-}*\\dot q\\right)\n')];
+            text = [text, sprintf('\\end{array}\n')];
+            text = [text, sprintf('\\end{equation}\n')];
+            
             text = [text, sprintf('\\begin{equation}\n')];
             text = [text, sprintf('\\label{eq:%sFrictionCoeffCoulomb}\n',path)];
             text = [text, sprintf('\\begin{array}{cccl}\n')];
