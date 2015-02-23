@@ -13,21 +13,21 @@ robot = Robot('iCubGenova03');
 robot = robot.setConfiguration('root_link','true');
 
 %% Add motors to test
-robot = robot.addMotor('leg','left','hip','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-robot = robot.addMotor('leg','right','hip','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-robot = robot.addMotor('leg','left','ankle','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-robot = robot.addMotor('leg','right','ankle','roll');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
+% robot = robot.addMotor('leg','left','hip','roll');
+% robot = robot.setInLastRatio(40,8000);
+% robot.saveInLastParameters();
+% robot = robot.addMotor('leg','right','hip','roll');
+% robot = robot.setInLastRatio(40,8000);
+% robot.saveInLastParameters();
+% robot = robot.addMotor('leg','left','ankle','roll');
+% robot = robot.setInLastRatio(40,8000);
+% robot.saveInLastParameters();
+% robot = robot.addMotor('leg','right','ankle','roll');
+% robot = robot.setInLastRatio(40,8000);
+% robot.saveInLastParameters();
 
 % Example with coupled joint
-robot = robot.addMotor('torso');
+robot = robot.addMotor('arm','left');
 robot = robot.setInLastRatio(40,8000);
 robot.saveInLastParameters();
 
@@ -35,7 +35,7 @@ robot.saveInLastParameters();
 % Set all variables:
 % - If true, automatic set yarp namespace
 % - codyco-superbuild folder
-robot.configure('true','/Users/Raffaello/iit/codyco-superbuild');
+robot.configure('false','/Users/Raffaello/iit/codyco-superbuild');
 
 %% Open Simulink
 open('FrictionIdentification.slx');
