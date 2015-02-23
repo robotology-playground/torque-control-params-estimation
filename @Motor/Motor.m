@@ -175,6 +175,27 @@ classdef Motor < Joint
             text = [text, sprintf('\\end{equation}\n')];
         end
         
+        function text = textControlData(joint)
+            % Information joint estimation
+            text = sprintf('Name: %s\n',joint.robot);
+            text = [text sprintf('Part: %s\n',joint.part)];
+            if(joint.type ~= 0)
+                text = [text sprintf('Type: %s\n',joint.type)];
+            end
+            if(joint.info1 ~= 0)
+                text = [text sprintf('Info1: %s\n',joint.info1)];
+            end
+            if(joint.info2 ~= 0)
+                text = [text sprintf('Info2: %s\n',joint.info2)];
+            end
+            text = [text sprintf('\nFriction\n')];
+            text = [text sprintf('PWM = kt tau - [s(q)(kc+ + kv+ qdot q) + s(-q)(kc- + kv- qdot q)]\n')];
+            text = [text sprintf('kc+: %12.8f [V] - kc-: %12.8f [V] \n',joint.friction.KcP/joint.Kt, joint.friction.KcN/joint.Kt)];
+            text = [text sprintf('kv+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',joint.friction.KvP/joint.Kt, joint.friction.KvN/joint.Kt)];
+            %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
+            text = [text sprintf('kt: %12.8f [V]/[Nm]\n',1/joint.Kt)];
+        end
+        
         function path = getPathType(joint)
             %% Get path type
             path = joint.path_before;
