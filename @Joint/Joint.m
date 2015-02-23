@@ -1,7 +1,7 @@
 classdef Joint
     %JOINT Summary of this class goes here
     %   Detailed explanation goes here
-    
+
     properties
         name;
         number;
@@ -25,7 +25,7 @@ classdef Joint
 %         saveToFile(obj, name);
 %         saveControlToFile(obj, name);
     end
-
+    
     methods (Access = public, Static)
         function a = linearRegression(x, y)
             %% Linear regression to evalute coefficent for friction

@@ -4,13 +4,15 @@ classdef Robot
     
     properties (Access = private)
 %         JOINT_FRICTION = 'JOINT_FRICTION';
-%         SIMULATOR = 'icubGazeboSim';
+        SIMULATOR = 'icubGazeboSim';
 % 
 %         path_experiment;
 %         nameSpace;
-%         formatOut = 'yyyymmdd-HH:MM';
-%         worldRefFrame = 'root_link';
-%         robot_fixed = 'true';
+        codyco_folder;
+        build_folder = 'build';
+        formatOut = 'yyyymmdd-HH:MM';
+        worldRefFrame = 'root_link';
+        robot_fixed = 'true';
 %         configFile = 'yarpWholeBodyInterface_friction.ini';
 %         
 %         ROBOT_DOF = 0;
@@ -18,42 +20,181 @@ classdef Robot
     end
     
     properties
-%         joint_list = '';
-%         WBI_LIST;
-%         localName = 'simulink_joint_friction';
 %         path;
-%         Ts = 0.01;
-%         joints;
+        Ts = 0.01;
         realNameRobot;
-        list_joint;
-%         robotName = 'icub';
+        joints;
+        robotName = 'icub';
+        localName = 'simulink_joint_friction';
     end
     
     methods
         function robot = Robot(realNameRobot, codyco_folder)
-%             robot.WBI_LIST = robot.JOINT_FRICTION;
             % Name robot
             robot.realNameRobot = realNameRobot;
+            % Codyco folder
+            robot.codyco_folder = codyco_folder;
             % folder where exist robot folder
             copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.realNameRobot '/yarpWholeBodyInterface.ini'];
             %copyfile(copy_yarp_file, name_yarp_file);
             
+            robot.joints = struct;
             % Parse file and build robot
             text = parseFile(robot, copy_yarp_file, 'WBI_YARP_JOINTS');
             for i=1:size(text,2)
-                [mat,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
+                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
                 list = tok{:};
-                robot.list_joint = [robot.list_joint Joint(list{1},list{2},list{3})];
+                if ~isfield(robot.joints,list{2})
+                    robot.joints.(list{2}) = Joint(list{1},list{2},list{3});
+                else
+                    robot.joints.(list{2}) = [robot.joints.(list{2}) Joint(list{1},list{2},list{3})];
+                end
             end
-%             robot.nameSpace = [ '/' robot.robotName nameThisRobot(end-1:end)];
-%             if ~exist('path_experiment','var')
-%                 robot.path_experiment = 'experiments';
-%             else
-%                 robot.path_experiment = path_experiment;
-%             end
-%             robot.path = [robot.path_experiment '/' robot.nameThisRobot '/'];
         end
         
+        function configure(robot, name, list_joint)
+            %% Configure Yarp Whole Body Interface
+            if exist('list_joint','var')
+                if size(list_joint,1) > 0
+                    list = robot.getListJoints(name, list_joint);
+                    robot.loadYarpWBI(list);
+                    robot.setupWBI(robot, name);
+                    disp('[INFO] Update!');
+                else
+                    disp('[ERROR] List without joints!');
+                end
+            else
+                
+            end
+        end
+        
+        function joint = getJoint(robot,name)
+            %% Get joint from list
+            part = robot.getPartFromName(name);
+            if size(part,1) > 0
+                group = robot.joints.(part);
+                for i=1:size(group,2)
+                    if strcmp(group(i).name,name)
+                        joint = group(i);
+                        return
+                    end
+                end
+            end
+            joint = [];
+        end
+        
+        function joints = getCoupledJoints(robot,name)
+            %% Get Coupled joints from list
+            if strcmp(name,'torso')
+                joints = robot.getJoint('torso_yaw');
+                joints = [joints robot.getJoint('torso_roll')];
+                joints = [joints robot.getJoint('torso_pitch')];
+            else
+                [~,tok] = regexp(name, '(\w+).*?_(\w+).*?', 'match','tokens');
+                if size(tok,1) > 0
+                    list = tok{:};
+                    if size(list,2) == 2
+                        if strcmp(list{2},'shoulder')
+                            joints = robot.getJoint([name '_pitch']);
+                            joints = [joints robot.getJoint([name '_roll'])];
+                            joints = [joints robot.getJoint([name '_yaw'])];
+                            return
+                        end
+                    end
+                end
+                joints = [];
+            end
+            
+        end
+    end
+    
+    methods(Access = protected)
+        function text = setupWBI(robot, name)
+            %% Setup Whole Body Interface
+            if exist([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini']);
+                disp('UPDATE LOCAL FOLDER!');
+            else
+                %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+                name_yarp_file = [robot.codyco_folder '/' robot.build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+            end
+            if ~strcmp(robot.realNameRobot, robot.SIMULATOR)
+                text = sprintf('robot          %s\n',robot.robotName);
+            else
+                text = sprintf('robot          %s\n',robot.realNameRobot);
+            end
+            text = [text sprintf('localName      %s\n',robot.localName)];
+            text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
+            text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
+            text = [text sprintf('wbi_id_list    %s\n',name)];
+            text = [text sprintf('wbi_config_file %s', robot.configFile)];
+            fid = fopen(name_yarp_file,'w');
+            fprintf(fid, '%s', text);
+            fclose(fid);
+        end
+        
+        function loadYarpWBI(robot, list)
+            %% Load and save in BUILD directory configuraton
+            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile],'file')
+                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile]);
+                disp('UPDATE LOCAL FOLDER!');
+            else
+                name_yarp_file = [robot.codyco_folder '/' robot.build_folder '/install/share/codyco/robots/' robot.nameThisRobot '/' robot.configFile];
+            end
+            copy_yarp_file = [robot.codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.nameThisRobot '/yarpWholeBodyInterface.ini'];
+            copyfile(copy_yarp_file, name_yarp_file);
+            
+            fid = fopen(name_yarp_file, 'a+');
+            fprintf(fid, '# TEST JOINT\n%s', [robot.WBI_LIST ' = (' list ')']);
+            fclose(fid);
+        end
+    end
+    
+    methods (Access = protected, Static)
+        function format_list = getListJoints(name, list_joint)
+            %% Get a list of joints to add in yarpWholeBodyInterface
+            if size(list_joint,2) > 0
+                list = list_joint(1).name;
+                for i=2:size(list_joint,2)
+                    list = [list ', ' list_joint(i).name];
+                end
+            else
+                list = '';
+            end
+            if size(list,2) > 0
+                format_list = [name ' = ( ' list ' )'];
+            else
+                format_list = '';
+            end
+        end
+        
+        function part = getPartFromName(name)
+            %% Reconstruct part from name joint
+            groups = textscan(lower(name),'%s','delimiter','_');
+            groups = groups{1};
+            if strcmp(groups{1},'l')
+                part = 'left';
+            elseif strcmp(groups{1},'r')
+                part = 'right';
+            else
+                if strcmp(groups{1},'torso') || strcmp(groups{1},'head')
+                    part = groups{1};
+                    return
+                else
+                    part = '';
+                    return;
+                end
+            end
+            if strcmp(groups{2},'shoulder') || strcmp(groups{2},'elbow')
+                part = [part '_arm'];
+            elseif strcmp(groups{2},'hip') || strcmp(groups{2},'knee') || strcmp(groups{2},'ankle')
+                part = [part '_leg'];
+            else
+                part = '';
+                return
+            end
+        end
+    end
 %         function robot = setNameSpace(nameSpace)
 %             %% Configure type of namespace
 %             robot.nameSpace = nameSpace;
@@ -259,50 +400,6 @@ classdef Robot
 %                 disp('You does not load anything motors!');
 %             end
 %         end
-    end
-    
-    methods
-%         function text = setupWBI(robot, codyco_folder, build_folder)
-%             %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
-%             
-%             if exist([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'],'file')
-%                 name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini']);
-%                 disp('UPDATE LOCAL FOLDER!');
-%             else
-%                 name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
-%             end
-%             if ~strcmp(robot.nameThisRobot, robot.SIMULATOR)
-%                 text = sprintf('robot          %s\n',robot.robotName);
-%             else
-%                 text = sprintf('robot          %s\n',robot.nameThisRobot);
-%             end
-%             text = [text sprintf('localName      %s\n',robot.localName)];
-%             text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
-%             text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
-%             text = [text sprintf('wbi_id_list    %s\n',robot.WBI_LIST)];
-%             text = [text sprintf('wbi_config_file %s', robot.configFile)];
-%             fid = fopen(name_yarp_file,'w');
-%             fprintf(fid, '%s', text);
-%             fclose(fid);
-%         end
-        
-%         function loadYarpWBI(robot, codyco_folder, build_folder)
-%             %% Load and save in BUILD directory configuraton
-%             if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile],'file')
-%                 name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile]);
-%                 disp('UPDATE LOCAL FOLDER!');
-%             else
-%                 name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.nameThisRobot '/' robot.configFile];
-%             end
-%             copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.nameThisRobot '/yarpWholeBodyInterface.ini'];
-%             copyfile(copy_yarp_file, name_yarp_file);
-%             
-%             fid = fopen(name_yarp_file, 'a+');
-%             command = [robot.WBI_LIST ' = (' robot.joint_list ')'];
-%             fprintf(fid, '# TEST JOINT\n%s', command);
-%             fclose(fid);
-%         end
-    end
     
 end
 
