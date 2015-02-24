@@ -2,17 +2,27 @@ classdef Joint
     %JOINT Summary of this class goes here
     %   Detailed explanation goes here
 
+    properties (Access = private)
+        
+    end
+    
     properties
         name;
         number;
         part;
+        motor;
     end
     
     methods
         function joint = Joint(name, part, number)
             joint.name = name;
-            joint.number = number;
+            joint.number = str2double(number);
             joint.part = part;
+        end
+        
+        function joint = setMotor(joint, name_motor, Voltage, range_pwm)
+            %% Set motor in joints
+            joint.motor = Motor(name_motor, Voltage, range_pwm);
         end
 %         saveParameters(obj);
 %         obj = loadParameters(obj, file);

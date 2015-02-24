@@ -1,4 +1,4 @@
-classdef Motor < Joint
+classdef Motor
     %MOTOR Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -10,13 +10,13 @@ classdef Motor < Joint
         voltage;
         current;
         time;
+        % Information about motor
+        name_motor;
+        Voltage;
+        range_pwm;
     end
     
     properties
-        name_joint;
-        number_motor;
-        joint_number;
-        part;
         Kt;
         friction;
         ratio = 1;
@@ -26,9 +26,9 @@ classdef Motor < Joint
         function motor = Motor(name_motor, Voltage, range_pwm)
             motor.name_motor = name_motor;
             if exist('Voltage','var') && exist('range_pwm','var')
-                motor.Voltage = Voltage;
-                motor.range_pwm = range_pwm;
-                motor.ratio = Voltage/range_pwm;
+                motor.Voltage = str2double(Voltage);
+                motor.range_pwm = str2double(range_pwm);
+                motor.ratio = motor.Voltage/motor.range_pwm;
             end
         end
         

@@ -41,7 +41,7 @@ classdef Robot
             
             robot.joints_avaiable = struct;
             % Parse file and build robot
-            text = parseFile(robot, copy_yarp_file, 'WBI_YARP_JOINTS');
+            text = robot.parseFile(copy_yarp_file, 'WBI_YARP_JOINTS');
             for i=1:size(text,2)
                 [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
                 list = tok{:};
@@ -49,6 +49,33 @@ classdef Robot
                     robot.joints_avaiable.(list{2}) = Joint(list{1},list{2},list{3});
                 else
                     robot.joints_avaiable.(list{2}) = [robot.joints_avaiable.(list{2}) Joint(list{1},list{2},list{3})];
+                end
+            end
+            % Load all parameters from file
+            path_project = fullfile(robot.start_path,robot.realNameRobot,'JointNameList.ini');
+            if exist(path_project,'file')
+                robot = robot.loadParameters(path_project);
+                disp('[INFO] Load configuration');
+            end
+        end
+        
+        function robot = loadParameters(robot, path_project)
+            %% Load information about motors
+            text = robot.parseFile(path_project, 'JOINT_LIST PARAMETERS');
+            for i=1:size(text,2)
+                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
+                list = tok{:};
+                part = robot.getPartFromName(list{1});
+                if isfield(robot.joints_avaiable,part)
+                    joint_part = robot.joints_avaiable.(part);
+                    for count=1:size(joint_part,2)
+                        if strcmp(list{1},joint_part(count).name)
+                            %disp(joint_part(count).name);
+                            joint_part(count) = joint_part(count).setMotor(list{2}, list{3}, list{4});
+                            robot.joints_avaiable.(part) = joint_part;
+                            break;
+                        end
+                    end
                 end
             end
         end
@@ -92,12 +119,19 @@ classdef Robot
                 robot.loadYarpWBI(name, format_list);
                 % Set WBI
                 robot.setupWBI(name);
-                % Assignin variables
-                assignin('base', 'ROBOT_DOF', size(robot.joints,2));
+                
                 disp('[INFO] Update!');
             else
+                
                 disp('[ERROR] List without joints_avaiable!');
             end
+            % Assignin variables
+            assignin('base', 'ROBOT_DOF', size(robot.joints,2));
+            assignin('base', 'Ts', robot.Ts);
+            %assignin('base', 'nameRobot', robot.robotName);
+            %assignin('base', 'localName', robot.localName);
+            %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
+            setenv('YARP_ROBOT_NAME', robot.realNameRobot);
         end
         
         function joint = getJoint(robot, name)
@@ -255,12 +289,49 @@ classdef Robot
                 return
             end
         end
+        
+        function list = parseFile(copy_yarp_file, name_group)
+            %% Parse file and get list of lines
+            fid = fopen(copy_yarp_file,'r');  % Open text file
+            while (~feof(fid))                                     % For each block:
+                InputText = textscan(fid,'%s',1,'delimiter','\n');
+                
+                counter = 1;
+                [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                if size(mat,1) ~= 0
+                    if size(mat{:},1) ~= 0
+                        group_file = mat{1};
+                        if strcmp(group_file,['[' name_group ']'])
+                            while (~feof(fid))
+                                InputText = textscan(fid,'%s',1,'delimiter','\n');
+                                [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                                if size(mat{:}) ~= 0
+                                    break;
+                                else
+                                    string = InputText{1};
+                                    str = ['' string{1}];
+                                    if size(str,1) > 0
+                                        if ~strcmp(str(1), '#')
+                                            list{counter} = str;
+                                            counter = counter + 1;
+                                        end
+                                    end
+                                end
+                                
+                            end
+                        end
+                    end
+                end
+            end
+            fclose(fid);
+        end
     end
-%         function robot = setNameSpace(nameSpace)
-%             %% Configure type of namespace
-%             robot.nameSpace = nameSpace;
-%         end
-%         
+    
+    %         function robot = setNameSpace(nameSpace)
+    %             %% Configure type of namespace
+    %             robot.nameSpace = nameSpace;
+    %         end
+    %
 %         function robot = setNameList(robot, NAME_LIST)
 %             if ~strcmp(robot.WBI_LIST, NAME_LIST)
 %                 robot.ROBOT_DOF = 25;

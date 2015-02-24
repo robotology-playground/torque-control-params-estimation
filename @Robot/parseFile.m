@@ -1,4 +1,5 @@
-function list = parseFile(robot, copy_yarp_file, name_group)
+function list = parseFile(copy_yarp_file, name_group)
+    %% Parse file and get list of lines
     fid = fopen(copy_yarp_file,'r');  % Open text file
     while (~feof(fid))                                     % For each block:
         InputText = textscan(fid,'%s',1,'delimiter','\n');
