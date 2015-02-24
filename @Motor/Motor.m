@@ -10,8 +10,6 @@ classdef Motor < Joint
         voltage;
         current;
         time;
-        Kt;
-        friction;
     end
     
     properties
@@ -19,21 +17,23 @@ classdef Motor < Joint
         number_motor;
         joint_number;
         part;
+        Kt;
+        friction;
+        ratio = 1;
     end
     
     methods
-        function motor = Motor(name_motor)
+        function motor = Motor(name_motor, Voltage, range_pwm)
             motor.name_motor = name_motor;
+            if exist('Voltage','var') && exist('range_pwm','var')
+                motor.Voltage = Voltage;
+                motor.range_pwm = range_pwm;
+                motor.ratio = Voltage/range_pwm;
+            end
         end
         
 %         function joint = loadIdleMeasureData(joint, position, velocity, acceleration, torque, time)
 %                 joint.friction = Friction(position, velocity, acceleration, torque, time);
-%         end
-        
-%         function joint = setRatio(joint, Voltage, range_pwm)
-%             joint.Voltage = Voltage;
-%             joint.range_pwm = range_pwm;
-%             joint.ratio_V = Voltage/range_pwm;
 %         end
         
 %         function joint = setFrictionToCenter(joint)

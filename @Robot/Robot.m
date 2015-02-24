@@ -13,13 +13,14 @@ classdef Robot
         worldRefFrame = 'root_link';
         robot_fixed = 'true';
         configFile = 'yarpWholeBodyInterface_friction.ini';
+        start_path;
+        joints_avaiable;
 %         
 %         ROBOT_DOF = 0;
 %         counter_joints = 0;
     end
     
     properties
-%         path;
         Ts = 0.01;
         realNameRobot;
         joints;
@@ -28,40 +29,42 @@ classdef Robot
     end
     
     methods
-        function robot = Robot(realNameRobot, codyco_folder)
+        function robot = Robot(realNameRobot, start_path, codyco_folder)
             % Name robot
             robot.realNameRobot = realNameRobot;
+            % Start path
+            robot.start_path = start_path;
             % Codyco folder
             robot.codyco_folder = codyco_folder;
             % folder where exist robot folder
             copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.realNameRobot '/yarpWholeBodyInterface.ini'];
             
-            robot.joints = struct;
+            robot.joints_avaiable = struct;
             % Parse file and build robot
             text = parseFile(robot, copy_yarp_file, 'WBI_YARP_JOINTS');
             for i=1:size(text,2)
                 [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
                 list = tok{:};
-                if ~isfield(robot.joints,list{2})
-                    robot.joints.(list{2}) = Joint(list{1},list{2},list{3});
+                if ~isfield(robot.joints_avaiable,list{2})
+                    robot.joints_avaiable.(list{2}) = Joint(list{1},list{2},list{3});
                 else
-                    robot.joints.(list{2}) = [robot.joints.(list{2}) Joint(list{1},list{2},list{3})];
+                    robot.joints_avaiable.(list{2}) = [robot.joints_avaiable.(list{2}) Joint(list{1},list{2},list{3})];
                 end
             end
         end
         
-        function buildFolders(robot, path_experiment, list_joint)
-            %% Build folder with all dump and images joints
-            if size(list_joint,2) > 0
-                for i=1:size(list_joint,2)
-                    if isa(list_joint{i},'Joint')
-                        path = fullfile(path_experiment,robot.realNameRobot,list_joint{i}.part,list_joint{i}.name);
+        function buildFolders(robot)
+            %% Build folder with all dump and images joints_avaiable
+            if size(robot.joints,2) > 0
+                for i=1:size(robot.joints,2)
+                    if isa(robot.joints{i},'Joint')
+                        path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
                     else
-                        coupled = list_joint{i};
+                        coupled = robot.joints{i};
                         if strcmp(coupled{i}.part,'torso')
-                            path = fullfile(path_experiment,robot.realNameRobot,coupled{i}.part);
+                            path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part);
                         else
-                            path = fullfile(path_experiment,robot.realNameRobot,coupled{i}.part,'shoulder');
+                            path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part,'shoulder');
                         end
                     end
                     if ~exist(path,'dir') % Build folder
@@ -71,35 +74,37 @@ classdef Robot
             end
         end
         
-        function configure(robot, name, list_joint)
+        function configure(robot, name)
             %% Configure Yarp Whole Body Interface
-            if exist('list_joint','var')
-                if size(list_joint,2) > 0
-                    list = robot.getListJoints(list_joint{1});
-                    for i=2:size(list_joint,2)
-                        list = [list ', ' robot.getListJoints(list_joint{i})];
-                    end
-                    if size(list,2) > 0
-                        format_list = [name ' = ( ' list ' )'];
-                    else
-                        format_list = '';
-                    end
-                    robot.loadYarpWBI(name, format_list);
-                    robot.setupWBI(name);
-                    disp('[INFO] Update!');
-                else
-                    disp('[ERROR] List without joints!');
+            if size(robot.joints,2) > 0
+                list = robot.getListJoints(robot.joints{1});
+                for i=2:size(robot.joints,2)
+                    list = [list ', ' robot.getListJoints(robot.joints{i})];
                 end
+                if size(list,2) > 0
+                    format_list = [name ' = ( ' list ' )'];
+                else
+                    format_list = '';
+                end
+                % Plot list of joints_avaiable
+                disp(format_list);
+                % Set Yarp WBI
+                robot.loadYarpWBI(name, format_list);
+                % Set WBI
+                robot.setupWBI(name);
+                % Assignin variables
+                assignin('base', 'ROBOT_DOF', size(robot.joints,2));
+                disp('[INFO] Update!');
             else
-                
+                disp('[ERROR] List without joints_avaiable!');
             end
         end
         
-        function joint = getJoint(robot,name)
+        function joint = getJoint(robot, name)
             %% Get joint from list
             part = robot.getPartFromName(name);
             if size(part,1) > 0
-                group = robot.joints.(part);
+                group = robot.joints_avaiable.(part);
                 for i=1:size(group,2)
                     if strcmp(group(i).name,name)
                         joint{1} = group(i);
@@ -110,8 +115,8 @@ classdef Robot
             joint = {1};
         end
         
-        function joints = getCoupledJoints(robot,name)
-            %% Get Coupled joints from list
+        function joints_avaiable = getCoupledJoints(robot,name)
+            %% Get Coupled joints_avaiable from list
             if strcmp(name,'torso')
                 j = robot.getJoint('torso_yaw');
                 joint{1} = j{1};
@@ -119,7 +124,7 @@ classdef Robot
                 joint{2} = j{1};
                 j = robot.getJoint('torso_pitch');
                 joint{3} = j{1};
-                joints{1} = joint;
+                joints_avaiable{1} = joint;
             else
                 [~,tok] = regexp(name, '(\w+).*?_(\w+).*?', 'match','tokens');
                 if size(tok,1) > 0
@@ -132,12 +137,12 @@ classdef Robot
                             joint{2} = j{1};
                             j = robot.getJoint([name '_yaw']);
                             joint{3} = j{1};
-                            joints{1} = joint;
+                            joints_avaiable{1} = joint;
                             return
                         end
                     end
                 end
-                joints = {};
+                joints_avaiable = {};
             end
             
         end
@@ -186,8 +191,30 @@ classdef Robot
     end
     
     methods (Access = protected, Static)
+        function T = getTransformMatrix(part)
+            %% Get T matrix from part
+            if strcmp(part, 'torso')
+                R = 0.04;
+                r = 0.022;
+                T = [r/R r/(2*R) r/(2*R);
+                    0    1/2     1/2;
+                    0   -1/2     1/2];
+            elseif strcmp(part, 'l_shoulder')
+                t = 0.625;
+                T = [-1     0	0;
+                     -1    -t	0;
+                     0      t  -t];
+            elseif strcmp(part, 'r_shoulder')
+                t = 0.625;
+                T = [1      0   0;
+                     1      t   0;
+                     0     -t   t];
+            else
+                T = zeros(3);
+            end
+        end
         function list = getListJoints(list_joint)
-            %% Get a list of joints to add in yarpWholeBodyInterface
+            %% Get a list of joints_avaiable to add in yarpWholeBodyInterface
             if ~isa(list_joint,'Joint')
                 if size(list_joint,2) > 0
                     list = list_joint{1}.name;
@@ -256,17 +283,17 @@ classdef Robot
 %         function name = setupExperiment(robot, type, logsout, time)
 %             name = [type '-' datestr(now,robot.formatOut)];
 %             number = 0;
-%             for i=1:size(robot.joints,2)
-%                 m = matfile([robot.joints{i}.path name '.mat'],'Writable',true);
+%             for i=1:size(robot.joints_avaiable,2)
+%                 m = matfile([robot.joints_avaiable{i}.path name '.mat'],'Writable',true);
 %                 if robot.isWBIFrictionJoint()
-%                     if isa(robot.joints{i},'CoupledJoints')
-%                         number = (1:size(robot.joints{i}.joint,2));
+%                     if isa(robot.joints_avaiable{i},'CoupledJoints')
+%                         number = (1:size(robot.joints_avaiable{i}.joint,2));
 %                         number = number + (i-1);
 %                     else
 %                         number = number(end) + 1;
 %                     end
 %                 else
-%                     number = robot.joints{i}.number;
+%                     number = robot.joints_avaiable{i}.number;
 %                 end
 %                 m.time = time;
 %                 m.q = logsout.get('q').Values.Data(:,number);
@@ -274,10 +301,10 @@ classdef Robot
 %                 m.qDD = logsout.get('qDD').Values.Data(:,number);
 %                 m.tau = logsout.get('tau').Values.Data(:,number);
 %                 PWM = struct;
-%                 PWM.(robot.joints{i}.group_select) = logsout.get(['pwm_' robot.joints{i}.group_select]).Values.Data;
+%                 PWM.(robot.joints_avaiable{i}.group_select) = logsout.get(['pwm_' robot.joints_avaiable{i}.group_select]).Values.Data;
 %                 m.PWM = PWM;
 %                 Current = struct;
-%                 Current.(robot.joints{i}.group_select) = logsout.get(['current_' robot.joints{i}.group_select]).Values.Data;
+%                 Current.(robot.joints_avaiable{i}.group_select) = logsout.get(['current_' robot.joints_avaiable{i}.group_select]).Values.Data;
 %                 m.Current = Current;
 %             end
 %         end
@@ -291,18 +318,18 @@ classdef Robot
 %             if ~exist('counter','var')
 %                 counter = 1;
 %             end
-%             for i=1:size(robot.joints,2)
+%             for i=1:size(robot.joints_avaiable,2)
 %                 if type_idle == 1
-%                     robot.joints{i} = robot.joints{i}.loadIdleMeasure(name);
-%                     [ ~, counter] = robot.joints{i}.savePictureFriction(counter);
+%                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadIdleMeasure(name);
+%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureFriction(counter);
 %                 else
-%                     robot.joints{i} = robot.joints{i}.loadRefMeasure(name);
+%                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadRefMeasure(name);
 %                     % FIGURE - PWM vs Torque
-%                     [ ~, counter] = robot.joints{i}.savePictureKt(counter);
-%                     robot.joints{i}.saveControlToFile();
+%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureKt(counter);
+%                     robot.joints_avaiable{i}.saveControlToFile();
 %                 end
 %                 % Save information to file
-%                 robot.joints{i}.saveToFile();
+%                 robot.joints_avaiable{i}.saveToFile();
 %             end
 %         end
 %         
@@ -338,9 +365,9 @@ classdef Robot
 %             end
 %             
 %             if isWBIFrictionJoint(robot)
-%                 robot.joints{size(robot.joints,2)+1} = motor;
+%                 robot.joints_avaiable{size(robot.joints_avaiable,2)+1} = motor;
 %             else
-%                 robot.joints{motor.number} = motor;
+%                 robot.joints_avaiable{motor.number} = motor;
 %             end
 %             
 %             if strcmp(robot.joint_list,'')
@@ -349,21 +376,21 @@ classdef Robot
 %                 robot.joint_list = [robot.joint_list ', ' motor.getJointList()];
 %             end
 %             
-%             if exist([robot.joints{end}.path 'parameters.mat'],'file')
-%                 robot.joints{end} = robot.joints{end}.loadParameters('parameters');
+%             if exist([robot.joints_avaiable{end}.path 'parameters.mat'],'file')
+%                 robot.joints_avaiable{end} = robot.joints_avaiable{end}.loadParameters('parameters');
 %             end
 %         end
         
 %         function robot = setInLastRatio(robot, Voltage, range_pwm)
 %             if exist('Voltage','var') && exist('range_pwm','var')
-%                 robot.joints{end} = robot.joints{end}.setRatio(Voltage, range_pwm);
+%                 robot.joints_avaiable{end} = robot.joints_avaiable{end}.setRatio(Voltage, range_pwm);
 %             else
-%                 robot.joints{end} = robot.joints{end}.loadParameters(name_parameters);
+%                 robot.joints_avaiable{end} = robot.joints_avaiable{end}.loadParameters(name_parameters);
 %             end
 %         end
         
 %         function saveInLastParameters(robot)
-%             robot.joints{end}.saveParameters();
+%             robot.joints_avaiable{end}.saveParameters();
 %         end
         
 %         function robot = addParts(robot, part, type)
@@ -393,7 +420,7 @@ classdef Robot
 %                 ' --robot icub'...
 % %                 ' --part ' joint.group_select ...
 %                 ' --rate ' num2str(rate) ...
-% %                 ' --joints "(' num2str(joint.number_part-1) ')"' ...
+% %                 ' --joints_avaiable "(' num2str(joint.number_part-1) ')"' ...
 %                 ' --dataToDump "(getOutputs getCurrents)"'];
 %         end
         
