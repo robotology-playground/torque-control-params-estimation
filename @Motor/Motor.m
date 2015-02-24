@@ -32,27 +32,23 @@ classdef Motor
             end
         end
         
+        function motor = loadMeasure(motor, data, part, number)
+            motor.q = data.q;
+            motor.qdot = data.qD;
+            motor.torque = data.tau;
+            temp_pwm = data.PWM.(part);
+            motor.pwm = temp_pwm(:,number);
+            motor.voltage = motor.ratio*motor.pwm;
+            if isfield(data,'current')
+                motor.current = data.current;
+            end
+            motor.time = data.time;
+        end
+        
+        
+        
 %         function joint = loadIdleMeasureData(joint, position, velocity, acceleration, torque, time)
 %                 joint.friction = Friction(position, velocity, acceleration, torque, time);
-%         end
-        
-%         function joint = setFrictionToCenter(joint)
-%             joint.friction = joint.friction.setToCenter();
-%         end
-        
-%         function joint = loadReference(joint, data)
-%             joint.q = data.q;
-%             joint.qdot = data.qD;
-%             joint.torque = data.tau;
-%             temp_pwm = data.PWM.(joint.group_select);
-%             joint.pwm = temp_pwm(:,joint.number_part);
-%             joint.voltage = joint.ratio_V*joint.pwm;
-%             if isfield(data,'current')
-%                 joint.current = data.current;
-%             end
-%             joint.time = data.time;
-%             joint.friction_model = joint.friction.getFriction(joint.qdot);
-%             joint = joint.evaluateCoeff();
 %         end
         
 %         function joint = evaluateCoeff(joint)

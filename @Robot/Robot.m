@@ -56,7 +56,7 @@ classdef Robot
         
         function robot = loadParameters(robot, path_project)
             %% Load information about motors
-            text = robot.parseFile(path_project, 'JOINT_LIST PARAMETERS');
+            text = robot.parseFile(path_project, 'JOINT_LIST_PARAMETERS');
             for i=1:size(text,2)
                 [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
                 list = tok{:};
@@ -75,10 +75,42 @@ classdef Robot
             end
         end
         
-        function robot = loadData(robot)
+        function robot = loadData(robot, type)
             %% Load all data from path folder
-            for i=1:size(robot.joints_avaiable,2)
-                path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
+            if size(robot.joints,2) > 0
+                for i=1:size(robot.joints,2)
+                    path = robot.getPathJoint(i);
+                    if exist(path,'dir')
+                        path_type_file = fullfile(path,[type '.mat']);
+                        if exist(path_type_file,'file')
+                            data = load(path_type_file);
+                            if isa(robot.joints{i},'Joint')
+                                robot.joints{i} = robot.joints{i}.loadData(type, data);
+                            else
+                                coupled = robot.joints{i};
+                                T = robot.getTransformMatrix(coupled);
+                                mot_data = struct;
+                                mot_data.q = (T^-1*data.q')';
+                                mot_data.qD = (T^-1*data.qD')';
+                                mot_data.qDD = (T^-1*data.qDD')';
+                                mot_data.tau = (T'*data.tau')';
+                                
+                                for count=1:size(coupled,2)
+                                    data_temp = struct;
+                                    data_temp.q = mot_data.q(:,i);
+                                    data_temp.qD = mot_data.qD(:,i);
+                                    data_temp.qDD = mot_data.qDD(:,i);
+                                    data_temp.tau = mot_data.tau(:,i);
+                                    data_temp.PWM = data.PWM;
+                                    data_temp.Current = data.Current;
+                                    data_temp.time = data.time;
+                                    coupled{count} = coupled{count}.loadData(type, data_temp);
+                                end
+                                robot.joints{i} = coupled;
+                            end
+                        end
+                    end
+                end
             end
         end
         
@@ -86,16 +118,7 @@ classdef Robot
             %% Build folder with all dump and images joints_avaiable
             if size(robot.joints,2) > 0
                 for i=1:size(robot.joints,2)
-                    if isa(robot.joints{i},'Joint')
-                        path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
-                    else
-                        coupled = robot.joints{i};
-                        if strcmp(coupled{i}.part,'torso')
-                            path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part);
-                        else
-                            path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part,'shoulder');
-                        end
-                    end
+                    path = robot.getPathJoint(i);
                     if ~exist(path,'dir') % Build folder
                         mkdir(path);
                     end
@@ -128,7 +151,7 @@ classdef Robot
                 disp('[ERROR] List without joints_avaiable!');
             end
             % Assignin variables
-            assignin('base', 'ROBOT_DOF', size(robot.joints,2));
+            assignin('base', 'ROBOT_DOF', robot.getDOF());
             assignin('base', 'Ts', robot.Ts);
             %assignin('base', 'nameRobot', robot.robotName);
             %assignin('base', 'localName', robot.localName);
@@ -206,6 +229,21 @@ classdef Robot
     end
     
     methods(Access = protected)
+        function number = getDOF(robot)
+            if size(robot.joints,2) > 0
+                number = 0;
+                for i=1:size(robot.joints,2)
+                    if isa(robot.joints{i},'Joint')
+                        number = number + 1;
+                    else
+                        number = number + size(robot.joints{i},2);
+                    end
+                end
+            else
+                number = 0;
+            end
+        end
+        
         function text = setupWBI(robot, name)
             %% Setup Whole Body Interface
             path = fullfile(getenv('HOME'),'.local','share','yarp','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
@@ -244,14 +282,29 @@ classdef Robot
             copyfile(copy_yarp_file, name_yarp_file);
             
             fid = fopen(name_yarp_file, 'a+');
-            fprintf(fid, '# TEST JOINT\n%s', [name ' = (' list ')']);
+            fprintf(fid, '# TEST JOINT\n%s',list);
             fclose(fid);
+        end
+        
+        function path = getPathJoint(robot, i)
+            %% Get path from joints list
+            if isa(robot.joints{i},'Joint')
+                path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
+            else
+                coupled = robot.joints{i};
+                if strcmp(coupled{i}.part,'torso')
+                    path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part);
+                else
+                    path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part,'shoulder');
+                end
+            end
         end
     end
     
     methods (Access = protected, Static)
-        function T = getTransformMatrix(part)
+        function T = getTransformMatrix(coupled)
             %% Get T matrix from part
+            part = coupled{1}.part;
             if strcmp(part, 'torso')
                 R = 0.04;
                 r = 0.022;

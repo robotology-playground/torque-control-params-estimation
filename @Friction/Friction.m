@@ -52,14 +52,7 @@ classdef Friction
             end
             obj.experiment = '';
         end
-        
-%         function obj = addData(obj, velocity, acceleration, torque, time)
-%             
-%             obj = obj.minTh_vel();
-%             obj = obj.setToCenter();
-%             
-%         end
-        
+
         function obj = minTh_vel(obj, step, velMax)
             if ~exist('step','var')
                 step = 0.1;
@@ -131,13 +124,6 @@ classdef Friction
         
         function obj = setToCenter(obj)
             %% Remove from data offset from wrong models
-%             if obj.KcP < 0
-%                 obj.torque = -obj.torque;
-%                 obj.KcP = -obj.KcP;
-%                 obj.KcN = -obj.KcN;
-%                 obj.KvP = -obj.KvP;
-%                 obj.KvN = -obj.KvN;
-%             end
             %obj.offset = mean(obj.torque);
             obj.offset = (obj.KcP-obj.KcN)/2 + obj.KcN;
             %Scaled Kc and Kv

@@ -16,7 +16,7 @@ classdef Joint
     methods
         function joint = Joint(name, part, number)
             joint.name = name;
-            joint.number = str2double(number);
+            joint.number = str2double(number) + 1;
             joint.part = part;
         end
         
@@ -24,16 +24,15 @@ classdef Joint
             %% Set motor in joints
             joint.motor = Motor(name_motor, Voltage, range_pwm);
         end
-%         saveParameters(obj);
-%         obj = loadParameters(obj, file);
-%         obj = loadIdleMeasure(obj, file, cutoff);
-%         obj = loadRefMeasure(obj, file);
-%         obj = setRatio(obj, Voltage, range_pwm);
-%         list = getJointList(obj);
-%         [hFig, counter] = savePictureFriction(obj, counter);
-%         [hFig, counter] = savePictureKt(obj, counter);
-%         saveToFile(obj, name);
-%         saveControlToFile(obj, name);
+        
+        function joint = loadData(joint, type, data)
+            %% Load Friction measure
+            if strcmp(type,'ref')
+                joint.motor = joint.motor.loadMeasure(data, joint.part, joint.number);
+            elseif strcmp(type,'idle')
+                joint.motor.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time);
+            end
+        end
     end
     
     methods (Access = public, Static)
