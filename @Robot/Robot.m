@@ -58,7 +58,10 @@ classdef Robot
             %% Load information about motors
             text = robot.parseFile(path_project, 'JOINT_LIST_PARAMETERS');
             for i=1:size(text,2)
-                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
+                
+                %[~,tok] = regexp(text{i}, '(\w+).*? = (\w+).*?,(\w+).*?,(\w+).*?', 'match','tokens');
+                [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
+                [list_motors,~] = regexp(text{i}, '\((\w+).*?\)', 'match','tokens');
                 list = tok{:};
                 part = robot.getPartFromName(list{1});
                 if isfield(robot.joints_avaiable,part)
@@ -66,7 +69,7 @@ classdef Robot
                     for count=1:size(joint_part,2)
                         if strcmp(list{1},joint_part(count).name)
                             %disp(joint_part(count).name);
-                            joint_part(count) = joint_part(count).setMotor(list{2}, list{3}, list{4});
+                            joint_part(count) = joint_part(count).setMotor(path_project, list_motors);
                             robot.joints_avaiable.(part) = joint_part;
                             break;
                         end
@@ -141,7 +144,7 @@ classdef Robot
                 % Plot list of joints_avaiable
                 disp(format_list);
                 % Set Yarp WBI
-                robot.loadYarpWBI(name, format_list);
+                robot.loadYarpWBI(format_list);
                 % Set WBI
                 text = robot.setupWBI(name);
                 
@@ -226,6 +229,117 @@ classdef Robot
             robot.worldRefFrame = worldRefFrame;
             robot.robot_fixed = robot_fixed;
         end
+        
+        function command = getControlBoardCommand(robot, rate)
+            %% Get string to start ControlBoardDumper
+            if ~exist('rate','var')
+                rate = 10;
+            end
+            command = ['controlBoardDumper'...
+                ' --robot icub'...
+%                 ' --part ' joint.group_select ...
+                ' --rate ' num2str(rate) ...
+                %                 ' --joints_avaiable "(' num2str(joint.number_part-1) ')"' ...
+                ' --dataToDump "(getOutputs getCurrents)"'];
+        end
+        
+        function name = saveData(robot, type, logsout, time)
+            %% Save data from simulink
+            name = [type '-' datestr(now,robot.formatOut)];
+            number = 0;
+            for i=1:size(robot.joints,2)
+                path = fullfile(robot.getPathJoint(i), [name '.mat']);
+                m = matfile(path,'Writable',true);
+                if isa(robot.joints{i},'Joint')
+                    number = number(end) + 1;
+                else
+                    number = (1:size(robot.joints{i},2));
+                    number = number + (i-1);
+                end
+                % data to will be saved
+                m.time = time;
+                m.q = logsout.get('q').Values.Data(:,number);
+                m.qD = logsout.get('qD').Values.Data(:,number);
+                m.qDD = logsout.get('qDD').Values.Data(:,number);
+                m.tau = logsout.get('tau').Values.Data(:,number);
+                PWM = struct;
+                PWM.(robot.joints_avaiable{i}.group_select) = logsout.get(['pwm_' robot.joints_avaiable{i}.group_select]).Values.Data;
+                m.PWM = PWM;
+                Current = struct;
+                Current.(robot.joints_avaiable{i}.group_select) = logsout.get(['current_' robot.joints_avaiable{i}.group_select]).Values.Data;
+                m.Current = Current;
+            end
+        end
+        
+        function counter = plotAndPrintAllData(robot, counter)
+            %% Plot all information about joints
+            if ~exist('counter','var')
+                counter = 0;
+            end
+            for i=1:size(robot.joints,2)
+                if isa(robot.joints{i},'Joint')
+                    if robot.joints{i}.asPlot()
+                        counter = counter + 1;
+                        hCollect = figure(counter); %create new figure
+                        set(hCollect, 'Position', [0 0 800 600]);
+                        robot.joints{i}.plotCollected();
+                        %Save information to file
+                        text = robot.joints{i}.saveToFile();
+                        % Save figure
+                        robot.saveToFile(robot.getPathJoint(i), 'data', text);
+                        pathsave = robot.getPathJoint(i);
+                        saveas(hCollect,fullfile(pathsave, [robot.joints{i}.part '.fig']),'fig');
+                        saveas(hCollect,fullfile(pathsave, [robot.joints{i}.part '.png']),'png');
+                    end
+                else
+                    coupled = robot.joints{i};
+                    if size(coupled,2) > 0
+                        number_plot = coupled{1}.asPlot();
+                        if number_plot
+                            counter = counter + 1;
+                            hCollect = figure(counter); %create new figure
+                            set(hCollect, 'Position', [0 0 800 600]);
+                            for count=1:size(coupled,2)
+                                if size(coupled{count}.motor.friction,1) > 0
+                                    if size(coupled{count}.motor.Kt,1) > 0
+                                        subplot(3,number_plot,count*2-1);
+                                        coupled{count}.motor.friction.plotCollected();
+                                        grid;
+                                        subplot(3,number_plot,count*2);
+                                        coupled{count}.motor.plotCollected();
+                                        grid;
+                                    else
+                                        subplot(3,number_plot,count);
+                                        coupled{count}.plotCollected();
+                                        grid;
+                                    end
+                                end
+                            end
+                            % Save data
+                            %
+                            %
+                            % Save figure
+                            pathsave = robot.getPathJoint(i);
+                            saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.fig']),'fig');
+                            saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.png']),'png');
+                        end
+                    end
+                end
+            end
+        end
+        
+                
+    %                 if type_idle == 1
+    %                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadIdleMeasure(name);
+    %                     [ ~, counter] = robot.joints_avaiable{i}.savePictureFriction(counter);
+    %                 else
+    %                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadRefMeasure(name);
+    %                     % FIGURE - PWM vs Torque
+%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureKt(counter);
+%                     robot.joints_avaiable{i}.saveControlToFile();
+%                 end
+%                 % Save information to file
+%                 robot.joints_avaiable{i}.saveToFile();
     end
     
     methods(Access = protected)
@@ -269,7 +383,7 @@ classdef Robot
             fclose(fid);
         end
         
-        function loadYarpWBI(robot, name, list)
+        function loadYarpWBI(robot, list)
             %% Load and save in BUILD directory configuraton
             path = fullfile(getenv('HOME'), '.local', 'share', 'yarp', 'robots', robot.realNameRobot, robot.configFile);
             if exist(path,'file')
@@ -302,6 +416,13 @@ classdef Robot
     end
     
     methods (Access = protected, Static)
+        function saveToFile(path, name,text)
+            fileID = fopen(fullfile(path,[name '.txt']),'w');
+            fprintf(fileID,'%s',text);
+            % Close
+            fclose(fileID);
+        end
+        
         function T = getTransformMatrix(coupled)
             %% Get T matrix from part
             part = coupled{1}.part;
@@ -367,10 +488,12 @@ classdef Robot
                 return
             end
         end
-        
-        function list = parseFile(copy_yarp_file, name_group)
+    end
+    
+    methods (Access = public, Static)
+        function list = parseFile(file, name_group)
             %% Parse file and get list of lines
-            fid = fopen(copy_yarp_file,'r');  % Open text file
+            fid = fopen(file,'r');  % Open text file
             while (~feof(fid))                                     % For each block:
                 InputText = textscan(fid,'%s',1,'delimiter','\n');
                 
@@ -404,62 +527,7 @@ classdef Robot
             fclose(fid);
         end
     end
-         
-
-%         
-%         function name = setupExperiment(robot, type, logsout, time)
-%             name = [type '-' datestr(now,robot.formatOut)];
-%             number = 0;
-%             for i=1:size(robot.joints_avaiable,2)
-%                 m = matfile([robot.joints_avaiable{i}.path name '.mat'],'Writable',true);
-%                 if robot.isWBIFrictionJoint()
-%                     if isa(robot.joints_avaiable{i},'CoupledJoints')
-%                         number = (1:size(robot.joints_avaiable{i}.joint,2));
-%                         number = number + (i-1);
-%                     else
-%                         number = number(end) + 1;
-%                     end
-%                 else
-%                     number = robot.joints_avaiable{i}.number;
-%                 end
-%                 m.time = time;
-%                 m.q = logsout.get('q').Values.Data(:,number);
-%                 m.qD = logsout.get('qD').Values.Data(:,number);
-%                 m.qDD = logsout.get('qDD').Values.Data(:,number);
-%                 m.tau = logsout.get('tau').Values.Data(:,number);
-%                 PWM = struct;
-%                 PWM.(robot.joints_avaiable{i}.group_select) = logsout.get(['pwm_' robot.joints_avaiable{i}.group_select]).Values.Data;
-%                 m.PWM = PWM;
-%                 Current = struct;
-%                 Current.(robot.joints_avaiable{i}.group_select) = logsout.get(['current_' robot.joints_avaiable{i}.group_select]).Values.Data;
-%                 m.Current = Current;
-%             end
-%         end
-
-%         function [robot, counter] = plotAndPrintAllData(robot, name, counter)
-%             if ~strcmp(name(1:3),'ref')
-%                 type_idle = 1;
-%             else
-%                 type_idle = 0;  
-%             end
-%             if ~exist('counter','var')
-%                 counter = 1;
-%             end
-%             for i=1:size(robot.joints_avaiable,2)
-%                 if type_idle == 1
-%                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadIdleMeasure(name);
-%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureFriction(counter);
-%                 else
-%                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadRefMeasure(name);
-%                     % FIGURE - PWM vs Torque
-%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureKt(counter);
-%                     robot.joints_avaiable{i}.saveControlToFile();
-%                 end
-%                 % Save information to file
-%                 robot.joints_avaiable{i}.saveToFile();
-%             end
-%         end
-        
+    
 %         function robot = addParts(robot, part, type)
 %             if strcmp(part,'leg')
 %                 robot = robot.addMotor(part, type,'hip','pitch');
@@ -478,18 +546,7 @@ classdef Robot
 %             end
 %         end
         
-%         function command = getControlBoardCommand(robot, rate)
-%             %% Get string to start ControlBoardDumper
-%             if ~exist('rate','var')
-%                 rate = 10;
-%             end
-%             command = ['controlBoardDumper'...
-%                 ' --robot icub'...
-% %                 ' --part ' joint.group_select ...
-%                 ' --rate ' num2str(rate) ...
-% %                 ' --joints_avaiable "(' num2str(joint.number_part-1) ')"' ...
-%                 ' --dataToDump "(getOutputs getCurrents)"'];
-%         end
+
         
     
 end
