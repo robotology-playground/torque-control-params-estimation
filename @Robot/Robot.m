@@ -262,9 +262,13 @@ classdef Robot
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
         
-        function name = saveData(robot, type, logsout, time)
+        function robot = saveData(robot, type, logsout, time, fix)
             %% Save data from simulink
-            name = [type '-' datestr(now,robot.formatOut)];
+            if exist('fix','var')
+                name = type;
+            else
+                name = [type '-' datestr(now,robot.formatOut)];
+            end
             number = 0;
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
@@ -284,10 +288,10 @@ classdef Robot
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
                 PWM = struct;
-                PWM.(robot.joints_avaiable{i}.group_select) = logsout.get(['pwm_' robot.joints_avaiable{i}.group_select]).Values.Data;
+                PWM.(robot.joints{i}.part) = logsout.get(['pwm_' robot.joints{i}.part]).Values.Data;
                 m.PWM = PWM;
                 Current = struct;
-                Current.(robot.joints_avaiable{i}.group_select) = logsout.get(['current_' robot.joints_avaiable{i}.group_select]).Values.Data;
+                Current.(robot.joints{i}.part) = logsout.get(['current_' robot.joints{i}.part]).Values.Data;
                 m.Current = Current;
             end
         end
@@ -468,6 +472,7 @@ classdef Robot
     
     methods (Access = protected, Static)
         function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible)
+            text = '';
             if joint.asPlot()
                 counter = counter + 1;
                 hCollect = figure(counter); %create new figure
