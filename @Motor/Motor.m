@@ -12,21 +12,21 @@ classdef Motor
         time;
         friction_model;
         % Information about motor
-        name_motor;
         Voltage;
         range_pwm;
-        n_matrix;
     end
     
     properties
+        name;
+        n_matrix;
         Kt;
         friction;
         ratio = 1;
     end
     
     methods
-        function motor = Motor(name_motor, n_matrix)
-            motor.name_motor = name_motor;
+        function motor = Motor(name, n_matrix)
+            motor.name = name;
             motor.n_matrix = n_matrix;
         end
         
@@ -35,13 +35,13 @@ classdef Motor
             for i=1:size(text,2)
                 [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
                 tok = tok{:};
-                if strcmp(tok{1},motor.name_motor)
+                if strcmp(tok{1},motor.name)
                     motor = motor.setRatio(tok{2},tok{3});
                 end
             end
         end
         
-        function motor = setRatio(Voltage, range_pwm)
+        function motor = setRatio(motor, Voltage, range_pwm)
             motor.Voltage = str2double(Voltage); 
             motor.range_pwm = str2double(range_pwm);
             motor.ratio = motor.Voltage/motor.range_pwm;
@@ -74,7 +74,7 @@ classdef Motor
         
         function plotMotorModel(motor)
             %% Plot Motor model
-            title(sprintf('Kt: %12.8f [Nm]/[V] - Name motor: %s',motor.Kt, motor.name_motor));
+            title(sprintf('Kt: %12.8f [Nm]/[V] - Name motor: %s',motor.Kt, motor.name));
             plot(motor.voltage , motor.voltage*motor.Kt,'r-','LineWidth',3);
         end
         
@@ -114,7 +114,7 @@ classdef Motor
             %% Get Latex File
             text = sprintf('\n---- Kt -> Latex ----\n');
             text = [text, sprintf('\n\\begin{equation}\n')];
-            text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',motor.name_motor)];
+            text = [text, sprintf('\\label{eq:%sCoeffPWM}\n',motor.name)];
             text = [text, sprintf('\\begin{array}{cccl}\n')];
             text = [text, sprintf('\\bar Kt & \\simeq & %12.8f & \\frac{[Nm]}{[V]}\n',motor.Kt)];
             text = [text, sprintf('\\end{array}\n')];
@@ -125,7 +125,7 @@ classdef Motor
             %% Information joint estimation
             text = '';
             if size(motor.Kt,1) ~= 0
-                text = sprintf('Control Friction\n');
+                text = sprintf('\n----------> Control <----------\n');
                 text = [text sprintf('PWM = kt tau - [s(q)(kc+ + kv+ qdot q) + s(-q)(kc- + kv- qdot q)]\n')];
                 text = [text sprintf('kc+: %12.8f [V] - kc-: %12.8f [V] \n',motor.friction.KcP/motor.Kt, motor.friction.KcN/motor.Kt)];
                 text = [text sprintf('kv+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',motor.friction.KvP/motor.Kt, motor.friction.KvN/motor.Kt)];

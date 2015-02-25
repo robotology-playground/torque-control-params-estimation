@@ -12,13 +12,14 @@ classdef Robot
         robot_fixed = 'true';
         configFile = 'yarpWholeBodyInterface_friction.ini';
         start_path;
-        joints_avaiable;
+        path_project;
     end
     
     properties
         Ts = 0.01;
         realNameRobot;
         joints;
+        joints_avaiable;
         robotName = 'icub';
         localName = 'simulink_joint_friction';
     end
@@ -47,19 +48,18 @@ classdef Robot
                 end
             end
             % Load all parameters from file
-            path_project = fullfile(robot.start_path,robot.realNameRobot,'JointNameList.ini');
-            if exist(path_project,'file')
-                robot = robot.loadParameters(path_project);
+            robot.path_project = fullfile(robot.start_path,robot.realNameRobot,'JointNameList.ini');
+            if exist(robot.path_project,'file')
+                robot = robot.loadParameters();
                 disp('[INFO] Load configuration');
             end
         end
         
-        function robot = loadParameters(robot, path_project)
+        function robot = loadParameters(robot)
             %% Load information about motors
-            text = robot.parseFile(path_project, 'JOINT_LIST_PARAMETERS');
+            text = robot.parseFile(robot.path_project, 'JOINT_LIST_PARAMETERS');
             for i=1:size(text,2)
                 
-                %[~,tok] = regexp(text{i}, '(\w+).*? = (\w+).*?,(\w+).*?,(\w+).*?', 'match','tokens');
                 [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
                 [list_motors,~] = regexp(text{i}, '\((\w+).*?\)', 'match','tokens');
                 list = tok{:};
@@ -69,7 +69,7 @@ classdef Robot
                     for count=1:size(joint_part,2)
                         if strcmp(list{1},joint_part(count).name)
                             %disp(joint_part(count).name);
-                            joint_part(count) = joint_part(count).setMotor(path_project, list_motors);
+                            joint_part(count) = joint_part(count).setMotor(robot.path_project, list_motors);
                             robot.joints_avaiable.(part) = joint_part;
                             break;
                         end
@@ -83,34 +83,39 @@ classdef Robot
             if size(robot.joints,2) > 0
                 for i=1:size(robot.joints,2)
                     path = robot.getPathJoint(i);
-                    if exist(path,'dir')
+                    if isa(robot.joints{i},'Joint')
+                        path_type_file = fullfile(path,robot.joints{i}.motor.name,[type '.mat']);
+                        if exist(path_type_file,'file')
+                            data = load(path_type_file);
+                            robot.joints{i} = robot.joints{i}.loadData(type, data);
+                        end
+                    else
                         path_type_file = fullfile(path,[type '.mat']);
                         if exist(path_type_file,'file')
                             data = load(path_type_file);
-                            if isa(robot.joints{i},'Joint')
-                                robot.joints{i} = robot.joints{i}.loadData(type, data);
-                            else
-                                coupled = robot.joints{i};
-                                T = robot.getTransformMatrix(coupled);
-                                mot_data = struct;
-                                mot_data.q = (T^-1*data.q')';
-                                mot_data.qD = (T^-1*data.qD')';
-                                mot_data.qDD = (T^-1*data.qDD')';
-                                mot_data.tau = (T'*data.tau')';
-                                
-                                for count=1:size(coupled,2)
+                            coupled = robot.joints{i};
+                            [T, list_motor] = robot.getTransformMatrix(coupled);
+                            mot_data = struct;
+                            mot_data.q = (T^-1*data.q')';
+                            mot_data.qD = (T^-1*data.qD')';
+                            mot_data.qDD = (T^-1*data.qDD')';
+                            mot_data.tau = (T'*data.tau')';
+                            
+                            for count=1:size(coupled,2)
+                                for i_motor=1:size(list_motor,2)
                                     data_temp = struct;
-                                    data_temp.q = mot_data.q(:,i);
-                                    data_temp.qD = mot_data.qD(:,i);
-                                    data_temp.qDD = mot_data.qDD(:,i);
-                                    data_temp.tau = mot_data.tau(:,i);
+                                    data_temp.q = mot_data.q(:,i_motor);
+                                    data_temp.qD = mot_data.qD(:,i_motor);
+                                    data_temp.qDD = mot_data.qDD(:,i_motor);
+                                    data_temp.tau = mot_data.tau(:,i_motor);
                                     data_temp.PWM = data.PWM;
                                     data_temp.Current = data.Current;
                                     data_temp.time = data.time;
-                                    coupled{count} = coupled{count}.loadData(type, data_temp);
+                                    coupled{count} = coupled{count}.loadData(type, data_temp,list_motor{i_motor}{1});
+                                    
                                 end
-                                robot.joints{i} = coupled;
                             end
+                            robot.joints{i} = coupled;
                         end
                     end
                 end
@@ -122,8 +127,22 @@ classdef Robot
             if size(robot.joints,2) > 0
                 for i=1:size(robot.joints,2)
                     path = robot.getPathJoint(i);
-                    if ~exist(path,'dir') % Build folder
-                        mkdir(path);
+                    if isa(robot.joints{i},'Joint')
+                        path_motor = fullfile(path,robot.joints{i}.motor.name);
+                        if ~exist(path_motor,'dir') % Build folder
+                            mkdir(path_motor);
+                        end
+                    else
+                        % List of motor
+                        coupled = robot.joints{i};
+                        for count=1:size(coupled,2)
+                            for count_motor=1:size(coupled{count}.motor,2)
+                                path_motor = fullfile(path,coupled{count}.motor(count_motor).name);
+                                if ~exist(path_motor,'dir') % Build folder
+                                    mkdir(path_motor);
+                                end
+                            end
+                        end
                     end
                 end
             end
@@ -248,14 +267,16 @@ classdef Robot
             name = [type '-' datestr(now,robot.formatOut)];
             number = 0;
             for i=1:size(robot.joints,2)
-                path = fullfile(robot.getPathJoint(i), [name '.mat']);
-                m = matfile(path,'Writable',true);
                 if isa(robot.joints{i},'Joint')
+                    path = fullfile(robot.getPathJoint(i),robot.joints{i}.motor.name,[name '.mat']);
                     number = number(end) + 1;
                 else
+                    path = fullfile(robot.getPathJoint(i), [name '.mat']);
+                    
                     number = (1:size(robot.joints{i},2));
                     number = number + (i-1);
                 end
+                m = matfile(path,'Writable',true);
                 % data to will be saved
                 m.time = time;
                 m.q = logsout.get('q').Values.Data(:,number);
@@ -278,19 +299,9 @@ classdef Robot
             end
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
-                    if robot.joints{i}.asPlot()
-                        counter = counter + 1;
-                        hCollect = figure(counter); %create new figure
-                        set(hCollect, 'Position', [0 0 800 600]);
-                        robot.joints{i}.plotCollected();
-                        %Save information to file
-                        text = robot.joints{i}.saveToFile();
-                        % Save figure
-                        robot.saveToFile(robot.getPathJoint(i), 'data', text);
-                        pathsave = robot.getPathJoint(i);
-                        saveas(hCollect,fullfile(pathsave, [robot.joints{i}.part '.fig']),'fig');
-                        saveas(hCollect,fullfile(pathsave, [robot.joints{i}.part '.png']),'png');
-                    end
+                    text = robot.joints{i}.getInformation();
+                    [counter, text_m] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
+                    robot.saveToFile(robot.getPathJoint(i), 'data', [text sprintf('\n') text_m]);
                 else
                     coupled = robot.joints{i};
                     if size(coupled,2) > 0
@@ -299,50 +310,90 @@ classdef Robot
                             counter = counter + 1;
                             hCollect = figure(counter); %create new figure
                             set(hCollect, 'Position', [0 0 800 600]);
+                            motor_plotted = {};
+                            counter_image = 0;
                             for count=1:size(coupled,2)
-                                if size(coupled{count}.motor.friction,1) > 0
-                                    if size(coupled{count}.motor.Kt,1) > 0
-                                        subplot(3,number_plot,count*2-1);
-                                        coupled{count}.motor.friction.plotCollected();
-                                        grid;
-                                        subplot(3,number_plot,count*2);
-                                        coupled{count}.motor.plotCollected();
-                                        grid;
-                                    else
-                                        subplot(3,number_plot,count);
-                                        coupled{count}.plotCollected();
-                                        grid;
+                                for i_motor=1:size(coupled{count}.motor,2)
+                                    name_i_motor = coupled{count}.motor(i_motor).name;
+                                    if ~robot.isInList(motor_plotted, name_i_motor)
+                                        counter_image = counter_image + 1;
+                                        motor_plotted{i_motor} = name_i_motor;
+                                        if size(coupled{count}.motor(i_motor).friction,1) > 0
+                                            if size(coupled{count}.motor(i_motor).Kt,1) > 0
+                                                subplot(3,number_plot,counter_image*2-1);
+                                                coupled{count}.motor(i_motor).friction.plotCollected();
+                                                grid;
+                                                subplot(3,number_plot,counter_image*2);
+                                                coupled{count}.motor(i_motor).plotCollected();
+                                                grid;
+                                            else
+                                                subplot(3,number_plot,counter_image);
+                                                coupled{count}.plotCollected();
+                                                grid;
+                                            end
+                                        end
                                     end
                                 end
-                            end
-                            % Save data
-                            %
-                            %
+                            end                         
                             % Save figure
                             pathsave = robot.getPathJoint(i);
                             saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.fig']),'fig');
                             saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.png']),'png');
+                            % Save single plot
+                            motor_plotted = {};
+                            text = [coupled{1}.part sprintf('\n')];
+                            for count=1:size(coupled,2)
+                                for i_motor=1:size(coupled{count}.motor,2)
+                                    name_i_motor = coupled{count}.motor(i_motor).name;
+                                    if ~robot.isInList(motor_plotted, name_i_motor)
+                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off');
+                                        text = [text sprintf('\n') text_m];
+                                        motor_plotted{i_motor} = name_i_motor;
+                                    end
+                                end
+                            end
+                            robot.saveToFile(pathsave, 'data', text);
                         end
                     end
                 end
             end
         end
-        
-                
-    %                 if type_idle == 1
-    %                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadIdleMeasure(name);
-    %                     [ ~, counter] = robot.joints_avaiable{i}.savePictureFriction(counter);
-    %                 else
-    %                     robot.joints_avaiable{i} = robot.joints_avaiable{i}.loadRefMeasure(name);
-    %                     % FIGURE - PWM vs Torque
-%                     [ ~, counter] = robot.joints_avaiable{i}.savePictureKt(counter);
-%                     robot.joints_avaiable{i}.saveControlToFile();
-%                 end
-%                 % Save information to file
-%                 robot.joints_avaiable{i}.saveToFile();
     end
     
     methods(Access = protected)
+        function [T, list_motor] = getTransformMatrix(robot, coupled)
+            %% Get T matrix from part
+            part = coupled{1}.part;
+            if strcmp(part, 'torso')
+                R = 0.04;
+                r = 0.022;
+                T = [r/R r/(2*R) r/(2*R);
+                    0    1/2     1/2;
+                    0   -1/2     1/2];
+            elseif strcmp(part, 'l_shoulder')
+                t = 0.625;
+                T = [-1     0	0;
+                     -1    -t	0;
+                     0      t  -t];
+            elseif strcmp(part, 'r_shoulder')
+                t = 0.625;
+                T = [1      0   0;
+                     1      t   0;
+                     0     -t   t];
+            else
+                T = eye(3);
+            end
+            text = robot.parseFile(robot.path_project, 'COUPLED_JOINT_MOTOR_ORDER');
+            for i=1:size(text,2)
+                [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
+                if strcmp(part,tok{1}{1})
+                    [~,list_motor] = regexp(text{i}, '\"(\w*).*?\"', 'match','tokens');
+                    return;
+                end
+            end
+            list_motor = [];
+        end
+        
         function number = getDOF(robot)
             if size(robot.joints,2) > 0
                 number = 0;
@@ -416,36 +467,40 @@ classdef Robot
     end
     
     methods (Access = protected, Static)
+        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible)
+            if joint.asPlot()
+                counter = counter + 1;
+                hCollect = figure(counter); %create new figure
+                set(hCollect, 'Position', [0 0 800 600], 'visible', isVisible);
+                idx_motor = joint.getIndexMotorFromList(name_motor);
+                joint.plotCollected(idx_motor);
+                %Save information to file
+                text = joint.saveToFile(idx_motor);
+                % Save figure
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.fig']),'fig');
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.png']),'png');
+            end
+        end
+        
+        function bool = isInList(list, name)
+            %% Find name in a list
+            for i=1:size(list,2)
+                if strcmp(list{i},name)
+                    bool = 1;
+                    return
+                end
+            end
+            bool = 0;
+        end
+        
         function saveToFile(path, name,text)
+            %% Save all data to file
             fileID = fopen(fullfile(path,[name '.txt']),'w');
             fprintf(fileID,'%s',text);
             % Close
             fclose(fileID);
         end
         
-        function T = getTransformMatrix(coupled)
-            %% Get T matrix from part
-            part = coupled{1}.part;
-            if strcmp(part, 'torso')
-                R = 0.04;
-                r = 0.022;
-                T = [r/R r/(2*R) r/(2*R);
-                    0    1/2     1/2;
-                    0   -1/2     1/2];
-            elseif strcmp(part, 'l_shoulder')
-                t = 0.625;
-                T = [-1     0	0;
-                     -1    -t	0;
-                     0      t  -t];
-            elseif strcmp(part, 'r_shoulder')
-                t = 0.625;
-                T = [1      0   0;
-                     1      t   0;
-                     0     -t   t];
-            else
-                T = eye(3);
-            end
-        end
         function list = getListJoints(list_joint)
             %% Get a list of joints_avaiable to add in yarpWholeBodyInterface
             if ~isa(list_joint,'Joint')

@@ -22,29 +22,50 @@ classdef Joint
         
         function joint = setMotor(joint, path_project, list_motors)
             %% Set motor in joints
-            for i=1:size(list_motors,1)
+            joint.motor = [];
+            for i=1:size(list_motors,2)
                 part_list = regexp(list_motors{i}, '\,', 'split');
                 n_matrix = regexp(part_list{1}, '\w*\.\w*', 'match');
                 [~,name_motor] = regexp(part_list{2}, '\"(\w*).*?\"', 'match','tokens');
-                new_motor = Motor(name_motor, str2double(n_matrix{1}));
+                new_motor = Motor(name_motor{1}{1}, str2double(n_matrix{1}));
                 new_motor = new_motor.loadParameter(path_project);
                 joint.motor = [joint.motor new_motor];
             end
         end
         
-        function joint = loadData(joint, type, data)
+        function joint = loadData(joint, type, data, motor_name)
             %% Load Friction measure
-            if strcmp(type,'ref')
-                joint.motor = joint.motor.loadMeasure(data, joint.part, joint.number);
-            elseif strcmp(type,'idle')
-                joint.motor.friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time);
+            if exist('motor_name','var')
+                idx = joint.getIndexMotorFromList(motor_name);
+            else
+                idx = 1;
             end
+            if idx ~= 0
+                if strcmp(type,'ref')
+                    joint.motor(idx) = joint.motor(idx).loadMeasure(data, joint.part, joint.number);
+                elseif strcmp(type,'idle')
+                    joint.motor(idx).friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time);
+                end
+            end
+        end
+        
+        function index = getIndexMotorFromList(joint, motor_name)
+            %% Get index motor from name
+            if size(joint.motor,2) > 0
+                for i=1:size(joint.motor,2)
+                    if strcmp(joint.motor(i).name,motor_name)
+                        index = i;
+                        return
+                    end
+                end
+            end
+            index = 0;
         end
         
         function number = asPlot(joint)
             %% Get Number of subplot
-            if size(joint.motor.friction,1) > 0
-                if size(joint.motor.Kt,1) > 0
+            if size(joint.motor(1).friction,1) > 0
+                if size(joint.motor(1).Kt,1) > 0
                     number = 2;
                 else
                     number = 1;
@@ -54,16 +75,15 @@ classdef Joint
             end
         end
         
-        function text = saveToFile(joint)
+        function text = saveToFile(joint, idx_motor)
             %% Save All information joint to File
-            text = joint.getInformation();
-            text = [text sprintf('\n')];
-            text = [text joint.motor.friction.saveToFile()];
-            if size(joint.motor.Kt,1) > 0
+            text = ['Motor: ' joint.motor(idx_motor).name sprintf('\n')];
+            text = [text joint.motor(idx_motor).friction.saveToFile()];
+            if size(joint.motor(idx_motor).Kt,1) > 0
                 text = [text sprintf('\n')];
-                text = [text joint.motor.saveCoeffToFile()];
+                text = [text joint.motor(idx_motor).saveCoeffToFile()];
                 text = [text sprintf('\n')];
-                text = [text joint.motor.textControlData()];
+                text = [text joint.motor(idx_motor).textControlData()];
             end
         end
         
@@ -80,18 +100,21 @@ classdef Joint
             end
         end
         
-        function plotCollected(joint)
+        function plotCollected(joint, counter)
+            if ~exist('counter','var')
+                counter = 1;
+            end
             %% Plot Data
-            if size(joint.motor.friction,1) > 0
-                if size(joint.motor.Kt,1) > 0
+            if size(joint.motor(counter).friction,1) > 0
+                if size(joint.motor(counter).Kt,1) > 0
                     subplot(1,2,1);
-                    joint.motor.friction.plotCollected();
+                    joint.motor(counter).friction.plotCollected();
                     grid;
                     subplot(1,2,2);
-                    joint.motor.plotCollected();
+                    joint.motor(counter).plotCollected();
                     grid;
                 else
-                    joint.motor.friction.plotCollected();
+                    joint.motor(counter).friction.plotCollected();
                     grid;
                 end
             end
