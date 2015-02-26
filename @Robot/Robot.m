@@ -49,10 +49,12 @@ classdef Robot
             end
             % Load all parameters from file
             robot.path_project = fullfile(robot.start_path,robot.realNameRobot,'JointNameList.ini');
-            if exist(robot.path_project,'file')
-                robot = robot.loadParameters();
-                disp('[INFO] Load configuration');
+            if ~exist(robot.path_project,'file')
+                mkdir(fullfile(robot.start_path,robot.realNameRobot));
+                copyfile('JointNameList.ini', robot.path_project);
             end
+            robot = robot.loadParameters();
+            disp('[INFO] Load configuration');
         end
         
         function robot = loadParameters(robot)
@@ -62,6 +64,13 @@ classdef Robot
                 
                 [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
                 [list_motors,~] = regexp(text{i}, '\((\w+).*?\)', 'match','tokens');
+                [list_motors2,~] = regexp(text{i}, '\(\-(\w+).*?\)', 'match','tokens');
+                if size(list_motors2,2) > 0
+                    for c=1:size(list_motors2,2)
+                        list_motors{end+1} = list_motors2{c};
+                    end
+                    %list_motors = {list_motors list_motors2};
+                end
                 list = tok{:};
                 part = robot.getPartFromName(list{1});
                 if isfield(robot.joints_avaiable,part)
@@ -569,19 +578,20 @@ classdef Robot
                                 while (~feof(fid))
                                     InputText = textscan(fid,'%s',1,'delimiter','\n');
                                     [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
-                                    if size(mat{:}) ~= 0
-                                        break;
-                                    else
-                                        string = InputText{1};
-                                        str = ['' string{1}];
-                                        if size(str,1) > 0
-                                            if ~strcmp(str(1), '#')
-                                                list{counter} = str;
-                                                counter = counter + 1;
+                                    if size(mat,1) ~= 0
+                                        if size(mat{:},1) ~= 0
+                                            break;
+                                        else
+                                            string = InputText{1};
+                                            str = ['' string{1}];
+                                            if size(str,1) > 0
+                                                if ~strcmp(str(1), '#')
+                                                    list{counter} = str;
+                                                    counter = counter + 1;
+                                                end
                                             end
                                         end
                                     end
-                                    
                                 end
                             end
                         end

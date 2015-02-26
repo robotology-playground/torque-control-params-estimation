@@ -1,12 +1,12 @@
 
 
-robot = Robot('iCubGenova03', 'Test2', '/Users/Raffaello/iit/codyco-superbuild');
+robot = Robot('iCubGenova03', 'Test3', '/Users/Raffaello/iit/codyco-superbuild');
 
 %robot.joints = robot.getJoint('l_ankle_roll');
-robot.joints = robot.getCoupledJoints('torso');
-%robot.joints = [];
+%robot.joints = robot.getCoupledJoints('torso');
+robot.joints = [];
 %robot.joints = [robot.joints robot.getCoupledJoints('torso')];
-%robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
+robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
 robot.configure('JOINT_FRICTION','false');
 robot.buildFolders();
 
