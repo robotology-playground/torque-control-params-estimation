@@ -449,7 +449,7 @@ classdef Robot
                      1      t   0;
                      0     -t   t];
             else
-                T = eye(3);
+                T = zeros(3);
             end
             text = robot.parseFile(robot.path_project, 'COUPLED_JOINT_MOTOR_ORDER');
             for i=1:size(text,2)

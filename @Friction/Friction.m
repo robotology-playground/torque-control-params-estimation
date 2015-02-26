@@ -58,24 +58,18 @@ classdef Friction
                 step = 0.1;
             end
             if ~exist('velMax','var')
-                velMax = 10;
+                velMax = max(obj.velocity);
             end
             obj = obj.evaluateCoeff(0);
-            varOld = var(obj.torque-obj.getFriction(obj.velocity));
-            varGood = 1;
-            for i=0:step:velMax
-                obj = obj.evaluateCoeff(i);
+            Var = zeros(floor(velMax/step),1);
+            for i=1:size(Var,1);
+                obj = obj.evaluateCoeff(10+i*step);
                 variance = var(obj.torque-obj.getFriction(obj.velocity));
-                if variance < varOld
-                    if variance < varGood;
-                        varGood = variance;
-                        obj.th_velocity = i;
-                    end
-                elseif variance > varGood;
-                    break;
-                end
-                varOld = variance;
+                Var(i) = variance;
             end
+            [~, i] = min(Var);
+            obj.th_velocity = 10+i*step;
+            
             obj = obj.evaluateCoeff(obj.th_velocity);
         end
         
