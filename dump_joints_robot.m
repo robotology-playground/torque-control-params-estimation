@@ -12,7 +12,7 @@ robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superb
 % Variables:
 % - worldRefFrame
 % - robot_fixed
-robot = robot.setConfiguration('root_link','true');
+robot = robot.setReferenceFrame('root_link','true');
 
 %% Add motors to test
 robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
