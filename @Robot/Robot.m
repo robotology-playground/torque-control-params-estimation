@@ -32,6 +32,8 @@ classdef Robot
             robot.start_path = start_path;
             % Codyco folder
             robot.codyco_folder = codyco_folder;
+            % Reset joints list
+            robot.joints = [];
             % folder where exist robot folder
             copy_yarp_file = fullfile(codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
             
@@ -84,6 +86,32 @@ classdef Robot
                         end
                     end
                 end
+            end
+        end
+        
+        function robot = addParts(robot, part)
+            if strcmp(part,'left_leg')
+                robot.joints = [robot.joints robot.getJoint('l_hip_pitch')];
+                robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
+                robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
+                robot.joints = [robot.joints robot.getJoint('l_knee')];
+                robot.joints = [robot.joints robot.getJoint('l_ankle_pitch')];
+                robot.joints = [robot.joints robot.getJoint('l_ankle_roll')];
+            elseif strcmp(part,'right_leg')
+                robot.joints = [robot.joints robot.getJoint('r_hip_pitch')];
+                robot.joints = [robot.joints robot.getJoint('r_hip_roll')];
+                robot.joints = [robot.joints robot.getJoint('r_hip_yaw')];
+                robot.joints = [robot.joints robot.getJoint('r_knee')];
+                robot.joints = [robot.joints robot.getJoint('r_ankle_pitch')];
+                robot.joints = [robot.joints robot.getJoint('r_ankle_roll')];
+            elseif strcmp(part,'left_arm')
+                robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
+                robot.joints = [robot.joints robot.getJoint('l_elbow')];
+            elseif strcmp(part,'right_arm')
+                robot.joints = [robot.joints robot.getCoupledJoints('r_shoulder')];
+                robot.joints = [robot.joints robot.getJoint('r_elbow')];
+            elseif strcmp(part,'torso')
+                robot.joints = [robot.joints robot.getCoupledJoints('torso')];
             end
         end
         
@@ -472,10 +500,11 @@ classdef Robot
                 path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
             else
                 coupled = robot.joints{i};
-                if strcmp(coupled{i}.part,'torso')
-                    path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part);
+                part = coupled{1}.part;
+                if strcmp(part,'torso')
+                    path = fullfile(robot.start_path,robot.realNameRobot,part);
                 else
-                    path = fullfile(robot.start_path,robot.realNameRobot,coupled{i}.part,'shoulder');
+                    path = fullfile(robot.start_path,robot.realNameRobot,part,'shoulder');
                 end
             end
         end
@@ -604,27 +633,6 @@ classdef Robot
             end
         end
     end
-    
-%         function robot = addParts(robot, part, type)
-%             if strcmp(part,'leg')
-%                 robot = robot.addMotor(part, type,'hip','pitch');
-%                 robot = robot.addMotor(part, type,'hip','roll');
-%                 robot = robot.addMotor(part, type,'hip','yaw');
-%                 robot = robot.addMotor(part, type,'knee');
-%                 robot = robot.addMotor(part, type,'ankle','roll');
-%                 robot = robot.addMotor(part, type,'ankle','yaw');
-% %             elseif strcmp(part,'arm')
-% %                 robot = robot.addMotor(part, type,'pitch');
-% %                 robot = robot.addMotor(part, type,'roll');
-% %                 robot = robot.addMotor(part, type,'yaw');
-% %                 robot = robot.addMotor(part, type,'elbow');
-% %             elseif strcmp(part,'torso')
-% %                 
-%             end
-%         end
-        
-
-        
     
 end
 
