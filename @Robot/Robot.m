@@ -172,11 +172,13 @@ classdef Robot
                     else
                         % List of motor
                         coupled = robot.joints{i};
-                        for count=1:size(coupled,2)
-                            for count_motor=1:size(coupled{count}.motor,2)
-                                path_motor = fullfile(path,coupled{count}.motor(count_motor).name);
-                                if ~exist(path_motor,'dir') % Build folder
-                                    mkdir(path_motor);
+                        if size(coupled,2) > 0
+                            for count=1:size(coupled,2)
+                                for count_motor=1:size(coupled{count}.motor,2)
+                                    path_motor = fullfile(path,coupled{count}.motor(count_motor).name);
+                                    if ~exist(path_motor,'dir') % Build folder
+                                        mkdir(path_motor);
+                                    end
                                 end
                             end
                         end
@@ -238,27 +240,39 @@ classdef Robot
             %% Get joint from list
             part = robot.getPartFromName(name);
             if size(part,1) > 0
-                group = robot.joints_avaiable.(part);
-                for i=1:size(group,2)
-                    if strcmp(group(i).name,name)
-                        joint{1} = group(i);
-                        return
+                if isfield(part, robot.joints_avaiable)
+                    group = robot.joints_avaiable.(part);
+                    for i=1:size(group,2)
+                        if strcmp(group(i).name,name)
+                            joint{1} = group(i);
+                            return
+                        end
                     end
                 end
             end
-            joint = {1};
+            joint = {};
         end
         
-        function joints_avaiable = getCoupledJoints(robot,name)
+        function coupled_joints = getCoupledJoints(robot,name)
             %% Get Coupled joints_avaiable from list
             if strcmp(name,'torso')
                 j = robot.getJoint('torso_yaw');
-                joint{1} = j{1};
+                if size(j,1)>0
+                    joint{1} = j{1};
+                end
                 j = robot.getJoint('torso_roll');
-                joint{2} = j{1};
+                if size(j,1)>0
+                    joint{2} = j{1};
+                end
                 j = robot.getJoint('torso_pitch');
-                joint{3} = j{1};
-                joints_avaiable{1} = joint;
+                if size(j,1)>0
+                    joint{3} = j{1};
+                end
+                if exist('joint','var')
+                    coupled_joints{1} = joint;
+                else
+                    coupled_joints{1} = {};
+                end
             else
                 [~,tok] = regexp(name, '(\w+).*?_(\w+).*?', 'match','tokens');
                 if size(tok,1) > 0
@@ -266,17 +280,27 @@ classdef Robot
                     if size(list,2) == 2
                         if strcmp(list{2},'shoulder')
                             j = robot.getJoint([name '_pitch']);
-                            joint{1} = j{1};
+                            if size(j,1)>0
+                                joint{1} = j{1};
+                            end
                             j = robot.getJoint([name '_roll']);
-                            joint{2} = j{1};
+                            if size(j,1)>0
+                                joint{2} = j{1};
+                            end
                             j = robot.getJoint([name '_yaw']);
-                            joint{3} = j{1};
-                            joints_avaiable{1} = joint;
+                            if size(j,1)>0
+                                joint{3} = j{1};
+                            end
+                            if exist('joint','var')
+                                coupled_joints{1} = joint;
+                            else
+                                coupled_joints{1} = {};
+                            end
                             return
                         end
                     end
                 end
-                joints_avaiable = {};
+                coupled_joints = {};
             end
         end
         
@@ -500,11 +524,15 @@ classdef Robot
                 path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
             else
                 coupled = robot.joints{i};
-                part = coupled{1}.part;
-                if strcmp(part,'torso')
-                    path = fullfile(robot.start_path,robot.realNameRobot,part);
+                if size(coupled,1) > 0
+                    part = coupled{1}.part;
+                    if strcmp(part,'torso')
+                        path = fullfile(robot.start_path,robot.realNameRobot,part);
+                    else
+                        path = fullfile(robot.start_path,robot.realNameRobot,part,'shoulder');
+                    end
                 else
-                    path = fullfile(robot.start_path,robot.realNameRobot,part,'shoulder');
+                    path = '';
                 end
             end
         end
