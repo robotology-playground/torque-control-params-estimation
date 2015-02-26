@@ -240,7 +240,7 @@ classdef Robot
             %% Get joint from list
             part = robot.getPartFromName(name);
             if size(part,1) > 0
-                if isfield(part, robot.joints_avaiable)
+                if isfield(robot.joints_avaiable, part)
                     group = robot.joints_avaiable.(part);
                     for i=1:size(group,2)
                         if strcmp(group(i).name,name)
