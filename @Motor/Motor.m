@@ -107,6 +107,9 @@ classdef Motor
                 text = [text, sprintf('\n---------->     Kt    <----------\n')];
                 text = [text, sprintf('tau_m = Kt*PWM \n')];
                 text = [text, sprintf('Kt: %12.8f [Nm]/[V]',motor.Kt)];
+                if motor.ratio ~= 1
+                    text = [text, sprintf('\nRatio: %12.8f [V]/PWM',motor.ratio)];
+                end
             end
         end
         

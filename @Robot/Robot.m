@@ -25,7 +25,10 @@ classdef Robot
     end
     
     methods
-        function robot = Robot(realNameRobot, start_path, codyco_folder)
+        function robot = Robot(realNameRobot, start_path, codyco_folder, yarpWBIfile)
+            if ~exist('yarpWBIfile','var')
+                yarpWBIfile = 'yarpWholeBodyInterface.ini';
+            end
             % Name robot
             robot.realNameRobot = realNameRobot;
             % Start path
@@ -35,7 +38,7 @@ classdef Robot
             % Reset joints list
             robot.joints = [];
             % folder where exist robot folder
-            copy_yarp_file = fullfile(codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
+            copy_yarp_file = fullfile(codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot, yarpWBIfile);
             
             robot.joints_avaiable = struct;
             % Parse file and build robot
@@ -208,14 +211,12 @@ classdef Robot
                 
                 disp('[INFO] Update!');
             else
-                
-                disp('[ERROR] List without joints_avaiable!');
+                text = '';
+                disp('[ERROR] List without joints!');
             end
             % Assignin variables
             assignin('base', 'ROBOT_DOF', robot.getDOF());
             assignin('base', 'Ts', robot.Ts);
-            %assignin('base', 'nameRobot', robot.robotName);
-            %assignin('base', 'localName', robot.localName);
             %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
             setenv('YARP_ROBOT_NAME', robot.realNameRobot);
             
