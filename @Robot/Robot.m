@@ -3,197 +3,311 @@ classdef Robot
     %   Detailed explanation goes here
     
     properties (Access = private)
-        JOINT_FRICTION = 'JOINT_FRICTION';
         SIMULATOR = 'icubGazeboSim';
-
-        path_experiment;
-        nameSpace;
+        
+        codyco_folder;
+        build_folder = 'build';
         formatOut = 'yyyymmdd-HH:MM';
         worldRefFrame = 'root_link';
         robot_fixed = 'true';
         configFile = 'yarpWholeBodyInterface_friction.ini';
-        
-        ROBOT_DOF = 0;
-        counter_joints = 0;
+        start_path;
+        path_project;
     end
     
     properties
-        joint_list = '';
-        WBI_LIST;
-        localName = 'simulink_joint_friction';
-        path;
         Ts = 0.01;
+        realNameRobot;
         joints;
-        nameThisRobot;
+        joints_avaiable;
         robotName = 'icub';
+        localName = 'simulink_joint_friction';
     end
     
     methods
-        function robot = Robot(nameThisRobot, path_experiment)
-            robot.WBI_LIST = robot.JOINT_FRICTION;
-            robot.nameThisRobot = nameThisRobot;
-            robot.nameSpace = [ '/' robot.robotName nameThisRobot(end-1:end)];
-            if ~exist('path_experiment','var')
-                robot.path_experiment = 'experiments';
-            else
-                robot.path_experiment = path_experiment;
-            end
-            robot.path = [robot.path_experiment '/' robot.nameThisRobot '/'];
-        end
-        
-        function robot = setNameSpace(nameSpace)
-            %% Configure type of namespace
-            robot.nameSpace = nameSpace;
-        end
-        
-        function robot = setNameList(robot, NAME_LIST)
-            if ~strcmp(robot.WBI_LIST, NAME_LIST)
-                robot.ROBOT_DOF = 25;
-            end
-            robot.WBI_LIST = NAME_LIST;
-        end
-        
-        function list = getJointList(robot)
-            list = robot.joint_list;
-        end
+        function robot = Robot(realNameRobot, start_path, codyco_folder)
+            % Name robot
+            robot.realNameRobot = realNameRobot;
+            % Start path
+            robot.start_path = start_path;
+            % Codyco folder
+            robot.codyco_folder = codyco_folder;
+            % Reset joints list
+            robot.joints = [];
+            % folder where exist robot folder
+            copy_yarp_file = fullfile(codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
             
-        function robot = setConfiguration(robot, worldRefFrame, robot_fixed, configFile)
+            robot.joints_avaiable = struct;
+            % Parse file and build robot
+            text = robot.parseFile(copy_yarp_file, 'WBI_YARP_JOINTS');
+            for i=1:size(text,2)
+                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
+                list = tok{:};
+                if ~isfield(robot.joints_avaiable,list{2})
+                    robot.joints_avaiable.(list{2}) = Joint(list{1},list{2},list{3});
+                else
+                    robot.joints_avaiable.(list{2}) = [robot.joints_avaiable.(list{2}) Joint(list{1},list{2},list{3})];
+                end
+            end
+            % Load all parameters from file
+            robot.path_project = fullfile(robot.start_path,robot.realNameRobot,'JointNameList.ini');
+            if ~exist(robot.path_project,'file')
+                mkdir(fullfile(robot.start_path,robot.realNameRobot));
+                copyfile('JointNameList.ini', robot.path_project);
+            end
+            robot = robot.loadParameters();
+            disp('[INFO] Load configuration');
+        end
+        
+        function robot = loadParameters(robot)
+            %% Load information about motors
+            text = robot.parseFile(robot.path_project, 'JOINT_LIST_PARAMETERS');
+            for i=1:size(text,2)
+                
+                [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
+                [list_motors,~] = regexp(text{i}, '\((\w+).*?\)', 'match','tokens');
+                [list_motors2,~] = regexp(text{i}, '\(\-(\w+).*?\)', 'match','tokens');
+                if size(list_motors2,2) > 0
+                    for c=1:size(list_motors2,2)
+                        list_motors{end+1} = list_motors2{c};
+                    end
+                    %list_motors = {list_motors list_motors2};
+                end
+                list = tok{:};
+                part = robot.getPartFromName(list{1});
+                if isfield(robot.joints_avaiable,part)
+                    joint_part = robot.joints_avaiable.(part);
+                    for count=1:size(joint_part,2)
+                        if strcmp(list{1},joint_part(count).name)
+                            %disp(joint_part(count).name);
+                            joint_part(count) = joint_part(count).setMotor(robot.path_project, list_motors);
+                            robot.joints_avaiable.(part) = joint_part;
+                            break;
+                        end
+                    end
+                end
+            end
+        end
+        
+        function robot = addParts(robot, part)
+            if strcmp(part,'left_leg')
+                robot.joints = [robot.joints robot.getJoint('l_hip_pitch')];
+                robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
+                robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
+                robot.joints = [robot.joints robot.getJoint('l_knee')];
+                robot.joints = [robot.joints robot.getJoint('l_ankle_pitch')];
+                robot.joints = [robot.joints robot.getJoint('l_ankle_roll')];
+            elseif strcmp(part,'right_leg')
+                robot.joints = [robot.joints robot.getJoint('r_hip_pitch')];
+                robot.joints = [robot.joints robot.getJoint('r_hip_roll')];
+                robot.joints = [robot.joints robot.getJoint('r_hip_yaw')];
+                robot.joints = [robot.joints robot.getJoint('r_knee')];
+                robot.joints = [robot.joints robot.getJoint('r_ankle_pitch')];
+                robot.joints = [robot.joints robot.getJoint('r_ankle_roll')];
+            elseif strcmp(part,'left_arm')
+                robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
+                robot.joints = [robot.joints robot.getJoint('l_elbow')];
+            elseif strcmp(part,'right_arm')
+                robot.joints = [robot.joints robot.getCoupledJoints('r_shoulder')];
+                robot.joints = [robot.joints robot.getJoint('r_elbow')];
+            elseif strcmp(part,'torso')
+                robot.joints = [robot.joints robot.getCoupledJoints('torso')];
+            end
+        end
+        
+        function robot = loadData(robot, type)
+            %% Load all data from path folder
+            if size(robot.joints,2) > 0
+                for i=1:size(robot.joints,2)
+                    path = robot.getPathJoint(i);
+                    if isa(robot.joints{i},'Joint')
+                        path_type_file = fullfile(path,robot.joints{i}.motor.name,[type '.mat']);
+                        if exist(path_type_file,'file')
+                            data = load(path_type_file);
+                            robot.joints{i} = robot.joints{i}.loadData(type, data);
+                        end
+                    else
+                        path_type_file = fullfile(path,[type '.mat']);
+                        if exist(path_type_file,'file')
+                            data = load(path_type_file);
+                            coupled = robot.joints{i};
+                            [T, list_motor] = robot.getTransformMatrix(coupled);
+                            mot_data = struct;
+                            mot_data.q = (T^-1*data.q')';
+                            mot_data.qD = (T^-1*data.qD')';
+                            mot_data.qDD = (T^-1*data.qDD')';
+                            mot_data.tau = (T'*data.tau')';
+                            
+                            for count=1:size(coupled,2)
+                                for i_motor=1:size(list_motor,2)
+                                    data_temp = struct;
+                                    data_temp.q = mot_data.q(:,i_motor);
+                                    data_temp.qD = mot_data.qD(:,i_motor);
+                                    data_temp.qDD = mot_data.qDD(:,i_motor);
+                                    data_temp.tau = mot_data.tau(:,i_motor);
+                                    data_temp.PWM = data.PWM;
+                                    data_temp.Current = data.Current;
+                                    data_temp.time = data.time;
+                                    coupled{count} = coupled{count}.loadData(type, data_temp,list_motor{i_motor}{1});
+                                    
+                                end
+                            end
+                            robot.joints{i} = coupled;
+                        end
+                    end
+                end
+            end
+        end
+        
+        function buildFolders(robot)
+            %% Build folder with all dump and images joints_avaiable
+            if size(robot.joints,2) > 0
+                for i=1:size(robot.joints,2)
+                    path = robot.getPathJoint(i);
+                    if isa(robot.joints{i},'Joint')
+                        path_motor = fullfile(path,robot.joints{i}.motor.name);
+                        if ~exist(path_motor,'dir') % Build folder
+                            mkdir(path_motor);
+                        end
+                    else
+                        % List of motor
+                        coupled = robot.joints{i};
+                        if size(coupled,2) > 0
+                            for count=1:size(coupled,2)
+                                for count_motor=1:size(coupled{count}.motor,2)
+                                    path_motor = fullfile(path,coupled{count}.motor(count_motor).name);
+                                    if ~exist(path_motor,'dir') % Build folder
+                                        mkdir(path_motor);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        
+        function configure(robot, name, check_yarp)
+            %% Configure Yarp Whole Body Interface
+            if size(robot.joints,2) > 0
+                list = robot.getListJoints(robot.joints{1});
+                for i=2:size(robot.joints,2)
+                    list = [list ', ' robot.getListJoints(robot.joints{i})];
+                end
+                if size(list,2) > 0
+                    format_list = [name ' = ( ' list ' )'];
+                else
+                    format_list = '';
+                end
+                % Plot list of joints_avaiable
+                disp(format_list);
+                % Set Yarp WBI
+                robot.loadYarpWBI(format_list);
+                % Set WBI
+                text = robot.setupWBI(name);
+                
+                disp('[INFO] Update!');
+            else
+                
+                disp('[ERROR] List without joints_avaiable!');
+            end
+            % Assignin variables
+            assignin('base', 'ROBOT_DOF', robot.getDOF());
+            assignin('base', 'Ts', robot.Ts);
+            %assignin('base', 'nameRobot', robot.robotName);
+            %assignin('base', 'localName', robot.localName);
+            %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
+            setenv('YARP_ROBOT_NAME', robot.realNameRobot);
+            
+            % Set yarp namespace
+            if exist('check_yarp','var')
+                nameSpace = [ '/' robot.robotName robot.realNameRobot(end-1:end)];
+                [~,name_set] = system('yarp namespace');
+                if strcmp(check_yarp,'true')
+                    if strcmp(name_set(17:end-1), nameSpace) == 0
+                        [~,namespace] = system(['yarp namespace ' nameSpace]);
+                        text = [text namespace];
+                        [~,detect] = system('yarp detect --write');
+                        text = [text detect];
+                    end
+                end
+                text = [text sprintf('\n---------\n') name_set];
+            end
+            disp(text);
+        end
+        
+        function joint = getJoint(robot, name)
+            %% Get joint from list
+            part = robot.getPartFromName(name);
+            if size(part,1) > 0
+                if isfield(robot.joints_avaiable, part)
+                    group = robot.joints_avaiable.(part);
+                    for i=1:size(group,2)
+                        if strcmp(group(i).name,name)
+                            joint{1} = group(i);
+                            return
+                        end
+                    end
+                end
+            end
+            joint = {};
+        end
+        
+        function coupled_joints = getCoupledJoints(robot,name)
+            %% Get Coupled joints_avaiable from list
+            if strcmp(name,'torso')
+                j = robot.getJoint('torso_yaw');
+                if size(j,1)>0
+                    joint{1} = j{1};
+                end
+                j = robot.getJoint('torso_roll');
+                if size(j,1)>0
+                    joint{2} = j{1};
+                end
+                j = robot.getJoint('torso_pitch');
+                if size(j,1)>0
+                    joint{3} = j{1};
+                end
+                if exist('joint','var')
+                    coupled_joints{1} = joint;
+                else
+                    coupled_joints{1} = {};
+                end
+            else
+                [~,tok] = regexp(name, '(\w+).*?_(\w+).*?', 'match','tokens');
+                if size(tok,1) > 0
+                    list = tok{:};
+                    if size(list,2) == 2
+                        if strcmp(list{2},'shoulder')
+                            j = robot.getJoint([name '_pitch']);
+                            if size(j,1)>0
+                                joint{1} = j{1};
+                            end
+                            j = robot.getJoint([name '_roll']);
+                            if size(j,1)>0
+                                joint{2} = j{1};
+                            end
+                            j = robot.getJoint([name '_yaw']);
+                            if size(j,1)>0
+                                joint{3} = j{1};
+                            end
+                            if exist('joint','var')
+                                coupled_joints{1} = joint;
+                            else
+                                coupled_joints{1} = {};
+                            end
+                            return
+                        end
+                    end
+                end
+                coupled_joints = {};
+            end
+        end
+        
+        function robot = setReferenceFrame(robot, worldRefFrame, robot_fixed)
+            %% Set Reference_frame
             robot.worldRefFrame = worldRefFrame;
             robot.robot_fixed = robot_fixed;
-            if exist('configFile','var')
-                robot.configFile = configFile;
-            end
-        end
-        
-        function name = setupExperiment(robot, type, logsout, time)
-            name = [type '-' datestr(now,robot.formatOut)];
-            number = 0;
-            for i=1:size(robot.joints,2)
-                m = matfile([robot.joints{i}.path name '.mat'],'Writable',true);
-                if robot.isWBIFrictionJoint()
-                    if isa(robot.joints{i},'CoupledJoints')
-                        number = (1:size(robot.joints{i}.joint,2));
-                        number = number + (i-1);
-                    else
-                        number = number(end) + 1;
-                    end
-                else
-                    number = robot.joints{i}.number;
-                end
-                m.time = time;
-                m.q = logsout.get('q').Values.Data(:,number);
-                m.qD = logsout.get('qD').Values.Data(:,number);
-                m.qDD = logsout.get('qDD').Values.Data(:,number);
-                m.tau = logsout.get('tau').Values.Data(:,number);
-                PWM = struct;
-                PWM.(robot.joints{i}.group_select) = logsout.get(['pwm_' robot.joints{i}.group_select]).Values.Data;
-                m.PWM = PWM;
-                Current = struct;
-                Current.(robot.joints{i}.group_select) = logsout.get(['current_' robot.joints{i}.group_select]).Values.Data;
-                m.Current = Current;
-            end
-        end
-        
-        function [robot, counter] = plotAndPrintAllData(robot, name, counter)
-            if ~strcmp(name(1:3),'ref')
-                type_idle = 1;
-            else
-                type_idle = 0;  
-            end
-            if ~exist('counter','var')
-                counter = 1;
-            end
-            for i=1:size(robot.joints,2)
-                if type_idle == 1
-                    robot.joints{i} = robot.joints{i}.loadIdleMeasure(name);
-                    [ ~, counter] = robot.joints{i}.savePictureFriction(counter);
-                else
-                    robot.joints{i} = robot.joints{i}.loadRefMeasure(name);
-                    % FIGURE - PWM vs Torque
-                    [ ~, counter] = robot.joints{i}.savePictureKt(counter);
-                    robot.joints{i}.saveControlToFile();
-                end
-                % Save information to file
-                robot.joints{i}.saveToFile();
-            end
-        end
-        
-        function bool = isWBIFrictionJoint(robot)
-            bool = strcmp(robot.WBI_LIST, robot.JOINT_FRICTION);
-        end
-        
-        
-        function robot = addMotor(robot, part, type, info1, info2)
-            %% Add motor in robot
-            if exist('type','var') && exist('info1','var') && exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type, info1, info2);
-            elseif exist('type','var') && exist('info1','var') && ~exist('info2','var')
-                motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type, info1);
-            elseif exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                if strcmp(part,'arm')
-                    motor = CoupledJoints(robot.path_experiment, robot.nameThisRobot, part, type);
-                else
-                    motor = Motor(robot.path_experiment, robot.nameThisRobot, part, type);
-                end
-            elseif ~exist('type','var') && ~exist('info1','var') && ~exist('info2','var')
-                if strcmp(part,'torso')
-                    motor = CoupledJoints(robot.path_experiment, robot.nameThisRobot, part);
-                else
-                    motor = Motor(robot.path_experiment, robot.nameThisRobot, part);
-                end
-                
-            end
-            if isprop(motor,'joint')
-                robot.ROBOT_DOF = robot.ROBOT_DOF + size(motor.joint,2);
-            else
-                robot.ROBOT_DOF = robot.ROBOT_DOF + 1;
-            end
-            
-            if isWBIFrictionJoint(robot)
-                robot.joints{size(robot.joints,2)+1} = motor;
-            else
-                robot.joints{motor.number} = motor;
-            end
-            
-            if strcmp(robot.joint_list,'')
-                robot.joint_list = motor.getJointList();
-            else
-                robot.joint_list = [robot.joint_list ', ' motor.getJointList()];
-            end
-            
-            if exist([robot.joints{end}.path 'parameters.mat'],'file')
-                robot.joints{end} = robot.joints{end}.loadParameters('parameters');
-            end
-        end
-        
-        function robot = setInLastRatio(robot, Voltage, range_pwm)
-            if exist('Voltage','var') && exist('range_pwm','var')
-                robot.joints{end} = robot.joints{end}.setRatio(Voltage, range_pwm);
-            else
-                robot.joints{end} = robot.joints{end}.loadParameters(name_parameters);
-            end
-        end
-        
-        function saveInLastParameters(robot)
-            robot.joints{end}.saveParameters();
-        end
-        
-        function robot = addParts(robot, part, type)
-            if strcmp(part,'leg')
-                robot = robot.addMotor(part, type,'hip','pitch');
-                robot = robot.addMotor(part, type,'hip','roll');
-                robot = robot.addMotor(part, type,'hip','yaw');
-                robot = robot.addMotor(part, type,'knee');
-                robot = robot.addMotor(part, type,'ankle','roll');
-                robot = robot.addMotor(part, type,'ankle','yaw');
-%             elseif strcmp(part,'arm')
-%                 robot = robot.addMotor(part, type,'pitch');
-%                 robot = robot.addMotor(part, type,'roll');
-%                 robot = robot.addMotor(part, type,'yaw');
-%                 robot = robot.addMotor(part, type,'elbow');
-%             elseif strcmp(part,'torso')
-%                 
-            end
         end
         
         function command = getControlBoardCommand(robot, rate)
@@ -205,88 +319,346 @@ classdef Robot
                 ' --robot icub'...
 %                 ' --part ' joint.group_select ...
                 ' --rate ' num2str(rate) ...
-%                 ' --joints "(' num2str(joint.number_part-1) ')"' ...
+                %                 ' --joints_avaiable "(' num2str(joint.number_part-1) ')"' ...
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
         
-        function configure(robot, check_yarp, codyco_folder, build_folder)
-            %% Configure PC end set YARP NAMESPACE
-            if size(robot.joint_list,2) ~= 0
-            if ~exist('build_folder','var')
-                build_folder = 'build';
-            end
-            text = '';
-            
-            [~,name_set] = system('yarp namespace');
-            if strcmp(check_yarp,'true')
-                if strcmp(name_set(17:end-1),robot.nameSpace) == 0
-                    [~,namespace] = system(['yarp namespace ' robot.nameSpace]);
-                    text = [text namespace];
-                    [~,detect] = system('yarp detect --write');
-                    text = [text detect];
-                end
-            end
-            text = [text name_set];
-            % Add configuration WBI
-            text = [text  robot.setupWBI(codyco_folder, build_folder)];
-            % Add JOINT FRICTION in yarpWholeBodyInterface.ini
-            if isWBIFrictionJoint(robot)
-                robot.loadYarpWBI(codyco_folder, build_folder);
-            end
-            % Set variables environment
-            assignin('base', 'Ts', robot.Ts);
-            %assignin('base', 'nameRobot', robot.robotName);
-            %assignin('base', 'localName', robot.localName);
-            assignin('base', 'ROBOT_DOF', robot.ROBOT_DOF);
-            %setenv('YARP_DATA_DIRS', [codyco_folder '/' build_folder '/install/share/codyco']);
-            setenv('YARP_ROBOT_NAME', robot.nameThisRobot);
-            disp(text);
+        function name = saveData(robot, type, logsout, time, fix)
+            %% Save data from simulink
+            if exist('fix','var')
+                name = type;
             else
-                disp('You does not load anything motors!');
+                name = [type '-' datestr(now,robot.formatOut)];
+            end
+            number = 0;
+            for i=1:size(robot.joints,2)
+                if isa(robot.joints{i},'Joint')
+                    path = fullfile(robot.getPathJoint(i),robot.joints{i}.motor.name,[name '.mat']);
+                    number = number(end) + 1;
+                    part = robot.joints{i}.part;
+                else
+                    path = fullfile(robot.getPathJoint(i), [name '.mat']);
+                    
+                    number = (1:size(robot.joints{i},2));
+                    number = number + (i-1);
+                    part = robot.joints{i}{1}.part;
+                end
+                m = matfile(path,'Writable',true);
+                % data to will be saved
+                m.time = time;
+                m.q = logsout.get('q').Values.Data(:,number);
+                m.qD = logsout.get('qD').Values.Data(:,number);
+                m.qDD = logsout.get('qDD').Values.Data(:,number);
+                m.tau = logsout.get('tau').Values.Data(:,number);
+                PWM = struct;
+                PWM.(part) = logsout.get(['pwm_' part]).Values.Data;
+                m.PWM = PWM;
+                Current = struct;
+                Current.(part) = logsout.get(['current_' part]).Values.Data;
+                m.Current = Current;
+            end
+        end
+        
+        function counter = plotAndPrintAllData(robot, counter)
+            %% Plot all information about joints
+            if ~exist('counter','var')
+                counter = 0;
+            end
+            for i=1:size(robot.joints,2)
+                if isa(robot.joints{i},'Joint')
+                    text = robot.joints{i}.getInformation();
+                    [counter, text_m] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
+                    robot.saveToFile(robot.getPathJoint(i), 'data', [text sprintf('\n') text_m]);
+                else
+                    coupled = robot.joints{i};
+                    if size(coupled,2) > 0
+                        number_plot = coupled{1}.asPlot();
+                        if number_plot
+                            counter = counter + 1;
+                            hCollect = figure(counter); %create new figure
+                            set(hCollect, 'Position', [0 0 800 600]);
+                            motor_plotted = {};
+                            counter_image = 0;
+                            for count=1:size(coupled,2)
+                                for i_motor=1:size(coupled{count}.motor,2)
+                                    name_i_motor = coupled{count}.motor(i_motor).name;
+                                    if ~robot.isInList(motor_plotted, name_i_motor)
+                                        counter_image = counter_image + 1;
+                                        motor_plotted{i_motor} = name_i_motor;
+                                        if size(coupled{count}.motor(i_motor).friction,1) > 0
+                                            if size(coupled{count}.motor(i_motor).Kt,1) > 0
+                                                subplot(3,number_plot,counter_image*2-1);
+                                                coupled{count}.motor(i_motor).friction.plotCollected();
+                                                grid;
+                                                subplot(3,number_plot,counter_image*2);
+                                                coupled{count}.motor(i_motor).plotCollected();
+                                                grid;
+                                            else
+                                                subplot(3,number_plot,counter_image);
+                                                coupled{count}.plotCollected();
+                                                grid;
+                                            end
+                                        end
+                                    end
+                                end
+                            end                         
+                            % Save figure
+                            pathsave = robot.getPathJoint(i);
+                            saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.fig']),'fig');
+                            saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.png']),'png');
+                            % Save single plot
+                            motor_plotted = {};
+                            text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
+                            for count=1:size(coupled,2)
+                                for i_motor=1:size(coupled{count}.motor,2)
+                                    name_i_motor = coupled{count}.motor(i_motor).name;
+                                    if ~robot.isInList(motor_plotted, name_i_motor)
+                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off');
+                                        text = [text sprintf('\n') text_m];
+                                        motor_plotted{i_motor} = name_i_motor;
+                                    end
+                                end
+                            end
+                            robot.saveToFile(pathsave, 'data', text);
+                        end
+                    end
+                end
             end
         end
     end
     
-    methods
-        function text = setupWBI(robot, codyco_folder, build_folder)
-            %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
-            
-            if exist([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini']);
+    methods(Access = protected)
+        function [T, list_motor] = getTransformMatrix(robot, coupled)
+            %% Get T matrix from part
+            part = coupled{1}.part;
+            if strcmp(part, 'torso')
+                R = 0.04;
+                r = 0.022;
+                T = [r/R r/(2*R) r/(2*R);
+                    0    1/2     1/2;
+                    0   -1/2     1/2];
+            elseif strcmp(part, 'l_shoulder')
+                t = 0.625;
+                T = [-1     0	0;
+                     -1    -t	0;
+                     0      t  -t];
+            elseif strcmp(part, 'r_shoulder')
+                t = 0.625;
+                T = [1      0   0;
+                     1      t   0;
+                     0     -t   t];
+            else
+                T = eye(3);
+            end
+            text = robot.parseFile(robot.path_project, 'COUPLED_JOINT_MOTOR_ORDER');
+            for i=1:size(text,2)
+                [~,tok] = regexp(text{i}, '(\w+).*?=', 'match','tokens');
+                if strcmp(part,tok{1}{1})
+                    [~,list_motor] = regexp(text{i}, '\"(\w*).*?\"', 'match','tokens');
+                    return;
+                end
+            end
+            list_motor = [];
+        end
+        
+        function number = getDOF(robot)
+            if size(robot.joints,2) > 0
+                number = 0;
+                for i=1:size(robot.joints,2)
+                    if isa(robot.joints{i},'Joint')
+                        number = number + 1;
+                    else
+                        number = number + size(robot.joints{i},2);
+                    end
+                end
+            else
+                number = 0;
+            end
+        end
+        
+        function text = setupWBI(robot, name)
+            %% Setup Whole Body Interface
+            path = fullfile(getenv('HOME'),'.local','share','yarp','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
+            if exist(path,'file')
+                name_yarp_file = cd(path);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+                %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+                name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
             end
-            if ~strcmp(robot.nameThisRobot, robot.SIMULATOR)
+            if ~strcmp(robot.realNameRobot, robot.SIMULATOR)
                 text = sprintf('robot          %s\n',robot.robotName);
             else
-                text = sprintf('robot          %s\n',robot.nameThisRobot);
+                text = sprintf('robot          %s\n',robot.realNameRobot);
             end
             text = [text sprintf('localName      %s\n',robot.localName)];
             text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
             text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
-            text = [text sprintf('wbi_id_list    %s\n',robot.WBI_LIST)];
+            text = [text sprintf('wbi_id_list    %s\n',name)];
             text = [text sprintf('wbi_config_file %s', robot.configFile)];
             fid = fopen(name_yarp_file,'w');
             fprintf(fid, '%s', text);
             fclose(fid);
         end
         
-        function loadYarpWBI(robot, codyco_folder, build_folder)
+        function loadYarpWBI(robot, list)
             %% Load and save in BUILD directory configuraton
-            if exist([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile],'file')
-                name_yarp_file = cd([getenv('HOME') '/.local/share/yarp/robots/' robot.nameThisRobot '/' robot.configFile]);
+            path = fullfile(getenv('HOME'), '.local', 'share', 'yarp', 'robots', robot.realNameRobot, robot.configFile);
+            if exist(path,'file')
+                name_yarp_file = cd(path);
                 disp('UPDATE LOCAL FOLDER!');
             else
-                name_yarp_file = [codyco_folder '/' build_folder '/install/share/codyco/robots/' robot.nameThisRobot '/' robot.configFile];
+                name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','robots',robot.realNameRobot,robot.configFile);
             end
-            copy_yarp_file = [codyco_folder '/libraries/yarpWholeBodyInterface/app/robots/' robot.nameThisRobot '/yarpWholeBodyInterface.ini'];
+            copy_yarp_file = fullfile(robot.codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
             copyfile(copy_yarp_file, name_yarp_file);
             
             fid = fopen(name_yarp_file, 'a+');
-            command = [robot.WBI_LIST ' = (' robot.joint_list ')'];
-            fprintf(fid, '# TEST JOINT\n%s', command);
+            fprintf(fid, '# TEST JOINT\n%s',list);
             fclose(fid);
+        end
+        
+        function path = getPathJoint(robot, i)
+            %% Get path from joints list
+            if isa(robot.joints{i},'Joint')
+                path = fullfile(robot.start_path,robot.realNameRobot,robot.joints{i}.part,robot.joints{i}.name);
+            else
+                coupled = robot.joints{i};
+                if size(coupled,1) > 0
+                    part = coupled{1}.part;
+                    if strcmp(part,'torso')
+                        path = fullfile(robot.start_path,robot.realNameRobot,part);
+                    else
+                        path = fullfile(robot.start_path,robot.realNameRobot,part,'shoulder');
+                    end
+                else
+                    path = '';
+                end
+            end
+        end
+    end
+    
+    methods (Access = protected, Static)
+        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible)
+            text = '';
+            if joint.asPlot()
+                counter = counter + 1;
+                hCollect = figure(counter); %create new figure
+                set(hCollect, 'Position', [0 0 800 600], 'visible', isVisible);
+                idx_motor = joint.getIndexMotorFromList(name_motor);
+                joint.plotCollected(idx_motor);
+                %Save information to file
+                text = joint.saveToFile(idx_motor);
+                % Save figure
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.fig']),'fig');
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.png']),'png');
+            end
+        end
+        
+        function bool = isInList(list, name)
+            %% Find name in a list
+            for i=1:size(list,2)
+                if strcmp(list{i},name)
+                    bool = 1;
+                    return
+                end
+            end
+            bool = 0;
+        end
+        
+        function saveToFile(path, name,text)
+            %% Save all data to file
+            fileID = fopen(fullfile(path,[name '.txt']),'w');
+            fprintf(fileID,'%s',text);
+            % Close
+            fclose(fileID);
+        end
+        
+        function list = getListJoints(list_joint)
+            %% Get a list of joints_avaiable to add in yarpWholeBodyInterface
+            if ~isa(list_joint,'Joint')
+                if size(list_joint,2) > 0
+                    list = list_joint{1}.name;
+                    for i=2:size(list_joint,2)
+                        list = [list ', ' list_joint{i}.name];
+                    end
+                else
+                    list = '';
+                end
+            else
+                list = list_joint.name;
+            end
+        end
+        
+        function part = getPartFromName(name)
+            %% Reconstruct part from name joint
+            groups = textscan(lower(name),'%s','delimiter','_');
+            groups = groups{1};
+            if strcmp(groups{1},'l')
+                part = 'left';
+            elseif strcmp(groups{1},'r')
+                part = 'right';
+            else
+                if strcmp(groups{1},'torso') || strcmp(groups{1},'head')
+                    part = groups{1};
+                    return
+                else
+                    part = '';
+                    return;
+                end
+            end
+            if strcmp(groups{2},'shoulder') || strcmp(groups{2},'elbow')
+                part = [part '_arm'];
+            elseif strcmp(groups{2},'hip') || strcmp(groups{2},'knee') || strcmp(groups{2},'ankle')
+                part = [part '_leg'];
+            else
+                part = '';
+                return
+            end
+        end
+    end
+    
+    methods (Access = public, Static)
+        function list = parseFile(file, name_group)
+            %% Parse file and get list of lines
+            fid = fopen(file,'r');  % Open text file
+            if fid ~= -1
+                while (~feof(fid))                                     % For each block:
+                    InputText = textscan(fid,'%s',1,'delimiter','\n');
+                    
+                    counter = 1;
+                    [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                    if size(mat,1) ~= 0
+                        if size(mat{:},1) ~= 0
+                            group_file = mat{1};
+                            if strcmp(group_file,['[' name_group ']'])
+                                while (~feof(fid))
+                                    InputText = textscan(fid,'%s',1,'delimiter','\n');
+                                    [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                                    if size(mat,1) ~= 0
+                                        if size(mat{:},1) ~= 0
+                                            break;
+                                        else
+                                            string = InputText{1};
+                                            str = ['' string{1}];
+                                            if size(str,1) > 0
+                                                if ~strcmp(str(1), '#')
+                                                    list{counter} = str;
+                                                    counter = counter + 1;
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                fclose(fid);
+            else
+                disp('[ERROR] Do not load JointNameList.ini');
+                list = {};
+            end
         end
     end
     

@@ -52,14 +52,7 @@ classdef Friction
             end
             obj.experiment = '';
         end
-        
-%         function obj = addData(obj, velocity, acceleration, torque, time)
-%             
-%             obj = obj.minTh_vel();
-%             obj = obj.setToCenter();
-%             
-%         end
-        
+
         function obj = minTh_vel(obj, step, velMax)
             if ~exist('step','var')
                 step = 0.1;
@@ -109,9 +102,9 @@ classdef Friction
 %             AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
 %                 obj.torque(obj.velocity < -th_velocity/2));
 
-            AP = obj.linearRegression(obj.velocity((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)), ...
+            AP = Joint.linearRegression(obj.velocity((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)), ...
                 obj.torque((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)));
-            AN = obj.linearRegression(obj.velocity((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)), ...
+            AN = Joint.linearRegression(obj.velocity((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)), ...
                 obj.torque((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)));
             
             obj.KcP = AP(2);
@@ -131,13 +124,6 @@ classdef Friction
         
         function obj = setToCenter(obj)
             %% Remove from data offset from wrong models
-%             if obj.KcP < 0
-%                 obj.torque = -obj.torque;
-%                 obj.KcP = -obj.KcP;
-%                 obj.KcN = -obj.KcN;
-%                 obj.KvP = -obj.KvP;
-%                 obj.KvN = -obj.KvN;
-%             end
             %obj.offset = mean(obj.torque);
             obj.offset = (obj.KcP-obj.KcN)/2 + obj.KcN;
             %Scaled Kc and Kv
@@ -174,13 +160,13 @@ classdef Friction
             hold off;
         end
         
-        function text = saveToFile(obj, path)
+        function text = saveToFile(obj)
             %% Save information about friction on file
             text = sprintf('\n----------> Friction <----------\n');
             % Coefficients
-            text = [text, sprintf('Voltage = s(q)(BAR-KcP + BAR-KvP*qdot) + s(-q)(BAR-KcN + BAR-KvN*qdot)\n')];
+            text = [text, sprintf('tau_f = s(q)(BAR-KcP + BAR-KvP*qdot) + s(-q)(BAR-KcN + BAR-KvN*qdot)\n\n')];
             text = [text, sprintf('BAR-KcP: %12.8f [Nm] - BAR-KcN: %12.8f [Nm]\n',obj.KcP, obj.KcN)];
-            text = [text, sprintf('BAR-KvP: %12.8f [Nm][s]/[deg] - BAR-KvN: %12.8f [Nm][s]/[deg]\n',obj.KvP, obj.KvN)];
+            text = [text, sprintf('BAR-KvP: %12.8f [Nm][s]/[deg] - BAR-KvN: %12.8f [Nm][s]/[deg]',obj.KvP, obj.KvN)];
             %text = [text, sprintf('KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',obj.KsP, obj.KsN)];
         end
         
@@ -281,37 +267,16 @@ classdef Friction
             ylabel('\tau [Nm] (Torque)','Interpreter','tex');
         end
         
-        function obj = setExperiment(obj,experiment)
-            obj.experiment = experiment;
-        end
-        
-        function hFig = savePictureToFile(obj, path, name, counter, figureName)
-            %% Save Friction picture
-            % FIGURE - Friction data and estimation
-            if ~exist('counter','var')
-                counter = 1;
-            end
-            hFig = figure(counter);
-            set(hFig, 'Position', [0 0 800 600]);
-            hold on
-            grid;
+        function plotCollected(obj)
+            hold on;
             obj.plotFriction();
             obj.plotFrictionModel();
-            title(['Friction: ' name]);
-            hold off
-            % Save image
-            currentFolder = pwd;
-            cd(path);
-            if ~exist('figureName','var')
-                figureName = 'friction';
-            end
-            if ~strcmp(obj.experiment,'')
-                figureName = [figureName '-' obj.experiment];
-            end
-            saveas(hFig,[figureName '.fig'],'fig');
-            saveas(hFig,[figureName '.png'],'png');
-            cd(currentFolder);
-            clear currentFolder;
+            hold off;
+            title('Friction estimate');
+        end
+        
+        function obj = setExperiment(obj,experiment)
+            obj.experiment = experiment;
         end
         
         %% Get original data: Velocity and torque
@@ -319,26 +284,6 @@ classdef Friction
             data = struct;
             data.velocity = obj.velocity;
             data.torque = obj.torque;
-        end
-    end
-    
-    methods (Access = protected, Static)
-        function a = linearRegression(x, y)
-            %% Linear regression to evalute coefficent for friction
-            % Line equal y = a(1)*x + a(2)
-            a = zeros(2,1);
-            if size(x,1) > 1 && size(y,1) > 1
-            r = corrcoef(x,y); % Corr coeff is the off-diagonal (1,2) element
-            r = r(1,2);  % Sample regression coefficient
-            xbar = mean(x);
-            ybar = mean(y);
-            sigx = std(x);
-            sigy = std(y);
-            a1 = r*sigy/sigx;   % Regression line slope
-            %yfit = ybar - a1*xbar + a1*x;
-            a(1) = a1;
-            a(2) = ybar - a1*xbar;
-            end
         end
     end
     
