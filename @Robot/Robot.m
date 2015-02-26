@@ -347,7 +347,7 @@ classdef Robot
                             saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.png']),'png');
                             % Save single plot
                             motor_plotted = {};
-                            text = [coupled{1}.part sprintf('\n')];
+                            text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(coupled{count}.motor,2)
                                     name_i_motor = coupled{count}.motor(i_motor).name;
