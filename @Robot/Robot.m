@@ -608,7 +608,7 @@ classdef Robot
                     return;
                 end
             end
-            if strcmp(groups{2},'shoulder') || strcmp(groups{2},'elbow')
+            if strcmp(groups{2},'shoulder') || strcmp(groups{2},'elbow') || strcmp(groups{2},'wrist')
                 part = [part '_arm'];
             elseif strcmp(groups{2},'hip') || strcmp(groups{2},'knee') || strcmp(groups{2},'ankle')
                 part = [part '_leg'];
