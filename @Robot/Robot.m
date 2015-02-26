@@ -262,7 +262,7 @@ classdef Robot
                 ' --dataToDump "(getOutputs getCurrents)"'];
         end
         
-        function robot = saveData(robot, type, logsout, time, fix)
+        function name = saveData(robot, type, logsout, time, fix)
             %% Save data from simulink
             if exist('fix','var')
                 name = type;
@@ -274,11 +274,13 @@ classdef Robot
                 if isa(robot.joints{i},'Joint')
                     path = fullfile(robot.getPathJoint(i),robot.joints{i}.motor.name,[name '.mat']);
                     number = number(end) + 1;
+                    part = robot.joints{i}.part;
                 else
                     path = fullfile(robot.getPathJoint(i), [name '.mat']);
                     
                     number = (1:size(robot.joints{i},2));
                     number = number + (i-1);
+                    part = robot.joints{i}{1}.part;
                 end
                 m = matfile(path,'Writable',true);
                 % data to will be saved
@@ -288,10 +290,10 @@ classdef Robot
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
                 PWM = struct;
-                PWM.(robot.joints{i}.part) = logsout.get(['pwm_' robot.joints{i}.part]).Values.Data;
+                PWM.(part) = logsout.get(['pwm_' part]).Values.Data;
                 m.PWM = PWM;
                 Current = struct;
-                Current.(robot.joints{i}.part) = logsout.get(['current_' robot.joints{i}.part]).Values.Data;
+                Current.(part) = logsout.get(['current_' part]).Values.Data;
                 m.Current = Current;
             end
         end
@@ -554,37 +556,42 @@ classdef Robot
         function list = parseFile(file, name_group)
             %% Parse file and get list of lines
             fid = fopen(file,'r');  % Open text file
-            while (~feof(fid))                                     % For each block:
-                InputText = textscan(fid,'%s',1,'delimiter','\n');
-                
-                counter = 1;
-                [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
-                if size(mat,1) ~= 0
-                    if size(mat{:},1) ~= 0
-                        group_file = mat{1};
-                        if strcmp(group_file,['[' name_group ']'])
-                            while (~feof(fid))
-                                InputText = textscan(fid,'%s',1,'delimiter','\n');
-                                [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
-                                if size(mat{:}) ~= 0
-                                    break;
-                                else
-                                    string = InputText{1};
-                                    str = ['' string{1}];
-                                    if size(str,1) > 0
-                                        if ~strcmp(str(1), '#')
-                                            list{counter} = str;
-                                            counter = counter + 1;
+            if fid ~= -1
+                while (~feof(fid))                                     % For each block:
+                    InputText = textscan(fid,'%s',1,'delimiter','\n');
+                    
+                    counter = 1;
+                    [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                    if size(mat,1) ~= 0
+                        if size(mat{:},1) ~= 0
+                            group_file = mat{1};
+                            if strcmp(group_file,['[' name_group ']'])
+                                while (~feof(fid))
+                                    InputText = textscan(fid,'%s',1,'delimiter','\n');
+                                    [mat,~] = regexp(InputText{1}, '\[(\w+).*?\]', 'match');
+                                    if size(mat{:}) ~= 0
+                                        break;
+                                    else
+                                        string = InputText{1};
+                                        str = ['' string{1}];
+                                        if size(str,1) > 0
+                                            if ~strcmp(str(1), '#')
+                                                list{counter} = str;
+                                                counter = counter + 1;
+                                            end
                                         end
                                     end
+                                    
                                 end
-                                
                             end
                         end
                     end
                 end
+                fclose(fid);
+            else
+                disp('[ERROR] Do not load JointNameList.ini');
+                list = {};
             end
-            fclose(fid);
         end
     end
     

@@ -2,7 +2,8 @@
 
 robot = Robot('iCubGenova03', 'Test2', '/Users/Raffaello/iit/codyco-superbuild');
 
-robot.joints = robot.getJoint('l_ankle_roll');
+%robot.joints = robot.getJoint('l_ankle_roll');
+robot.joints = robot.getCoupledJoints('torso');
 %robot.joints = [];
 %robot.joints = [robot.joints robot.getCoupledJoints('torso')];
 %robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
