@@ -3,9 +3,11 @@
 % included on this folder
 
 %% Load object Motor
-% Set all information about motor and robot when you would like to
-% experiments
-robot = Robot('iCubGenova03');
+% Set all information about your robot.
+% - Name of robot
+% - folder where you want save the data
+% - codyco-superbuild folder (try to put "getenv('CODYCO_SUPERBUILD_ROOT')" )
+robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
@@ -13,29 +15,17 @@ robot = Robot('iCubGenova03');
 robot = robot.setConfiguration('root_link','true');
 
 %% Add motors to test
-% robot = robot.addMotor('leg','left','hip','roll');
-% robot = robot.setInLastRatio(40,8000);
-% robot.saveInLastParameters();
-% robot = robot.addMotor('leg','right','hip','roll');
-% robot = robot.setInLastRatio(40,8000);
-% robot.saveInLastParameters();
-% robot = robot.addMotor('leg','left','ankle','roll');
-% robot = robot.setInLastRatio(40,8000);
-% robot.saveInLastParameters();
-% robot = robot.addMotor('leg','right','ankle','roll');
-% robot = robot.setInLastRatio(40,8000);
-% robot.saveInLastParameters();
+robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
+robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
+robot.joints = [robot.joints robot.getCoupledJoints('torso')];
+robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
 
-% Example with coupled joint
-robot = robot.addMotor('arm','left');
-robot = robot.setInLastRatio(40,8000);
-robot.saveInLastParameters();
-
-%% Configure computer
+%% Configure your computer
 % Set all variables:
+% - Name of joint list with your list of joints
 % - If true, automatic set yarp namespace
-% - codyco-superbuild folder
-robot.configure('false','/Users/Raffaello/iit/codyco-superbuild');
+robot.configure('JOINT_FRICTION','false');
+robot.buildFolders();
 
 %% Open Simulink
 open('FrictionIdentification.slx');
