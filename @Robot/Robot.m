@@ -430,7 +430,8 @@ classdef Robot
     methods(Access = protected)
         function [T, list_motor] = getTransformMatrix(robot, coupled)
             %% Get T matrix from part
-            part = coupled{1}.part;
+            [~,tok] = regexp(coupled{1}.name, '(\w+).*?_(\w+).*?', 'match','tokens');
+            part = tok{1}{1};
             if strcmp(part, 'torso')
                 R = 0.04;
                 r = 0.022;
