@@ -248,15 +248,15 @@ classdef Friction
             if ~exist('option','var')
                 option = '.';
             end
-            qD_d = obj.velocity((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
-            qD_d = [qD_d; obj.velocity((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
-            fr = obj.torque((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
-            fr = [fr; obj.torque((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
+%             qD_d = obj.velocity((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
+%             qD_d = [qD_d; obj.velocity((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
+%             fr = obj.torque((obj.velocity > obj.th_velocity/2) & (obj.acceleration >= 0));
+%             fr = [fr; obj.torque((obj.velocity < -obj.th_velocity/2) & (obj.acceleration <= 0))];
             
             plot(obj.velocity,obj.torque, option);
-            hold on;
-            plot(qD_d, fr,'g.');
-            hold off;
+%             hold on;
+%             plot(qD_d, fr,'g.');
+%             hold off;
             xlabel('qdot [deg]/[s] (Velocity)','Interpreter','tex');
             ylabel('\tau [Nm] (Torque)','Interpreter','tex');
         end
