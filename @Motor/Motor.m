@@ -126,14 +126,21 @@ classdef Motor
 
         function text = textControlData(motor)
             %% Information joint estimation
+            
+            kff = 1/motor.Kt;
+            stictionUp = sign(kff)*abs(motor.friction.KcP/motor.Kt);
+            stictionDown = sign(kff)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
+            
+            bemf = sign(kff)*abs(motor.friction.KvP/motor.Kt);
             text = '';
             if size(motor.Kt,1) ~= 0
-                text = sprintf('\n---------->  Control  <----------\n');
-                text = [text sprintf('V = kt tau - [s(q)(kc+ + kv+ qdot q) + s(-q)(kc- + kv- qdot q)]\n\n')];
-                text = [text sprintf('kc+: %12.8f [V] - kc-: %12.8f [V] \n',motor.friction.KcP/motor.Kt, motor.friction.KcN/motor.Kt)];
-                text = [text sprintf('kv+: %12.8f [V][s]/[deg] - kv-: %12.8f [V][s]/[deg]\n',motor.friction.KvP/motor.Kt, motor.friction.KvN/motor.Kt)];
+                text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
+                text = [text sprintf('kff:\t\t\t%12.8f [V]/[Nm]\n',kff)];
+                text = [text sprintf('stictionUp:\t\t%12.8f [V]\n', stictionUp)];
+                text = [text sprintf('stictionDown:\t%12.8f [V]\n', stictionDown)];
+                text = [text sprintf('bemf:\t\t\t%12.8f [V][s]/[deg]\n', bemf)];
                 %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
-                text = [text sprintf('kt: %12.8f [V]/[Nm]\n',1/motor.Kt)];
+                
             end
         end
     end

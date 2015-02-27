@@ -75,7 +75,7 @@ classdef Joint
             end
         end
         
-        function text = saveToFile(joint, idx_motor)
+        function text = saveVerbose(joint, idx_motor)
             %% Save All information joint to File
             text = sprintf('================================\n');
             text = [text 'Motor: ' joint.motor(idx_motor).name sprintf('\n')];
@@ -84,6 +84,15 @@ classdef Joint
                 text = [text sprintf('\n')];
                 text = [text joint.motor(idx_motor).saveCoeffToFile()];
                 text = [text sprintf('\n')];
+                text = [text joint.motor(idx_motor).textControlData()];
+            end
+        end
+        
+        function text = saveToFile(joint, idx_motor)
+            %% Save All information joint to File
+            text = sprintf('================================\n');
+            text = [text 'Motor: ' joint.motor(idx_motor).name sprintf('\n')];
+            if size(joint.motor(idx_motor).Kt,1) > 0
                 text = [text joint.motor(idx_motor).textControlData()];
             end
         end

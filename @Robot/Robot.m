@@ -227,9 +227,10 @@ classdef Robot
                 if strcmp(check_yarp,'true')
                     if strcmp(name_set(17:end-1), nameSpace) == 0
                         [~,namespace] = system(['yarp namespace ' nameSpace]);
-                        text = [text namespace];
+                        text = [text sprintf('\n') namespace];
                         [~,detect] = system('yarp detect --write');
                         text = [text detect];
+                        [~,name_set] = system('yarp namespace');
                     end
                 end
                 text = [text sprintf('\n---------\n') name_set];
@@ -367,9 +368,9 @@ classdef Robot
             end
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
-                    text = robot.joints{i}.getInformation();
-                    [counter, text_m] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
-                    robot.saveToFile(robot.getPathJoint(i), 'data', [text sprintf('\n') text_m]);
+                    %text = robot.joints{i}.getInformation();
+                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
+                    robot.saveToFile(robot.getPathJoint(i), 'data', text);
                 else
                     coupled = robot.joints{i};
                     if size(coupled,2) > 0
@@ -409,7 +410,7 @@ classdef Robot
                             saveas(hCollect,fullfile(pathsave, [coupled{count}.part '.png']),'png');
                             % Save single plot
                             motor_plotted = {};
-                            text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
+                            %text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(coupled{count}.motor,2)
                                     name_i_motor = coupled{count}.motor(i_motor).name;
@@ -425,6 +426,11 @@ classdef Robot
                     end
                 end
             end
+        end
+        
+        function robot = appendAllData(robot)
+%             for i=1:size(robot.joints_available)
+%             end
         end
     end
     
