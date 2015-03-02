@@ -16,9 +16,6 @@ robot.joints = robot.getJoint('l_hip_roll');
 % finally you can add all joints with
 % robot = robot.addParts('left_leg');
 
-%% Configure your computer
-robot.buildFolders();
-
 %% Load from file measure of friction
 % load data from name
 % if name start with "idle" the file will be loaded for study friction
@@ -30,3 +27,6 @@ robot = robot.loadData('ref');
 %% Estimate and plot Kt
 % Plot and save all information about motor
 robot.plotAndPrintAllData();
+
+%% Collect all data.txt in single folder
+robot.appendAllData('ParametersJTC');

@@ -411,6 +411,7 @@ classdef Robot
                             % Save single plot
                             motor_plotted = {};
                             %text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
+                            text = '';
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(coupled{count}.motor,2)
                                     name_i_motor = coupled{count}.motor(i_motor).name;
@@ -428,9 +429,33 @@ classdef Robot
             end
         end
         
-        function robot = appendAllData(robot)
-%             for i=1:size(robot.joints_available)
-%             end
+        function appendAllData(robot, name)
+            alldir = dir(fullfile(robot.start_path,robot.realNameRobot));
+            for i=1:length(alldir)
+                if alldir(i).isdir && ~strcmp(alldir(i).name,'.') && ~strcmp(alldir(i).name,'..') && ~strcmp(alldir(i).name,'torso')
+                    groupdir = dir(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name));
+                    disp(['Collect: ' alldir(i).name]);
+                    collectgroup = fopen(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name,[name '.txt']),'w');
+                    for i_group=1:length(groupdir)
+                        if groupdir(i_group).isdir && ~strcmp(groupdir(i_group).name,'.') && ~strcmp(groupdir(i_group).name,'..')
+                            %disp(groupdir(i_group).name);
+                            list_file = dir(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name));
+                            for i_file=1:length(list_file)
+                                if strcmp(list_file(i_file).name,'data.txt')
+                                    % Copy all data in collect folder
+                                    fid = fopen(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name, list_file(i_file).name));
+                                    while (~feof(fid))
+                                        fprintf(collectgroup, '%s', fgets(fid));
+                                    end
+                                    fclose(fid);
+                                end
+                            end
+                        end
+                    end
+                    fclose(collectgroup);
+                    %disp('--- STOP ---');
+                end
+            end
         end
     end
     
@@ -577,9 +602,11 @@ classdef Robot
         function saveToFile(path, name,text)
             %% Save all data to file
             fileID = fopen(fullfile(path,[name '.txt']),'w');
-            fprintf(fileID,'%s',text);
-            % Close
-            fclose(fileID);
+            if fileID ~= -1
+                fprintf(fileID,'%s',text);
+                % Close
+                fclose(fileID);
+            end
         end
         
         function list = getListJoints(list_joint)

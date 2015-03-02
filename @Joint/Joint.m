@@ -91,7 +91,7 @@ classdef Joint
         function text = saveToFile(joint, idx_motor)
             %% Save All information joint to File
             text = sprintf('================================\n');
-            text = [text 'Motor: ' joint.motor(idx_motor).name sprintf('\n')];
+            text = [text 'Motor: ' joint.motor(idx_motor).name ' (' joint.name sprintf(')\n')];
             if size(joint.motor(idx_motor).Kt,1) > 0
                 text = [text joint.motor(idx_motor).textControlData()];
             end
