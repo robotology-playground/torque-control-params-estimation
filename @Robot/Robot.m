@@ -92,6 +92,33 @@ classdef Robot
             end
         end
         
+        function motors = getListMotor(robot, joints)
+            if length(joints) > 1
+                motors = robot.getMotorCoupledJoints(joints);
+            else
+                motors{1} = joints.motor;
+            end
+        end
+        
+        function motors = getMotorCoupledJoints(robot, coupled)
+            [~, list_motor] = robot.getTransformMatrix(coupled);
+            motors = {};
+            counter_motor = 1;
+            for i=1:length(coupled)
+                for j_motor=1:length(coupled{i}.motor)
+                    if strcmp(list_motor{counter_motor}, coupled{i}.motor(j_motor).name)
+                        disp(coupled{i}.motor(j_motor).name);
+                        motors{counter_motor} = coupled{i}.motor(j_motor);
+                        if counter_motor == 3
+                            return;
+                        else
+                            counter_motor = counter_motor + 1;
+                        end
+                    end
+                end
+            end
+        end
+        
         function robot = addParts(robot, part)
             if strcmp(part,'left_leg')
                 robot.joints = [robot.joints robot.getJoint('l_hip_pitch')];
@@ -388,7 +415,7 @@ classdef Robot
                                         counter_image = counter_image + 1;
                                         motor_plotted{i_motor} = name_i_motor;
                                         if size(coupled{count}.motor(i_motor).friction,1) > 0
-                                            if size(coupled{count}.motor(i_motor).Kt,1) > 0
+                                            if size(coupled{count}.motor(i_motor).getKt(),1) > 0
                                                 subplot(3,number_plot,counter_image*2-1);
                                                 coupled{count}.motor(i_motor).friction.plotCollected();
                                                 grid;
