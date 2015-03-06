@@ -58,7 +58,7 @@ classdef Friction
                 step = 0.1;
             end
             if ~exist('velMax','var')
-                velMax = max(obj.velocity);
+                velMax = max(obj.velocity)/2;
             end
             obj = obj.evaluateCoeff(0);
             Var = zeros(floor(velMax/step),1);
