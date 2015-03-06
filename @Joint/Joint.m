@@ -65,7 +65,7 @@ classdef Joint
         function number = asPlot(joint)
             %% Get Number of subplot
             if size(joint.motor(1).friction,1) > 0
-                if size(joint.motor(1).Kt,1) > 0
+                if size(joint.motor(1).getKt(),1) > 0
                     number = 2;
                 else
                     number = 1;
@@ -80,7 +80,7 @@ classdef Joint
             text = sprintf('================================\n');
             text = [text 'Motor: ' joint.motor(idx_motor).name sprintf('\n')];
             text = [text joint.motor(idx_motor).friction.saveToFile()];
-            if size(joint.motor(idx_motor).Kt,1) > 0
+            if size(joint.motor(idx_motor).getKt(),1) > 0
                 text = [text sprintf('\n')];
                 text = [text joint.motor(idx_motor).saveCoeffToFile()];
                 text = [text sprintf('\n')];
@@ -92,7 +92,7 @@ classdef Joint
             %% Save All information joint to File
             text = sprintf('================================\n');
             text = [text 'Motor: ' joint.motor(idx_motor).name ' (' joint.name sprintf(')\n')];
-            if size(joint.motor(idx_motor).Kt,1) > 0
+            if size(joint.motor(idx_motor).getKt(),1) > 0
                 text = [text joint.motor(idx_motor).textControlData()];
             end
         end
@@ -102,7 +102,7 @@ classdef Joint
             text = joint.getInformation();
             text = [text sprintf('\n')];
             text = [text joint.motor.friction.saveLatexToFile(joint.name)];
-            if size(joint.motor.Kt,1) > 0
+            if size(joint.motor.getKt(),1) > 0
                 text = [text sprintf('\n')];
                 text = [text joint.motor.saveLatexCoeffToFile()];
 %                 text = [text sprintf('\n')];
@@ -116,7 +116,7 @@ classdef Joint
             end
             %% Plot Data
             if size(joint.motor(counter).friction,1) > 0
-                if size(joint.motor(counter).Kt,1) > 0
+                if size(joint.motor(counter).getKt(),1) > 0
                     subplot(1,2,1);
                     joint.motor(counter).friction.plotCollected();
                     grid;

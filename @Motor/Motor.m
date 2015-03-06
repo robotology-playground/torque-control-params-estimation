@@ -46,6 +46,10 @@ classdef Motor
             end
         end
         
+        function Kt = getKt(motor)
+            Kt = motor.Kt;
+        end
+        
         function motor = setRatio(motor, Voltage, range_pwm)
             motor.Voltage = str2double(Voltage); 
             motor.range_pwm = str2double(range_pwm);
@@ -79,7 +83,12 @@ classdef Motor
         
         function plotMotorModel(motor)
             %% Plot Motor model
-            title(sprintf('Kt: %12.8f [Nm]/[V] - Name motor: %s',motor.Kt, motor.name));
+            if motor.ratio ~= 1
+                unit = 'V';
+            else
+                unit = 'PWM';
+            end
+            title(sprintf('Kt: %12.8f [Nm]/[%s] - Name motor: %s',motor.Kt, unit, motor.name));
             plot(motor.voltage , motor.voltage*motor.Kt,'r-','LineWidth',3);
         end
         
@@ -111,7 +120,12 @@ classdef Motor
             if size(motor.Kt,1) ~= 0
                 text = [text, sprintf('\n---------->     Kt    <----------\n')];
                 text = [text, sprintf('tau_m = Kt*PWM \n')];
-                text = [text, sprintf('Kt: %12.8f [Nm]/[V]',motor.Kt)];
+                if motor.ratio ~= 1
+                    unit = 'V';
+                else
+                    unit = 'PWM';
+                end
+                text = [text, sprintf('Kt: %12.8f [Nm]/[%s]',motor.Kt, unit)];
                 if motor.ratio ~= 1
                     text = [text, sprintf('\nRatio: %12.8f [V]/PWM',motor.ratio)];
                 end
@@ -143,11 +157,16 @@ classdef Motor
             motor = motor.controlValue();
             text = '';
             if size(motor.Kt,1) ~= 0
+                if motor.ratio ~= 1
+                    unit = 'V';
+                else
+                    unit = 'PWM';
+                end
                 text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
-                text = [text sprintf('kff:\t\t\t%12.8f [V]/[Nm]\n',motor.kff)];
-                text = [text sprintf('stictionUp:\t\t%12.8f [V]\n', motor.stictionUp)];
-                text = [text sprintf('stictionDown:\t%12.8f [V]\n', motor.stictionDown)];
-                text = [text sprintf('bemf:\t\t\t%12.8f [V][s]/[deg]\n', motor.bemf)];
+                text = [text sprintf('kff:\t\t\t%12.8f [%s]/[Nm]\n',motor.kff,unit)];
+                text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unit)];
+                text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unit)];
+                text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unit)];
                 %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
                 
             end
