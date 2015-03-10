@@ -396,8 +396,8 @@ classdef Robot
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
                     %text = robot.joints{i}.getInformation();
-                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','Data');
-                    [counter, text_firmware] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','Firmware');
+                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','data');
+                    [counter, text_firmware] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'off','Firmware');
                     robot.saveToFile(robot.getPathJoint(i), 'data', text);
                     robot.saveToFile(robot.getPathJoint(i), 'firmware', text_firmware);
                 else
@@ -422,11 +422,11 @@ classdef Robot
                                                 coupled{count}.motor(i_motor).friction.plotCollected();
                                                 grid;
                                                 subplot(3,number_plot,counter_image*2);
-                                                coupled{count}.motor(i_motor).plotCollected();
+                                                coupled{count}.motor(i_motor).plotCollected('data');
                                                 grid;
                                             else
                                                 subplot(3,number_plot,counter_image);
-                                                coupled{count}.plotCollected();
+                                                coupled{count}.plotCollected('data');
                                                 grid;
                                             end
                                         end
@@ -441,17 +441,21 @@ classdef Robot
                             motor_plotted = {};
                             %text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
                             text = '';
+                            textFirmware = '';
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(coupled{count}.motor,2)
                                     name_i_motor = coupled{count}.motor(i_motor).name;
                                     if ~robot.isInList(motor_plotted, name_i_motor)
-                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off');
+                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off','data');
+                                        [counter, textFirmware_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off','Firmware');
                                         text = [text sprintf('\n') text_m];
+                                        textFirmware = [textFirmware sprintf('\n') textFirmware_m];
                                         motor_plotted{i_motor} = name_i_motor;
                                     end
                                 end
                             end
                             robot.saveToFile(pathsave, 'data', text);
+                            robot.saveToFile(pathsave, 'firmware', textFirmware);
                         end
                     end
                 end
