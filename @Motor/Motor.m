@@ -8,6 +8,7 @@ classdef Motor
         torque;
         pwm;
         voltage;
+        torqueMachine;
         current;
         time;
         friction_model;
@@ -17,6 +18,7 @@ classdef Motor
         maxTorque;
         % Kt values
         Kt;
+        KtFirmware;
         n_matrix;
     end
     
@@ -53,8 +55,12 @@ classdef Motor
             Kt = motor.Kt;
         end
         
+        function Kt = getKtFirmware(motor)
+            Kt = motor.KtFirmware;
+        end
+        
         function motor = setRatioTorque(motor, maxTorque)
-            if motor.maxTorque ~= 1
+            if maxTorque ~= 1
                 motor.maxTorque = maxTorque;
                 motor.ratioTorque = 32000/motor.maxTorque;
             end
@@ -70,10 +76,11 @@ classdef Motor
             %% Load measure to add in motor
             motor.q = data.q;
             motor.qdot = data.qD;
-            motor.torque = data.tau*motor.ratioTorque;
+            motor.torque = data.tau;
             temp_pwm = data.PWM.(part);
             motor.pwm = temp_pwm(:,number);
             motor.voltage = motor.ratioVoltage*motor.pwm;
+            motor.torqueMachine = data.tau*motor.ratioTorque;
             if isfield(data,'current')
                 motor.current = data.current;
             end
@@ -83,44 +90,46 @@ classdef Motor
             end
         end
         
-        function plotCollected(motor)
+        function plotCollected(motor, typedata)
             %% Plot Collected images - Motor and model
             hold on
-            motor.plotMotor();
-            motor.plotMotorModel();
+            motor.plotMotor(typedata);
+            motor.plotMotorModel(typedata);
             hold off
         end
         
-        function plotMotorModel(motor)
+        function plotMotorModel(motor, typedata)
             %% Plot Motor model
-            if motor.ratioVoltage ~= 1
-                unitX = 'V';
-            else
+            if strcmp(typedata,'Firmware')
                 unitX = 'PWM';
-            end
-            if motor.ratioTorque ~= 1
-                unitY = 'Nm';
+                unitY = 'Torque Machine';
+                Ktvalue = motor.KtFirmware;
             else
-                unitY = 'TorqueMachine';
+                unitX = 'V';
+                unitY = 'Nm';
+                Ktvalue = motor.Kt;
             end
-            title(sprintf('Kt: %12.8f [%s]/[%s] - Name motor: %s',motor.Kt, unitY, unitX, motor.name));
-            plot(motor.voltage , motor.voltage*motor.Kt,'r-','LineWidth',3);
+            title(sprintf('Kt: %12.8f [%s]/[%s] - Name motor: %s',Ktvalue, unitY, unitX, motor.name));
+            
+            if strcmp(typedata,'Firmware')
+                plot(motor.pwm, motor.pwm*motor.KtFirmware,'r-','LineWidth',3);
+            else
+                plot(motor.voltage, motor.voltage*motor.Kt,'r-','LineWidth',3);
+            end
         end
         
-        function plotMotor(motor, option)
+        function plotMotor(motor, typedata, option)
             %% Plot measure versus friction estimation
             if ~exist('option','var')
                 option = '.';
             end
-            plot(motor.voltage, motor.torque-motor.friction_model, option);
-            if motor.ratioVoltage == 1
+            if strcmp(typedata,'Firmware')
+                plot(motor.pwm, motor.ratioTorque*(motor.torque-motor.friction_model), option);
                 xlabel('PWM','Interpreter','tex');
-            else
-                xlabel('Voltage','Interpreter','tex');
-            end
-            if motor.ratioVoltage == 1
                 ylabel('TorqueMachine','Interpreter','tex');
             else
+                plot(motor.voltage, motor.torque-motor.friction_model, option);
+                xlabel('Voltage','Interpreter','tex');
                 ylabel('\tau-\tau_{f}','Interpreter','tex');
             end
         end
@@ -128,33 +137,33 @@ classdef Motor
         function motor = evaluateCoefficient(motor)
             %% Evaluate coefficient for Kt motor
             motor.friction_model = motor.friction.getFriction(motor.qdot);
-            A = Joint.linearRegression(motor.voltage,motor.torque-motor.friction_model);
+            A = Joint.linearRegression(motor.pwm,motor.torqueMachine-motor.friction_model);
+            B = Joint.linearRegression(motor.voltage,motor.torque-motor.friction_model);
             %A = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
-            motor.Kt = A(1);
+            motor.KtFirmware = A(1);
+            motor.Kt = B(1);
         end
 
-        function text = saveCoeffToFile(motor)
+        function text = saveCoeffToFile(motor, typedata)
             %% Write information to txt file
             text = '';
-            if size(motor.Kt,1) ~= 0
-                text = [text, sprintf('\n---------->     Kt    <----------\n')];
-                text = [text, sprintf('tau_m = Kt*PWM \n')];
-                if motor.ratioVoltage ~= 1
-                    unitX = 'V';
-                else
+            if strcmp(typedata,'Firmware')
+                if size(motor.KtFirmware,1) ~= 0
+                    text = [text, sprintf('\n---------->     Kt - FIRMWARE    <----------\n')];
+                    text = [text, sprintf('tau_machine = Kt*PWM \n')];
                     unitX = 'PWM';
-                end
-                if motor.ratioTorque ~= 1
-                    unitY = 'Nm';
-                else
                     unitY = 'TorqueMachine';
-                end
-                text = [text, sprintf('Kt: %12.8f [%s]/[%s]',motor.Kt, unitY, unitX)];
-                if motor.ratioVoltage ~= 1
+                    text = [text, sprintf('Kt: %12.8f [%s]/[%s]',motor.KtFirmware, unitY, unitX)];
                     text = [text, sprintf('\nRatio Volt: %12.8f [V]/PWM',motor.ratioVoltage)];
-                end
-                if motor.ratioTorque ~= 1
                     text = [text, sprintf('\nRatio Torque: %12.8f [Nm]/TorqueMachine',motor.ratioTorque)];
+                end
+            else
+                if size(motor.Kt,1) ~= 0
+                    text = [text, sprintf('\n---------->     Kt    <----------\n')];
+                    text = [text, sprintf('tau_m = Kt*Volt \n')];
+                    unitX = 'V';
+                    unitY = 'Nm';
+                    text = [text, sprintf('Kt: %12.8f [%s]/[%s]',motor.Kt, unitY, unitX)];
                 end
             end
         end
@@ -170,38 +179,45 @@ classdef Motor
             text = [text, sprintf('\\end{equation}\n')];
         end
         
-        function motor = controlValue(motor)
+        function motor = controlValue(motor,typedata)
             %% Control values
-            motor.ktau = 1/motor.Kt;
-            motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP/motor.Kt);
-            motor.stictionDown = sign(motor.ktau)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
-            motor.bemf = sign(motor.ktau)*abs(motor.friction.KvP/motor.Kt);
+            if strcmp(typedata,'Firmware')
+                motor.ktau = 1/motor.KtFirmware;
+            else
+                motor.ktau = 1/motor.Kt;
+            end
+                motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
+                motor.stictionDown = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
+                motor.bemf = sign(motor.ktau)*abs(motor.friction.KvP*motor.ktau);
         end
 
-        function text = textControlData(motor)
+        function text = textControlData(motor, typedata)
             %% Information joint estimation
-            
-            motor = motor.controlValue();
-            text = '';
-            if size(motor.Kt,1) ~= 0
-                if motor.ratioVoltage ~= 1
-                    unitX = 'V';
-                else
+            motor = motor.controlValue(typedata);
+            if strcmp(typedata,'Firmware')
+                if size(motor.KtFirmware,1) ~= 0
                     unitX = 'PWM';
-                end
-                if motor.ratioTorque ~= 1
-                    unitY = 'Nm';
-                else
                     unitY = 'TorqueMachine';
+                    text = sprintf('\n---------->  Parameters for FIRMWARE  <----------\n\n');
+                    text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
+                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
+                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
+                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
+                    %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
                 end
-                text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
-                text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
-                text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
-                text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
-                text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
-                %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
-                
+            else
+                if size(motor.Kt,1) ~= 0
+                    unitX = 'V';
+                    unitY = 'Nm';
+                    text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
+                    text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
+                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
+                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
+                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
+                    %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
+                end
             end
+            
         end
     end
     

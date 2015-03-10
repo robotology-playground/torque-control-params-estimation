@@ -396,8 +396,10 @@ classdef Robot
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
                     %text = robot.joints{i}.getInformation();
-                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
+                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','Data');
+                    [counter, text_firmware] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','Firmware');
                     robot.saveToFile(robot.getPathJoint(i), 'data', text);
+                    robot.saveToFile(robot.getPathJoint(i), 'firmware', text_firmware);
                 else
                     coupled = robot.joints{i};
                     if size(coupled,2) > 0
@@ -599,19 +601,24 @@ classdef Robot
     end
     
     methods (Access = protected, Static)
-        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible)
+        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible, typedata)
             text = '';
             if joint.asPlot()
                 counter = counter + 1;
                 hCollect = figure(counter); %create new figure
                 set(hCollect, 'Position', [0 0 800 600], 'visible', isVisible);
+                clf;
                 idx_motor = joint.getIndexMotorFromList(name_motor);
-                joint.plotCollected(idx_motor);
+                joint.plotCollected(typedata, idx_motor);
                 %Save information to file
-                text = joint.saveToFile(idx_motor);
+                text = joint.saveToFile(typedata, idx_motor);
                 % Save figure
-                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.fig']),'fig');
-                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.png']),'png');
+                name_figure = joint.motor(idx_motor).name;
+                if strcmp(typedata,'Firmware')
+                    name_figure = [name_figure '-' typedata];
+                end
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [name_figure '.fig']),'fig');
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [name_figure '.png']),'png');
             end
         end
         
