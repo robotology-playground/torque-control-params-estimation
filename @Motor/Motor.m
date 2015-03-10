@@ -182,9 +182,13 @@ classdef Motor
         function motor = controlValue(motor,typedata)
             %% Control values
             if strcmp(typedata,'Firmware')
-                motor.ktau = 1/motor.KtFirmware;
+                if length(motor.KtFirmware) == 1
+                    motor.ktau = 1/motor.KtFirmware;
+                end
             else
-                motor.ktau = 1/motor.Kt;
+                if length(motor.Kt) == 1
+                    motor.ktau = 1/motor.Kt;
+                end
             end
                 motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
                 motor.stictionDown = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
