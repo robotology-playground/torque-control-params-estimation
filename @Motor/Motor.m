@@ -40,11 +40,11 @@ classdef Motor
         function motor = loadParameter(motor, file)
             text = Robot.parseFile(file, 'MOTOR_LIST_PARAMETERS');
             for i=1:size(text,2)
-                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
+                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
                 tok = tok{:};
                 if strcmp(tok{1},motor.name)
                     motor = motor.setRatioVoltage(str2double(tok{2}),str2double(tok{3}));
-                    motor = motor.setRatioTorque(str2double(tok{4}),str2double(tok{5}));
+                    motor = motor.setRatioTorque(str2double(tok{4}));
                 end
             end
         end
@@ -53,9 +53,11 @@ classdef Motor
             Kt = motor.Kt;
         end
         
-        function motor = setRatioTorque(motor, maxTorque, maxInt)
-            motor.maxTorque = maxTorque;
-            motor.ratioTorque = motor.maxTorque/maxInt;
+        function motor = setRatioTorque(motor, maxTorque)
+            if motor.maxTorque ~= 1
+                motor.maxTorque = maxTorque;
+                motor.ratioTorque = 32000/motor.maxTorque;
+            end
         end
         
         function motor = setRatioVoltage(motor, Voltage, range_pwm)
@@ -68,7 +70,7 @@ classdef Motor
             %% Load measure to add in motor
             motor.q = data.q;
             motor.qdot = data.qD;
-            motor.torque = data.tau./motor.ratioTorque;
+            motor.torque = data.tau*motor.ratioTorque;
             temp_pwm = data.PWM.(part);
             motor.pwm = temp_pwm(:,number);
             motor.voltage = motor.ratioVoltage*motor.pwm;
