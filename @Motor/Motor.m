@@ -14,6 +14,7 @@ classdef Motor
         % Information about motor
         Voltage;
         range_pwm;
+        maxTorque;
         % Kt values
         Kt;
         n_matrix;
@@ -22,8 +23,9 @@ classdef Motor
     properties
         name;
         friction;
-        ratio = 1;
-        kff = 0
+        ratioTorque = 1;
+        ratioVoltage = 1;
+        ktau = 0
         stictionUp = 0;
         stictionDown = 0;
         bemf = 0;
@@ -38,10 +40,11 @@ classdef Motor
         function motor = loadParameter(motor, file)
             text = Robot.parseFile(file, 'MOTOR_LIST_PARAMETERS');
             for i=1:size(text,2)
-                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?\)', 'match','tokens');
+                [~,tok] = regexp(text{i}, '(\w+).*? = \((\w+).*?,(\w+).*?,(\w+).*?,(\w+).*?\)', 'match','tokens');
                 tok = tok{:};
                 if strcmp(tok{1},motor.name)
-                    motor = motor.setRatio(tok{2},tok{3});
+                    motor = motor.setRatioVoltage(str2double(tok{2}),str2double(tok{3}));
+                    motor = motor.setRatioTorque(str2double(tok{4}),str2double(tok{5}));
                 end
             end
         end
@@ -50,20 +53,25 @@ classdef Motor
             Kt = motor.Kt;
         end
         
-        function motor = setRatio(motor, Voltage, range_pwm)
-            motor.Voltage = str2double(Voltage); 
-            motor.range_pwm = str2double(range_pwm);
-            motor.ratio = motor.Voltage/motor.range_pwm;
+        function motor = setRatioTorque(motor, maxTorque, maxInt)
+            motor.maxTorque = maxTorque;
+            motor.ratioTorque = motor.maxTorque/maxInt;
+        end
+        
+        function motor = setRatioVoltage(motor, Voltage, range_pwm)
+            motor.Voltage = Voltage; 
+            motor.range_pwm = range_pwm;
+            motor.ratioVoltage = motor.Voltage/motor.range_pwm;
         end
         
         function motor = loadMeasure(motor, data, part, number)
             %% Load measure to add in motor
             motor.q = data.q;
             motor.qdot = data.qD;
-            motor.torque = data.tau;
+            motor.torque = data.tau./motor.ratioTorque;
             temp_pwm = data.PWM.(part);
             motor.pwm = temp_pwm(:,number);
-            motor.voltage = motor.ratio*motor.pwm;
+            motor.voltage = motor.ratioVoltage*motor.pwm;
             if isfield(data,'current')
                 motor.current = data.current;
             end
@@ -83,12 +91,17 @@ classdef Motor
         
         function plotMotorModel(motor)
             %% Plot Motor model
-            if motor.ratio ~= 1
-                unit = 'V';
+            if motor.ratioVoltage ~= 1
+                unitX = 'V';
             else
-                unit = 'PWM';
+                unitX = 'PWM';
             end
-            title(sprintf('Kt: %12.8f [Nm]/[%s] - Name motor: %s',motor.Kt, unit, motor.name));
+            if motor.ratioTorque ~= 1
+                unitY = 'Nm';
+            else
+                unitY = 'TorqueMachine';
+            end
+            title(sprintf('Kt: %12.8f [%s]/[%s] - Name motor: %s',motor.Kt, unitY, unitX, motor.name));
             plot(motor.voltage , motor.voltage*motor.Kt,'r-','LineWidth',3);
         end
         
@@ -98,12 +111,16 @@ classdef Motor
                 option = '.';
             end
             plot(motor.voltage, motor.torque-motor.friction_model, option);
-            if motor.ratio == 1
+            if motor.ratioVoltage == 1
                 xlabel('PWM','Interpreter','tex');
             else
                 xlabel('Voltage','Interpreter','tex');
             end
-            ylabel('\tau-\tau_{f}','Interpreter','tex');
+            if motor.ratioVoltage == 1
+                ylabel('TorqueMachine','Interpreter','tex');
+            else
+                ylabel('\tau-\tau_{f}','Interpreter','tex');
+            end
         end
         
         function motor = evaluateCoefficient(motor)
@@ -120,14 +137,22 @@ classdef Motor
             if size(motor.Kt,1) ~= 0
                 text = [text, sprintf('\n---------->     Kt    <----------\n')];
                 text = [text, sprintf('tau_m = Kt*PWM \n')];
-                if motor.ratio ~= 1
-                    unit = 'V';
+                if motor.ratioVoltage ~= 1
+                    unitX = 'V';
                 else
-                    unit = 'PWM';
+                    unitX = 'PWM';
                 end
-                text = [text, sprintf('Kt: %12.8f [Nm]/[%s]',motor.Kt, unit)];
-                if motor.ratio ~= 1
-                    text = [text, sprintf('\nRatio: %12.8f [V]/PWM',motor.ratio)];
+                if motor.ratioTorque ~= 1
+                    unitY = 'Nm';
+                else
+                    unitY = 'TorqueMachine';
+                end
+                text = [text, sprintf('Kt: %12.8f [%s]/[%s]',motor.Kt, unitY, unitX)];
+                if motor.ratioVoltage ~= 1
+                    text = [text, sprintf('\nRatio Volt: %12.8f [V]/PWM',motor.ratioVoltage)];
+                end
+                if motor.ratioTorque ~= 1
+                    text = [text, sprintf('\nRatio Torque: %12.8f [Nm]/TorqueMachine',motor.ratioTorque)];
                 end
             end
         end
@@ -145,10 +170,10 @@ classdef Motor
         
         function motor = controlValue(motor)
             %% Control values
-            motor.kff = 1/motor.Kt;
-            motor.stictionUp = sign(motor.kff)*abs(motor.friction.KcP/motor.Kt);
-            motor.stictionDown = sign(motor.kff)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
-            motor.bemf = sign(motor.kff)*abs(motor.friction.KvP/motor.Kt);
+            motor.ktau = 1/motor.Kt;
+            motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP/motor.Kt);
+            motor.stictionDown = sign(motor.ktau)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
+            motor.bemf = sign(motor.ktau)*abs(motor.friction.KvP/motor.Kt);
         end
 
         function text = textControlData(motor)
@@ -157,16 +182,21 @@ classdef Motor
             motor = motor.controlValue();
             text = '';
             if size(motor.Kt,1) ~= 0
-                if motor.ratio ~= 1
-                    unit = 'V';
+                if motor.ratioVoltage ~= 1
+                    unitX = 'V';
                 else
-                    unit = 'PWM';
+                    unitX = 'PWM';
+                end
+                if motor.ratioTorque ~= 1
+                    unitY = 'Nm';
+                else
+                    unitY = 'TorqueMachine';
                 end
                 text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
-                text = [text sprintf('kff:\t\t\t%12.8f [%s]/[Nm]\n',motor.kff,unit)];
-                text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unit)];
-                text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unit)];
-                text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unit)];
+                text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
+                text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
+                text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
+                text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
                 %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
                 
             end
