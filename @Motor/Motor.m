@@ -147,8 +147,8 @@ classdef Motor
             %% Control values
             motor.kff = 1/motor.Kt;
             motor.stictionUp = sign(motor.kff)*abs(motor.friction.KcP/motor.Kt);
-            motor.stictionDown = sign(motor.kff)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
-            motor.bemf = sign(motor.kff)*abs(motor.friction.KvP/motor.Kt);
+            motor.stictionDown = sign(motor.kff)*abs(motor.friction.KcN/motor.Kt);
+            motor.bemf = sign(motor.kff)*abs(mean([motor.friction.KvP/motor.Kt,motor.friction.KvN/motor.Kt]));
         end
 
         function text = textControlData(motor)
