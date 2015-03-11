@@ -25,8 +25,8 @@ Before run scripts are important to:
 5. Run `matlab` 
 
 ## In Matlab
-- Open and set the script `dump_joints_robot.m` to load on matlab environment all variables and read all information
-- Run the script `dump_joints_robot.m` to load on matlab environment all variables and read all information
+- Open and set the script `dump_joints.m` to load on matlab environment all variables and read all information
+- Run the script `dump_joints.m` to load on matlab environment all variables and read all information
 
 --------
 
