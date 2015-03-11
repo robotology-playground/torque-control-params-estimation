@@ -19,6 +19,7 @@ Before run scripts are important to:
 2. Run `robotInterface` on **pc104**
 3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
 4. Run `controlBoardDumper` to receive information about Voltage (PWM) and Current **OPTIONAL**
+  - For example, if you want to estimate the friction of the `left_leg` joints you can launch controlBoradDumper with the following command: `controlBoardDumper --robot icub --part left_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getOutputs getCurrents)"`
 5. Run `matlab` 
 
 ## In Matlab
