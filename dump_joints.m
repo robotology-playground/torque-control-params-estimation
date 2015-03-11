@@ -7,7 +7,11 @@
 % - Name of robot
 % - folder where you want save the data
 % - codyco-superbuild folder (try to put "getenv('CODYCO_SUPERBUILD_ROOT')" )
-robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
+% - optional: name of the yarpWholeBodyInterface configuration file.
+%              Default: yarpWholeBodyInterface.ini 
+% - optional: name of the build directory 
+%              Default: build 
+robot = Robot('iCubGenova01', 'experiments', '/usr/local/src/robot/codyco-superbuild');
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
@@ -17,8 +21,8 @@ robot = robot.setReferenceFrame('root_link','true');
 %% Add motors to test
 robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
 robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
-robot.joints = [robot.joints robot.getCoupledJoints('torso')];
-robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
+% robot.joints = [robot.joints robot.getCoupledJoints('torso')];
+% robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
 
 %% Configure your computer
 % Set all variables:
