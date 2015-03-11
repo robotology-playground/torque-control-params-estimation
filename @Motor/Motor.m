@@ -190,9 +190,9 @@ classdef Motor
                     motor.ktau = 1/motor.Kt;
                 end
             end
-                motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
-                motor.stictionDown = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
-                motor.bemf = sign(motor.ktau)*abs(motor.friction.KvP*motor.ktau);
+            motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
+            motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ktau);
+            motor.bemf = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
         end
 
         function text = textControlData(motor, typedata)
