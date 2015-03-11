@@ -1,9 +1,6 @@
 # FrictionJoint
 Analysis friction on iCub's joint with **MATLAB** and **WBI-Toolbox**
 
-## Dataset
-- **iCubGenova04** [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.14814.svg)](http://dx.doi.org/10.5281/zenodo.14814)
-
 ## Dependencies
 This scripts running with *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*, see the instruction to install all programs:
 - [ICub Software Installation](http://wiki.icub.org/wiki/ICub_Software_Installation)
