@@ -217,8 +217,11 @@ classdef Robot
             end
         end
         
-        function configure(robot, name, check_yarp)
+        function configure(robot, name, check_yarp, yarpWBIfile)
             %% Configure Yarp Whole Body Interface
+            if ~exist('yarpWBIfile','var')
+                yarpWBIfile = 'yarpWholeBodyInterface.ini';
+            end
             if size(robot.joints,2) > 0
                 list = robot.getListJoints(robot.joints{1});
                 for i=2:size(robot.joints,2)
@@ -232,7 +235,7 @@ classdef Robot
                 % Plot list of joints_avaiable
                 disp(format_list);
                 % Set Yarp WBI
-                robot.loadYarpWBI(format_list);
+                robot.loadYarpWBI(format_list, yarpWBIfile);
                 % Set WBI
                 text = robot.setupWBI(name);
                 
@@ -567,7 +570,7 @@ classdef Robot
             fclose(fid);
         end
         
-        function loadYarpWBI(robot, list)
+        function loadYarpWBI(robot, list, yarpWBIfile)
             %% Load and save in BUILD directory configuraton
             path = fullfile(getenv('HOME'), '.local', 'share', 'yarp', 'robots', robot.realNameRobot, robot.configFile);
             if exist(path,'file')
@@ -576,7 +579,7 @@ classdef Robot
             else
                 name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','robots',robot.realNameRobot,robot.configFile);
             end
-            copy_yarp_file = fullfile(robot.codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
+            copy_yarp_file = fullfile(robot.codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot, yarpWBIfile);
             copyfile(copy_yarp_file, name_yarp_file);
             
             fid = fopen(name_yarp_file, 'a+');
