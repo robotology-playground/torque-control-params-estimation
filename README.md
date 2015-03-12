@@ -40,3 +40,10 @@ Before run scripts are important to:
 - Click on "Plot Joint" and you will get the plot of the experiments data and the fitted model. 
 - All the data is also saved in the directory that you indicated in the constructor of the Robot object. 
 
+## Perform joint friction estimation for group of coupled joints
+The procedure is similar to the one done for a single joint, the main differences are:
+ - In the `dump_joints.m` file you have to set the `robot.joints` attribute using a special function to add all the joints belonging to the coupled group, the one currently supported are: 
+    - `robot.joints = [robot.getCoupledJoints('torso')];` ,
+    - `robot.joints = [robot.getCoupledJoints('l_shoulder')];` ,
+    - `robot.joints = [robot.getCoupledJoints('r_shoulder')];` ,
+ - Then, when you do the data collection you should switch in idle all the joints in the coupled group and collect the idle data. Similarly after you clicked  the "Save Idle Data" button, you have to switch all the joints in the coupled group to be controlled in positions, and you have to collect the motor gain data and then click on the "Save Ref Data" button. Remember to try to get exciting data for all the motors belonging to the coupled group. 
