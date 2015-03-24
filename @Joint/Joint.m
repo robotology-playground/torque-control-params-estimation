@@ -88,12 +88,18 @@ classdef Joint
             end
         end
         
-        function text = saveToFile(joint, idx_motor)
+        function text = saveToFile(joint, typedata, idx_motor)
             %% Save All information joint to File
             text = sprintf('================================\n');
             text = [text 'Motor: ' joint.motor(idx_motor).name ' (' joint.name sprintf(')\n')];
-            if size(joint.motor(idx_motor).getKt(),1) > 0
-                text = [text joint.motor(idx_motor).textControlData()];
+            if strcmp(typedata,'Firmware')
+                if size(joint.motor(idx_motor).getKtFirmware(),1) > 0
+                    text = [text joint.motor(idx_motor).textControlData(typedata)];
+                end
+            else
+                if size(joint.motor(idx_motor).getKt(),1) > 0
+                    text = [text joint.motor(idx_motor).textControlData(typedata)];
+                end
             end
         end
         
@@ -110,7 +116,7 @@ classdef Joint
             end
         end
         
-        function plotCollected(joint, counter)
+        function plotCollected(joint, typedata, counter)
             if ~exist('counter','var')
                 counter = 1;
             end
@@ -121,7 +127,7 @@ classdef Joint
                     joint.motor(counter).friction.plotCollected();
                     grid;
                     subplot(1,2,2);
-                    joint.motor(counter).plotCollected();
+                    joint.motor(counter).plotCollected(typedata);
                     grid;
                 else
                     joint.motor(counter).friction.plotCollected();
