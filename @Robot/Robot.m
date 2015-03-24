@@ -92,6 +92,33 @@ classdef Robot
             end
         end
         
+        function motors = getListMotor(robot, joints)
+            if length(joints) > 1
+                motors = robot.getMotorCoupledJoints(joints);
+            else
+                motors{1} = joints.motor;
+            end
+        end
+        
+        function motors = getMotorCoupledJoints(robot, coupled)
+            [~, list_motor] = robot.getTransformMatrix(coupled);
+            motors = {};
+            counter_motor = 1;
+            for i=1:length(coupled)
+                for j_motor=1:length(coupled{i}.motor)
+                    if strcmp(list_motor{counter_motor}, coupled{i}.motor(j_motor).name)
+                        disp(coupled{i}.motor(j_motor).name);
+                        motors{counter_motor} = coupled{i}.motor(j_motor);
+                        if counter_motor == 3
+                            return;
+                        else
+                            counter_motor = counter_motor + 1;
+                        end
+                    end
+                end
+            end
+        end
+        
         function robot = addParts(robot, part)
             if strcmp(part,'left_leg')
                 robot.joints = [robot.joints robot.getJoint('l_hip_pitch')];
@@ -190,8 +217,11 @@ classdef Robot
             end
         end
         
-        function configure(robot, name, check_yarp)
+        function configure(robot, name, check_yarp, yarpWBIfile)
             %% Configure Yarp Whole Body Interface
+            if ~exist('yarpWBIfile','var')
+                yarpWBIfile = 'yarpWholeBodyInterface.ini';
+            end
             if size(robot.joints,2) > 0
                 list = robot.getListJoints(robot.joints{1});
                 for i=2:size(robot.joints,2)
@@ -205,7 +235,7 @@ classdef Robot
                 % Plot list of joints_avaiable
                 disp(format_list);
                 % Set Yarp WBI
-                robot.loadYarpWBI(format_list);
+                robot.loadYarpWBI(format_list, yarpWBIfile);
                 % Set WBI
                 text = robot.setupWBI(name);
                 
@@ -369,8 +399,10 @@ classdef Robot
             for i=1:size(robot.joints,2)
                 if isa(robot.joints{i},'Joint')
                     %text = robot.joints{i}.getInformation();
-                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on');
+                    [counter, text] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'on','data');
+                    [counter, text_firmware] = robot.plotSingleImage(robot.joints{i}, robot.getPathJoint(i), robot.joints{i}.motor.name, counter, 'off','Firmware');
                     robot.saveToFile(robot.getPathJoint(i), 'data', text);
+                    robot.saveToFile(robot.getPathJoint(i), 'firmware', text_firmware);
                 else
                     coupled = robot.joints{i};
                     if size(coupled,2) > 0
@@ -388,16 +420,16 @@ classdef Robot
                                         counter_image = counter_image + 1;
                                         motor_plotted{i_motor} = name_i_motor;
                                         if size(coupled{count}.motor(i_motor).friction,1) > 0
-                                            if size(coupled{count}.motor(i_motor).Kt,1) > 0
+                                            if size(coupled{count}.motor(i_motor).getKt(),1) > 0
                                                 subplot(3,number_plot,counter_image*2-1);
                                                 coupled{count}.motor(i_motor).friction.plotCollected();
                                                 grid;
                                                 subplot(3,number_plot,counter_image*2);
-                                                coupled{count}.motor(i_motor).plotCollected();
+                                                coupled{count}.motor(i_motor).plotCollected('data');
                                                 grid;
                                             else
                                                 subplot(3,number_plot,counter_image);
-                                                coupled{count}.plotCollected();
+                                                coupled{count}.plotCollected('data');
                                                 grid;
                                             end
                                         end
@@ -412,17 +444,21 @@ classdef Robot
                             motor_plotted = {};
                             %text = ['Name coupled joint: ' coupled{1}.part sprintf('\n')];
                             text = '';
+                            textFirmware = '';
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(coupled{count}.motor,2)
                                     name_i_motor = coupled{count}.motor(i_motor).name;
                                     if ~robot.isInList(motor_plotted, name_i_motor)
-                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off');
+                                        [counter, text_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off','data');
+                                        [counter, textFirmware_m] = robot.plotSingleImage(coupled{count}, robot.getPathJoint(i), name_i_motor, counter, 'off','Firmware');
                                         text = [text sprintf('\n') text_m];
+                                        textFirmware = [textFirmware sprintf('\n') textFirmware_m];
                                         motor_plotted{i_motor} = name_i_motor;
                                     end
                                 end
                             end
                             robot.saveToFile(pathsave, 'data', text);
+                            robot.saveToFile(pathsave, 'firmware', textFirmware);
                         end
                     end
                 end
@@ -534,7 +570,7 @@ classdef Robot
             fclose(fid);
         end
         
-        function loadYarpWBI(robot, list)
+        function loadYarpWBI(robot, list, yarpWBIfile)
             %% Load and save in BUILD directory configuraton
             path = fullfile(getenv('HOME'), '.local', 'share', 'yarp', 'robots', robot.realNameRobot, robot.configFile);
             if exist(path,'file')
@@ -543,7 +579,7 @@ classdef Robot
             else
                 name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','robots',robot.realNameRobot,robot.configFile);
             end
-            copy_yarp_file = fullfile(robot.codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot,'yarpWholeBodyInterface.ini');
+            copy_yarp_file = fullfile(robot.codyco_folder,'libraries','yarpWholeBodyInterface','app','robots',robot.realNameRobot, yarpWBIfile);
             copyfile(copy_yarp_file, name_yarp_file);
             
             fid = fopen(name_yarp_file, 'a+');
@@ -572,19 +608,24 @@ classdef Robot
     end
     
     methods (Access = protected, Static)
-        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible)
+        function [counter, text] = plotSingleImage(joint, path, name_motor, counter, isVisible, typedata)
             text = '';
             if joint.asPlot()
                 counter = counter + 1;
                 hCollect = figure(counter); %create new figure
                 set(hCollect, 'Position', [0 0 800 600], 'visible', isVisible);
+                clf;
                 idx_motor = joint.getIndexMotorFromList(name_motor);
-                joint.plotCollected(idx_motor);
+                joint.plotCollected(typedata, idx_motor);
                 %Save information to file
-                text = joint.saveToFile(idx_motor);
+                text = joint.saveToFile(typedata, idx_motor);
                 % Save figure
-                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.fig']),'fig');
-                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [joint.motor(idx_motor).name '.png']),'png');
+                name_figure = joint.motor(idx_motor).name;
+                if strcmp(typedata,'Firmware')
+                    name_figure = [name_figure '-' typedata];
+                end
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [name_figure '.fig']),'fig');
+                saveas(hCollect, fullfile(path, joint.motor(idx_motor).name, [name_figure '.png']),'png');
             end
         end
         
