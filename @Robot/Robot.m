@@ -25,10 +25,16 @@ classdef Robot
     end
     
     methods
-        function robot = Robot(realNameRobot, start_path, codyco_folder, yarpWBIfile)
+        function robot = Robot(realNameRobot, start_path, codyco_folder, yarpWBIfile, build_directory)
             if ~exist('yarpWBIfile','var')
                 yarpWBIfile = 'yarpWholeBodyInterface.ini';
             end
+            if ~exist('build_directory','var')
+                robot.build_folder = 'build';
+            else
+                robot.build_folder = build_directory;
+            end
+
             % Name robot
             robot.realNameRobot = realNameRobot;
             % Start path
