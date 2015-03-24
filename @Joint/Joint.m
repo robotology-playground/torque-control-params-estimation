@@ -44,7 +44,9 @@ classdef Joint
                 if strcmp(type,'ref')
                     joint.motor(idx) = joint.motor(idx).loadMeasure(data, joint.part, joint.number);
                 elseif strcmp(type,'idle')
-                    joint.motor(idx).friction = Friction(data.q, data.qD, data.qDD, data.tau, data.time);
+                    velocity = data.qD;
+                    %velocity = data.FAST_ENC.(joint.part)(:,joint.number);
+                    joint.motor(idx).friction = Friction(data.q, velocity, data.qDD, data.tau, data.time);
                 end
             end
         end

@@ -154,6 +154,7 @@ classdef Robot
                         path_type_file = fullfile(path,robot.joints{i}.motor.name,[type '.mat']);
                         if exist(path_type_file,'file')
                             data = load(path_type_file);
+                            data.qD = data.FAST_ENC.(robot.joints{i}.part)(:,robot.joints{i}.number);
                             robot.joints{i} = robot.joints{i}.loadData(type, data);
                         end
                     else
@@ -164,7 +165,9 @@ classdef Robot
                             [T, list_motor] = robot.getTransformMatrix(coupled);
                             mot_data = struct;
                             mot_data.q = (T^-1*data.q')';
-                            mot_data.qD = (T^-1*data.qD')';
+                            temp_vel = data.FAST_ENC.(coupled{1}.part)(:,1:3);
+                            mot_data.qD = (T^-1*temp_vel')';
+                            %mot_data.qD = (T^-1*data.qD')';
                             mot_data.qDD = (T^-1*data.qDD')';
                             mot_data.tau = (T'*data.tau')';
                             
@@ -380,6 +383,7 @@ classdef Robot
                 m.time = time;
                 m.q = logsout.get('q').Values.Data(:,number);
                 m.qD = logsout.get('qD').Values.Data(:,number);
+                %m.qD = logsout.get(['enc_' part]).Values.Data(:,robot.joints{i}.number);
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
                 PWM = struct;
@@ -388,6 +392,9 @@ classdef Robot
                 Current = struct;
                 Current.(part) = logsout.get(['current_' part]).Values.Data;
                 m.Current = Current;
+                FAST_ENC = struct;
+                FAST_ENC.(part) = logsout.get(['enc_' part]).Values.Data;
+                m.FAST_ENC = FAST_ENC;
             end
         end
         

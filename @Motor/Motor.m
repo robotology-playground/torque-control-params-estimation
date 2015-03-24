@@ -182,26 +182,46 @@ classdef Motor
         function motor = controlValue(motor,typedata)
             %% Control values
             if strcmp(typedata,'Firmware')
+                if length(motor.Kt) == 1
+                    % motor.bemf = [Nm]/([deg]/[s])
+                    % motor.Kt = [Nm]/[V] -- 1/motor.Kt = [V]/[Nm]
+                    % motor.ratioTorque = [TorqueMachine]/[Nm]
+                    % motor.ratioVoltage = [V]/[PWM]
+                    motor.ktau = (1/(motor.ratioVoltage*motor.Kt)); % [PWM]/[Nm]
+                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP); % [Nm]
+                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN); % [Nm]
+                    motor.bemf = sign(motor.ktau)*mean([abs(motor.friction.KvP),abs(motor.friction.KvN)]);
+                end
+            elseif strcmp(typedata,'Firmware-CAN')
                 if length(motor.KtFirmware) == 1
-                    motor.ktau = 1/motor.KtFirmware;
+                    % motor.bemf = [Nm]/([deg]/[s])
+                    % motor.KtFirmware = [Nm]/[TorqueMachine] -- 1/motor.Kt = [TorqueMachine]/[Nm]
+                    % motor.ratioTorque = [TorqueMachine]/[Nm]
+                    % motor.ratioVoltage = [V]/[PWM]
+                    motor.ktau = (1/(motor.KtFirmware)); % [TorqueMachine]/[Nm]
+                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ratioTorque); 
+                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ratioTorque);
+                    motor.bemf = sign(motor.ktau)*mean([abs(motor.friction.KvP*motor.ratioTorque),abs(motor.friction.KvN*motor.ratioTorque)]);
                 end
             else
                 if length(motor.Kt) == 1
                     motor.ktau = 1/motor.Kt;
+                    % motor.ratioTorque = [TorqueMachine]/[Nm]
+                    % motor.ratioVoltage = [V]/[PWM]
+                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
+                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ktau);
+                    motor.bemf = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
                 end
             end
-            motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
-            motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ktau);
-            motor.bemf = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
         end
-
+        
         function text = textControlData(motor, typedata)
             %% Information joint estimation
             motor = motor.controlValue(typedata);
             if strcmp(typedata,'Firmware')
                 if size(motor.KtFirmware,1) ~= 0
                     unitX = 'PWM';
-                    unitY = 'TorqueMachine';
+                    unitY = 'Nm';
                     text = sprintf('\n---------->  Parameters for FIRMWARE  <----------\n\n');
                     text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
                     text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
