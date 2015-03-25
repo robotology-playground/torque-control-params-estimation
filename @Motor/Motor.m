@@ -224,9 +224,9 @@ classdef Motor
                     unitY = 'Nm';
                     text = sprintf('\n---------->  Parameters for FIRMWARE  <----------\n\n');
                     text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
-                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
-                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
-                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
+                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitY)];
+                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitY)];
+                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitY)];
                     %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
                 end
             else
@@ -235,9 +235,9 @@ classdef Motor
                     unitY = 'Nm';
                     text = sprintf('\n---------->  Parameters for joint torque control  <----------\n\n');
                     text = [text sprintf('ktau:\t\t\t%12.8f [%s]/[%s]\n',motor.ktau,unitX,unitY)];
-                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitX)];
-                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitX)];
-                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitX)];
+                    text = [text sprintf('stictionUp:\t\t%12.8f [%s]\n', motor.stictionUp,unitY)];
+                    text = [text sprintf('stictionDown:\t%12.8f [%s]\n', motor.stictionDown,unitY)];
+                    text = [text sprintf('bemf:\t\t\t%12.8f [%s][s]/[deg]\n', motor.bemf,unitY)];
                     %fprintf(fileID,'KsP: %12.8f [Nm] - KsN %12.8f [Nm][s]/[deg]\n',joint.friction.KsP, joint.friction.KsN);
                 end
             end

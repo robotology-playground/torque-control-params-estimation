@@ -160,7 +160,9 @@ classdef Robot
                         path_type_file = fullfile(path,robot.joints{i}.motor.name,[type '.mat']);
                         if exist(path_type_file,'file')
                             data = load(path_type_file);
-                            data.qD = data.FAST_ENC.(robot.joints{i}.part)(:,robot.joints{i}.number);
+                            if isfield(data,'FAST_ENC')
+                                data.qD = data.FAST_ENC.(robot.joints{i}.part)(:,robot.joints{i}.number);
+                            end
                             robot.joints{i} = robot.joints{i}.loadData(type, data);
                         end
                     else
@@ -171,11 +173,17 @@ classdef Robot
                             [T, list_motor] = robot.getTransformMatrix(coupled);
                             mot_data = struct;
                             mot_data.q = (T^-1*data.q')';
-                            temp_vel = data.FAST_ENC.(coupled{1}.part)(:,1:3);
-                            mot_data.qD = (T^-1*temp_vel')';
+                            if isfield(data,'FAST_ENC')
+                                temp_vel = data.FAST_ENC.(coupled{1}.part)(:,1:3);
+                                mot_data.qD = temp_vel;
+                            else
+                                mot_data.qD = (T^-1*data.qD')';
+                            end
                             %mot_data.qD = (T^-1*data.qD')';
-                            mot_data.qDD = (T^-1*data.qDD')';
+                            %mot_data.qDD = (T^-1*data.qDD')';
+                            mot_data.qDD = data.qDD;
                             mot_data.tau = (T'*data.tau')';
+                            %mot_data.tau = data.tau;
                             
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(list_motor,2)
