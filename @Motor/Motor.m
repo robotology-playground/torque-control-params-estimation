@@ -187,10 +187,10 @@ classdef Motor
                     % motor.Kt = [Nm]/[V] -- 1/motor.Kt = [V]/[Nm]
                     % motor.ratioTorque = [TorqueMachine]/[Nm]
                     % motor.ratioVoltage = [V]/[PWM]
-                    motor.ktau = (1/(motor.ratioVoltage*motor.Kt)); % [PWM]/[Nm]
-                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP); % [Nm]
-                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN); % [Nm]
-                    motor.bemf = sign(motor.ktau)*mean([abs(motor.friction.KvP),abs(motor.friction.KvN)]);
+                    motor.ktau = 1/(motor.ratioVoltage*motor.Kt); % [PWM]/[Nm]
+                    motor.stictionUp = -motor.friction.KcP; % [Nm]
+                    motor.stictionDown = -motor.friction.KcN; % [Nm]
+                    motor.bemf = -mean([motor.friction.KvP,motor.friction.KvN]);
                 end
             elseif strcmp(typedata,'Firmware-CAN')
                 if length(motor.KtFirmware) == 1
@@ -198,19 +198,19 @@ classdef Motor
                     % motor.KtFirmware = [Nm]/[TorqueMachine] -- 1/motor.Kt = [TorqueMachine]/[Nm]
                     % motor.ratioTorque = [TorqueMachine]/[Nm]
                     % motor.ratioVoltage = [V]/[PWM]
-                    motor.ktau = (1/(motor.KtFirmware)); % [TorqueMachine]/[Nm]
-                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ratioTorque); 
-                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ratioTorque);
-                    motor.bemf = sign(motor.ktau)*mean([abs(motor.friction.KvP*motor.ratioTorque),abs(motor.friction.KvN*motor.ratioTorque)]);
+                    motor.ktau = 1/(motor.KtFirmware); % [TorqueMachine]/[Nm]
+                    motor.stictionUp = -motor.friction.KcP*motor.ratioTorque; 
+                    motor.stictionDown = -motor.friction.KcN*motor.ratioTorque;
+                    motor.bemf = -mean([motor.friction.KvP,motor.friction.KvN])*motor.ratioTorque;
                 end
             else
                 if length(motor.Kt) == 1
                     motor.ktau = 1/motor.Kt;
                     % motor.ratioTorque = [TorqueMachine]/[Nm]
                     % motor.ratioVoltage = [V]/[PWM]
-                    motor.stictionUp = sign(motor.ktau)*abs(motor.friction.KcP*motor.ktau);
-                    motor.stictionDown = sign(motor.ktau)*abs(motor.friction.KcN*motor.ktau);
-                    motor.bemf = sign(motor.ktau)*abs(mean([motor.friction.KvP*motor.ktau,motor.friction.KvN*motor.ktau]));
+                    motor.stictionUp = -motor.friction.KcP*motor.ktau;
+                    motor.stictionDown = -motor.friction.KcN*motor.ktau;
+                    motor.bemf = -mean([motor.friction.KvP,motor.friction.KvN*motor.ktau])*motor.ktau;
                 end
             end
         end

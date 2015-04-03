@@ -193,7 +193,7 @@ classdef Robot
                                     data_temp.qDD = mot_data.qDD(:,i_motor);
                                     data_temp.tau = mot_data.tau(:,i_motor);
                                     data_temp.PWM = data.PWM;
-                                    data_temp.Current = data.Current;
+                                    %data_temp.Current = data.Current;
                                     data_temp.time = data.time;
                                     coupled{count} = coupled{count}.loadData(type, data_temp,list_motor{i_motor}{1});
                                     
@@ -403,9 +403,9 @@ classdef Robot
                 PWM = struct;
                 PWM.(part) = logsout.get(['pwm_' part]).Values.Data;
                 m.PWM = PWM;
-                Current = struct;
-                Current.(part) = logsout.get(['current_' part]).Values.Data;
-                m.Current = Current;
+                %Current = struct;
+                %Current.(part) = logsout.get(['current_' part]).Values.Data;
+                %m.Current = Current;
                 FAST_ENC = struct;
                 FAST_ENC.(part) = logsout.get(['enc_' part]).Values.Data;
                 m.FAST_ENC = FAST_ENC;
@@ -486,7 +486,10 @@ classdef Robot
             end
         end
         
-        function appendAllData(robot, name)
+        function appendAllData(robot, name, nametxt)
+            if ~exist('nametxt','var')
+                nametxt = 'data.txt';
+            end
             alldir = dir(fullfile(robot.start_path,robot.realNameRobot));
             for i=1:length(alldir)
                 if alldir(i).isdir && ~strcmp(alldir(i).name,'.') && ~strcmp(alldir(i).name,'..') && ~strcmp(alldir(i).name,'torso')
@@ -498,7 +501,7 @@ classdef Robot
                             %disp(groupdir(i_group).name);
                             list_file = dir(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name));
                             for i_file=1:length(list_file)
-                                if strcmp(list_file(i_file).name,'data.txt')
+                                if strcmp(list_file(i_file).name, nametxt)
                                     % Copy all data in collect folder
                                     fid = fopen(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name, list_file(i_file).name));
                                     while (~feof(fid))
@@ -529,9 +532,12 @@ classdef Robot
                     0   -1/2     1/2];
             elseif strcmp(part, 'l_shoulder')
                 t = 0.625;
-                T = [-1     0	0;
-                     -1    -t	0;
-                     0      t  -t];
+                T = [1      0   0;
+                     1      t   0;
+                     0     -t   t];
+%                 T = [-1     0	0;
+%                      -1    -t	0;
+%                      0      t  -t];
             elseif strcmp(part, 'r_shoulder')
                 t = 0.625;
                 T = [1      0   0;
