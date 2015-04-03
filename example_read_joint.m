@@ -1,18 +1,17 @@
 %% Example to use this scripts
 % This file is usefull to understand the functionality about all object
 % included on this folder
-
 %% Load object Motor
 % Set all information about your robot.
 % - Name of robot
 % - folder where you want save the data
 % - codyco-superbuild folder (try to put "getenv('CODYCO_SUPERBUILD_ROOT')" )
-robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
+robot = Robot('iCubGenova02', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
 
 %% Add motors to test
-robot.joints = robot.getJoint('l_hip_roll');
+% robot.joints = robot.getJoint('r_elbow');
 % or you can add a coupled joints
-% robot.joints = robot.getCoupledJoints('l_shoulder');
+robot.joints = robot.getCoupledJoints('r_shoulder');
 % finally you can add all joints with
 % robot = robot.addParts('left_leg');
 

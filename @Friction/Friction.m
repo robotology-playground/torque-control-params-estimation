@@ -45,11 +45,12 @@ classdef Friction
                 obj.cutoff = cutoff;
             end
             
-            if exist('th_velocity','var')
-                obj = obj.evaluateCoeff(th_velocity);
-            else
-                obj = obj.minTh_vel();
-            end
+%             if exist('th_velocity','var')
+%                 obj = obj.evaluateCoeff(th_velocity);
+%             else
+%                 obj = obj.minTh_vel();
+%             end
+            obj = obj.evaluateCoeff(500);
             obj.experiment = '';
         end
 
@@ -91,15 +92,15 @@ classdef Friction
             end
             
             % Evaluate fricition
-%             AP = obj.linearRegression(obj.velocity(obj.velocity > th_velocity/2), ...
-%                 obj.torque(obj.velocity > th_velocity/2));
-%             AN = obj.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
-%                 obj.torque(obj.velocity < -th_velocity/2));
+            AP = Joint.linearRegression(obj.velocity(obj.velocity > th_velocity/2), ...
+                obj.torque(obj.velocity > th_velocity/2));
+            AN = Joint.linearRegression(obj.velocity(obj.velocity < -th_velocity/2), ...
+                obj.torque(obj.velocity < -th_velocity/2));
 
-            AP = Joint.linearRegression(obj.velocity((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)), ...
-                obj.torque((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)));
-            AN = Joint.linearRegression(obj.velocity((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)), ...
-                obj.torque((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)));
+%             AP = Joint.linearRegression(obj.velocity((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)), ...
+%                 obj.torque((obj.velocity > th_velocity/2) & (obj.acceleration <= 0)));
+%             AN = Joint.linearRegression(obj.velocity((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)), ...
+%                 obj.torque((obj.velocity < -th_velocity/2) & (obj.acceleration >= 0)));
             
             obj.KcP = AP(2);
             obj.KvP = AP(1);

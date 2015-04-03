@@ -7,7 +7,7 @@
 % - Name of robot
 % - folder where you want save the data
 % - codyco-superbuild folder (try to put "getenv('CODYCO_SUPERBUILD_ROOT')" )
-robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
+robot = Robot('iCubGenova02', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
@@ -15,7 +15,8 @@ robot = Robot('iCubGenova04', 'experiments', '/Users/Raffaello/iit/codyco-superb
 robot = robot.setReferenceFrame('root_link','true');
 
 %% Add motors to test
-robot.joints = robot.getJoint('l_hip_roll');
+%robot.joints = robot.getJoint('r_elbow');
+robot.joints = robot.getCoupledJoints('r_shoulder');
 % or you can add a coupled joints
 % robot.joints = robot.getCoupledJoints('l_shoulder');
 
