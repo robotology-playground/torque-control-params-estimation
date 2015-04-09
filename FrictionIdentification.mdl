@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.261"
+    ComputedModelVersion    "1.262"
     NumModelReferences	    0
     NumTestPointedSignals   9
     TestPointedSignal {
@@ -134,9 +134,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Raffaello"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Apr 09 11:53:52 2015"
-  RTWModifiedTimeStamp	  350481102
-  ModelVersionFormat	  "1.%<AutoIncrement:261>"
+  LastModifiedDate	  "Thu Apr 09 11:55:46 2015"
+  RTWModifiedTimeStamp	  350481341
+  ModelVersionFormat	  "1.%<AutoIncrement:262>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -174,7 +174,7 @@ Model {
     $ObjectID		    6
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "MotorIdent2"
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -2043,9 +2043,9 @@ Model {
     }
     Annotation {
       SID		      "142"
-      Name		      "\nSAVE\nIDLE DATA\n"
+      Name		      "\nSAVE\nPWM=0\nDATA\n"
       Position		      [417, 145]
-      BackgroundColor	      "yellow"
+      BackgroundColor	      "orange"
       DropShadow	      on
       ZOrder		      -1
       ClickFcn		      "if exist('robot','var') & exist('logsout','var')\n   name = robot.saveData('idle',logsout,tout,"

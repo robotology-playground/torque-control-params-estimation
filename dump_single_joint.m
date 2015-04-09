@@ -27,4 +27,4 @@ robot.configure('JOINT_FRICTION','false');
 robot.buildFolders();
 
 %% Open Simulink
-open('FrictionIdentification.slx');
+open('FrictionIdentification.mdl');
