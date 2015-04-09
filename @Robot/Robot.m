@@ -182,7 +182,7 @@ classdef Robot
                                     data_temp.qDD = mot_data.qDD(:,i_motor);
                                     data_temp.tau = mot_data.tau(:,i_motor);
                                     data_temp.PWM = data.PWM;
-                                    data_temp.Current = data.Current;
+                                    %data_temp.Current = data.Current;
                                     data_temp.time = data.time;
                                     coupled{count} = coupled{count}.loadData(type, data_temp,list_motor{i_motor}{1});
                                     
@@ -391,9 +391,9 @@ classdef Robot
                 PWM = struct;
                 PWM.(part) = logsout.get(['pwm_' part]).Values.Data;
                 m.PWM = PWM;
-                Current = struct;
-                Current.(part) = logsout.get(['current_' part]).Values.Data;
-                m.Current = Current;
+                %Current = struct;
+                %Current.(part) = logsout.get(['current_' part]).Values.Data;
+                %m.Current = Current;
             end
         end
         
