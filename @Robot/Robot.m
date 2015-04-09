@@ -160,6 +160,9 @@ classdef Robot
                         path_type_file = fullfile(path,robot.joints{i}.motor.name,[type '.mat']);
                         if exist(path_type_file,'file')
                             data = load(path_type_file);
+                            if isfield(data,'FAST_ENC')
+                                data.qD = data.FAST_ENC.(robot.joints{i}.part)(:,robot.joints{i}.number);
+                            end
                             robot.joints{i} = robot.joints{i}.loadData(type, data);
                         end
                     else
@@ -170,9 +173,17 @@ classdef Robot
                             [T, list_motor] = robot.getTransformMatrix(coupled);
                             mot_data = struct;
                             mot_data.q = (T^-1*data.q')';
-                            mot_data.qD = (T^-1*data.qD')';
-                            mot_data.qDD = (T^-1*data.qDD')';
+                            if isfield(data,'FAST_ENC')
+                                temp_vel = data.FAST_ENC.(coupled{1}.part)(:,1:3);
+                                mot_data.qD = temp_vel;
+                            else
+                                mot_data.qD = (T^-1*data.qD')';
+                            end
+                            %mot_data.qD = (T^-1*data.qD')';
+                            %mot_data.qDD = (T^-1*data.qDD')';
+                            mot_data.qDD = data.qDD;
                             mot_data.tau = (T'*data.tau')';
+                            %mot_data.tau = data.tau;
                             
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(list_motor,2)
@@ -386,6 +397,7 @@ classdef Robot
                 m.time = time;
                 m.q = logsout.get('q').Values.Data(:,number);
                 m.qD = logsout.get('qD').Values.Data(:,number);
+                %m.qD = logsout.get(['enc_' part]).Values.Data(:,robot.joints{i}.number);
                 m.qDD = logsout.get('qDD').Values.Data(:,number);
                 m.tau = logsout.get('tau').Values.Data(:,number);
                 PWM = struct;
@@ -471,7 +483,10 @@ classdef Robot
             end
         end
         
-        function appendAllData(robot, name)
+        function appendAllData(robot, name, nametxt)
+            if ~exist('nametxt','var')
+                nametxt = 'data.txt';
+            end
             alldir = dir(fullfile(robot.start_path,robot.realNameRobot));
             for i=1:length(alldir)
                 if alldir(i).isdir && ~strcmp(alldir(i).name,'.') && ~strcmp(alldir(i).name,'..') && ~strcmp(alldir(i).name,'torso')
@@ -483,7 +498,7 @@ classdef Robot
                             %disp(groupdir(i_group).name);
                             list_file = dir(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name));
                             for i_file=1:length(list_file)
-                                if strcmp(list_file(i_file).name,'data.txt')
+                                if strcmp(list_file(i_file).name, nametxt)
                                     % Copy all data in collect folder
                                     fid = fopen(fullfile(robot.start_path,robot.realNameRobot, alldir(i).name, groupdir(i_group).name, list_file(i_file).name));
                                     while (~feof(fid))
