@@ -13,13 +13,12 @@ Download this repository
 git clone https://github.com:robotology-playground/torque-control-params-estimation.git
 ```
 ## Initialization setup
-Before any launching any scipt related to this repository, it is important to configure the setup as follows:
+Before launching any script related to this repository, it is important to configure the setup as follows:
 
-1. Plug the PC from which to launch the simulink model into icub local area network
+1. Plug the computer, from which you want to launch the simulink model, into icub local area network
 2. Run `robotInterface` on **pc104**
-3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
-4. Run `controlBoardDumper` to receive information about Voltage (PWM) and encoder speed for all joints.
-  - If you want to estimate the friction of the `left_leg` joints you can launch all controlBoradDumper for all joints:
+3. Run `wholeBodyDymanicsTree`;
+4. Run `controlBoardDumper` to read PWMs and encoder speeds. For instance, if you want to estimate the friction of the `left_leg` joints you can launch the controlBoradDumper as follows:
 ```
 controlBoardDumper --robot icub --part right_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
 controlBoardDumper --robot icub --part left_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
