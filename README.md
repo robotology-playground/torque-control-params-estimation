@@ -1,8 +1,8 @@
 # FrictionJoint
-Analysis friction on iCub's joint with **MATLAB** and **WBI-Toolbox**
+This simulonk model allows one to identify viscous and coulomb friction of the iCub joints. 
 
 ## Dependencies
-This scripts running with *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*, see the instruction to install all programs:
+The model depends on *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*, see the instructions to install them:
 - [ICub Software Installation](http://wiki.icub.org/wiki/ICub_Software_Installation)
 - [Codyco superbuild](https://github.com/robotology/codyco-superbuild)
 - [WBI-Toolbox](https://github.com/robotology-playground/WBI-Toolbox)
@@ -10,12 +10,12 @@ This scripts running with *yarp*, *icub-main*, *codyco-superbuild* and *WBI-tool
 ## Installation
 Download this repository
 ```
-git clone https://github.com/rbonghi/FrictionJoint/
+git clone https://github.com:robotology-playground/torque-control-params-estimation.git
 ```
 ## Initialization setup
-Before run scripts are important to:
+Before any launching any scipt related to this repository, it is important to configure the setup as follows:
 
-1. Plug the PC in icub local area network
+1. Plug the PC from which to launch the simulink model into icub local area network
 2. Run `robotInterface` on **pc104**
 3. Run `wholeBodyDymanicsTree` to receive information about torque on joints
 4. Run `controlBoardDumper` to receive information about Voltage (PWM) and encoder speed for all joints.
