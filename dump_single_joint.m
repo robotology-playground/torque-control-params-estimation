@@ -1,3 +1,5 @@
+
+clear;
 %% Example to use this scripts
 % This file is usefull to understand the functionality about all object
 % included on this folder
@@ -7,7 +9,7 @@
 % - Name of robot
 % - folder where you want save the data
 % - codyco-superbuild folder (try to put "getenv('CODYCO_SUPERBUILD_ROOT')" )
-robot = Robot('iCubGenova02', 'experiments', '/Users/Raffaello/iit/codyco-superbuild');
+robot = Robot('iCubGenova02', 'experiments', getenv('CODYCO_SUPERBUILD_ROOT'));
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
@@ -15,10 +17,23 @@ robot = Robot('iCubGenova02', 'experiments', '/Users/Raffaello/iit/codyco-superb
 robot = robot.setReferenceFrame('root_link','true');
 
 %% Add motors to test
-%robot.joints = robot.getJoint('r_elbow');
-robot.joints = robot.getCoupledJoints('r_shoulder');
-% or you can add a coupled joints
-% robot.joints = robot.getCoupledJoints('l_shoulder');
+
+% robot.joints = robot.getCoupledJoints('torso');
+
+% robot.joints = robot.getJoint('l_hip_pitch');
+% robot.joints = robot.getJoint('l_hip_roll');
+% robot.joints = robot.getJoint('l_hip_yaw');
+% robot.joints = robot.getJoint('l_knee');
+% robot.joints = robot.getJoint('l_ankle_pitch');
+% robot.joints = robot.getJoint('l_ankle_roll');
+%  
+% 
+robot.joints = robot.getJoint('r_hip_pitch');
+% robot.joints = robot.getJoint('r_hip_roll');
+% robot.joints = robot.getJoint('r_hip_yaw');
+% robot.joints = robot.getJoint('r_knee');
+% robot.joints = robot.getJoint('r_ankle_pitch');
+% robot.joints = robot.getJoint('r_ankle_roll');
 
 %% Configure your computer
 % Set all variables:

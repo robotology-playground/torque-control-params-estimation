@@ -450,7 +450,7 @@ classdef Robot
                                                 grid;
                                             else
                                                 subplot(3,number_plot,counter_image);
-                                                coupled{count}.plotCollected('data');
+                                                coupled{count}.motor(i_motor).friction.plotCollected();
                                                 grid;
                                             end
                                         end

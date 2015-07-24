@@ -1,12 +1,13 @@
 Model {
   Name			  "FrictionIdentification"
-  Version		  8.1
+  Version		  8.3
   MdlSubVersion		  0
+  SavedCharacterEncoding  "UTF-8"
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.270"
+    ComputedModelVersion    "1.310"
     NumModelReferences	    0
     NumTestPointedSignals   14
     TestPointedSignal {
@@ -41,7 +42,6 @@ Model {
       SignalName	      "enc_left_arm"
       FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Left arm"
       LogSignal		      1
-      LogName		      "pwm_left_arm"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -49,7 +49,6 @@ Model {
       SignalName	      "enc_left_leg"
       FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Left leg"
       LogSignal		      1
-      LogName		      "pwm_left_leg"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -57,7 +56,6 @@ Model {
       SignalName	      "enc_right_arm"
       FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Right arm"
       LogSignal		      1
-      LogName		      "[prefix '_right_arm']"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -65,7 +63,6 @@ Model {
       SignalName	      "enc_right_leg"
       FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Right leg"
       LogSignal		      1
-      LogName		      "pwm_right_leg"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -73,7 +70,6 @@ Model {
       SignalName	      "enc_torso"
       FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Torso"
       LogSignal		      1
-      LogName		      "pwm_torso"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -81,7 +77,6 @@ Model {
       SignalName	      "pwm_left_arm"
       FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Left arm"
       LogSignal		      1
-      LogName		      "pwm_left_arm"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -89,7 +84,6 @@ Model {
       SignalName	      "pwm_left_leg"
       FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Left leg"
       LogSignal		      1
-      LogName		      "pwm_left_leg"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -97,15 +91,13 @@ Model {
       SignalName	      "pwm_right_arm"
       FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Right arm"
       LogSignal		      1
-      LogName		      "[prefix '_right_arm']"
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "pwm_right_leg"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Right leg"
+      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Right leg "
       LogSignal		      1
-      LogName		      "pwm_right_leg"
       MaxPoints		      5000
       Decimation	      2
     }
@@ -113,12 +105,10 @@ Model {
       SignalName	      "pwm_torso"
       FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Torso"
       LogSignal		      1
-      LogName		      "pwm_torso"
       MaxPoints		      5000
       Decimation	      2
     }
   }
-  SavedCharacterEncoding  "US-ASCII"
   SaveDefaultBlockParams  on
   ScopeRefreshTime	  0.035000
   OverrideScopeRefreshTime on
@@ -138,7 +128,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [129.0, 123.0, 955.0, 577.0]
+      Location		      [-4.0, 28.0, 1374.0, 743.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -155,16 +145,55 @@ Model {
 	$ClassName		"Simulink.ExplorerBarInfo"
 	Visible			[0]
       }
-      Object {
-	$PropName		"EditorsInfo"
-	$ObjectID		5
-	$ClassName		"Simulink.EditorInfo"
-	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
-	Extents			[731.0, 437.0]
-	ZoomFactor		[1.3876141130027142]
-	Offset			[328.28573968705547, 103.53547297297303]
+      Array {
+	Type			"Simulink.EditorInfo"
+	Dimension		5
+	Object {
+	  $ObjectID		  5
+	  IsActive		  [1]
+	  ViewObjType		  "SimulinkTopLevel"
+	  LoadSaveID		  "0"
+	  Extents		  [1123.0, 580.0]
+	  ZoomFactor		  [1.7809076682316121]
+	  Offset		  [272.54539213532519, 99.638840070298784]
+	}
+	Object {
+	  $ObjectID		  6
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "230"
+	  Extents		  [1123.0, 580.0]
+	  ZoomFactor		  [2.2851405622489955]
+	  Offset		  [-31.218585237258338, 13.873462214411234]
+	}
+	Object {
+	  $ObjectID		  7
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "180"
+	  Extents		  [1123.0, 580.0]
+	  ZoomFactor		  [2.2362204724409449]
+	  Offset		  [7.9999999999999716, 20.894366197183064]
+	}
+	Object {
+	  $ObjectID		  8
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "109"
+	  Extents		  [1135.0, 596.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [0.0, 0.0]
+	}
+	Object {
+	  $ObjectID		  9
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "20"
+	  Extents		  [1135.0, 596.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [0.0, 0.0]
+	}
+	PropName		"EditorsInfo"
       }
     }
   }
@@ -172,12 +201,12 @@ Model {
   Creator		  "Raffaello"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Raffaello"
+  LastModifiedBy	  "daniele"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 06 18:01:49 2015"
-  RTWModifiedTimeStamp	  349898252
-  ModelVersionFormat	  "1.%<AutoIncrement:270>"
-  ConfigurationManager	  "None"
+  LastModifiedDate	  "Fri Jul 24 15:54:55 2015"
+  RTWModifiedTimeStamp	  359654054
+  ModelVersionFormat	  "1.%<AutoIncrement:310>"
+  ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "disabled"
@@ -202,6 +231,11 @@ Model {
   BrowserShowLibraryLinks off
   BrowserLookUnderMasks	  off
   SimulationMode	  "normal"
+  PauseTimes		  "5"
+  NumberOfSteps		  1
+  SnapshotBufferSize	  10
+  SnapshotInterval	  10
+  NumberOfLastSnapshots	  0
   LinearizationMsg	  "none"
   Profile		  off
   ParamWorkspaceSource	  "MATLABWorkspace"
@@ -211,10 +245,10 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    6
+    $ObjectID		    10
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "MotorIdent2"
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -235,6 +269,7 @@ Model {
   CovNameIncrementing	  off
   CovHtmlReporting	  on
   CovForceBlockReductionOff on
+  CovEnableCumulative	  on
   covSaveCumulativeToWorkspaceVar on
   CovSaveSingleToWorkspaceVar on
   CovCumulativeVarName	  "covCumulativeData"
@@ -242,6 +277,9 @@ Model {
   CovReportOnPause	  on
   CovModelRefEnable	  "Off"
   CovExternalEMLEnable	  off
+  CovSFcnEnable		  off
+  CovBoundaryAbsTol	  0.000010
+  CovBoundaryRelTol	  0.010000
   ExtModeBatchMode	  off
   ExtModeEnableFloating	  on
   ExtModeTrigType	  "manual"
@@ -270,16 +308,16 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      7
-      Version		      "1.13.0"
+      $ObjectID		      11
+      Version		      "1.14.2"
       Array {
 	Type			"Handle"
 	Dimension		8
 	Simulink.SolverCC {
-	  $ObjectID		  8
-	  Version		  "1.13.0"
+	  $ObjectID		  12
+	  Version		  "1.14.2"
 	  StartTime		  "0.0"
-	  StopTime		  "60"
+	  StopTime		  "120"
 	  AbsTol		  "auto"
 	  FixedStep		  "robot.Ts"
 	  InitialStep		  "auto"
@@ -311,8 +349,8 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  9
-	  Version		  "1.13.0"
+	  $ObjectID		  13
+	  Version		  "1.14.2"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
 	  FinalStateName	  "xFinal"
@@ -330,6 +368,7 @@ Model {
 	  SignalLogging		  on
 	  DSMLogging		  on
 	  InspectSignalLogs	  off
+	  VisualizeSimOutput	  on
 	  SaveTime		  on
 	  ReturnWorkspaceOutputs  off
 	  StateSaveName		  "xout"
@@ -343,8 +382,8 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  10
-	  Version		  "1.13.0"
+	  $ObjectID		  14
+	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    8
@@ -364,11 +403,14 @@ Model {
 	  InlineParams		  off
 	  UseIntDivNetSlope	  off
 	  UseFloatMulNetSlope	  off
+	  DefaultUnderspecifiedDataType	"double"
 	  UseSpecifiedMinMax	  off
 	  InlineInvariantSignals  off
 	  OptimizeBlockIOStorage  on
 	  BufferReuse		  on
 	  EnhancedBackFolding	  off
+	  CachingGlobalReferences off
+	  GlobalBufferReuse	  on
 	  StrengthReduction	  off
 	  ExpressionFolding	  on
 	  BooleansAsBitfields	  off
@@ -383,6 +425,7 @@ Model {
 	  SystemCodeInlineAuto	  off
 	  StateBitsets		  off
 	  DataBitsets		  off
+	  ActiveStateOutputEnumStorageType "Native Integer"
 	  UseTempVars		  off
 	  ZeroExternalMemoryAtStartup on
 	  ZeroInternalMemoryAtStartup on
@@ -399,8 +442,8 @@ Model {
 	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  11
-	  Version		  "1.13.0"
+	  $ObjectID		  15
+	  Version		  "1.14.2"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
 	  ArrayBoundsChecking	  "none"
@@ -489,8 +532,8 @@ Model {
 	  SFTransitionActionBeforeConditionDiag	"warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  12
-	  Version		  "1.13.0"
+	  $ObjectID		  16
+	  Version		  "1.14.2"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
 	  ProdBitPerInt		  32
@@ -530,8 +573,8 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  13
-	  Version		  "1.13.0"
+	  $ObjectID		  17
+	  Version		  "1.14.2"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
 	  EnableParallelModelReferenceBuilds off
@@ -545,8 +588,8 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  14
-	  Version		  "1.13.0"
+	  $ObjectID		  18
+	  Version		  "1.14.2"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
 	  SFSimEcho		  on
@@ -557,11 +600,12 @@ Model {
 	  SimUseLocalCustomCode	  off
 	  SimParseCustomCode	  on
 	  SimBuildMode		  "sf_incremental_build"
+	  SimGenImportedTypeDefs  off
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  15
-	  Version		  "1.13.0"
+	  $ObjectID		  19
+	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    15
@@ -583,11 +627,15 @@ Model {
 	    PropName		    "DisabledProps"
 	  }
 	  SystemTargetFile	  "grt.tlc"
+	  TLCOptions		  ""
 	  GenCodeOnly		  off
 	  MakeCommand		  "make_rtw"
 	  GenerateMakefile	  on
 	  PackageGeneratedCodeAndArtifacts off
+	  PackageName		  ""
 	  TemplateMakefile	  "grt_default_tmf"
+	  PostCodeGenCommand	  ""
+	  Description		  ""
 	  GenerateReport	  off
 	  SaveLog		  off
 	  RTWVerbose		  on
@@ -598,13 +646,23 @@ Model {
 	  TLCAssert		  off
 	  ProcessScriptMode	  "Default"
 	  ConfigurationMode	  "Optimized"
+	  ProcessScript		  ""
+	  ConfigurationScript	  ""
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
+	  CustomSourceCode	  ""
+	  CustomHeaderCode	  ""
+	  CustomInclude		  ""
+	  CustomSource		  ""
+	  CustomLibrary		  ""
+	  CustomInitializer	  ""
+	  CustomTerminator	  ""
+	  Toolchain		  "Automatically locate an installed toolchain"
+	  BuildConfiguration	  "Faster Builds"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  PortableWordSizes	  off
-	  GenerateErtSFunction	  off
 	  CreateSILPILBlock	  "None"
 	  CodeExecutionProfiling  off
 	  CodeExecutionProfileVariable "executionProfile"
@@ -624,14 +682,17 @@ Model {
 	  GenerateCodeMetricsReport off
 	  GenerateCodeReplacementReport	off
 	  RTWCompilerOptimization "Off"
+	  RTWCustomCompilerOptimizations ""
 	  CheckMdlBeforeBuild	  "Off"
 	  CustomRebuildMode	  "OnUpdate"
+	  DataInitializer	  ""
+	  SharedConstantsCachingThreshold 1024
 	  Array {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      16
-	      Version		      "1.13.0"
+	      $ObjectID		      20
+	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
 		Dimension		22
@@ -661,6 +722,7 @@ Model {
 	      }
 	      ForceParamTrailComments off
 	      GenerateComments	      on
+	      CommentStyle	      "Auto"
 	      IgnoreCustomStorageClasses on
 	      IgnoreTestpoints	      off
 	      IncHierarchyInIds	      off
@@ -683,6 +745,7 @@ Model {
 	      CustomSymbolStrBlkIO    "rtb_$N$M"
 	      CustomSymbolStrTmpVar   "$N$M"
 	      CustomSymbolStrMacro    "$R$N$M"
+	      CustomSymbolStrUtil     "$N$C"
 	      DefineNamingRule	      "None"
 	      ParamNamingRule	      "None"
 	      SignalNamingRule	      "None"
@@ -698,8 +761,8 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      17
-	      Version		      "1.13.0"
+	      $ObjectID		      21
+	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
 		Dimension		15
@@ -723,7 +786,9 @@ Model {
 	      TargetFcnLib	      "ansi_tfl_table_tmw.mat"
 	      TargetLibSuffix	      ""
 	      TargetPreCompLibLocation ""
-	      CodeReplacementLibrary  "ANSI_C"
+	      GenFloatMathFcnCalls    "NOT IN USE"
+	      TargetLangStandard      "C89/C90 (ANSI)"
+	      CodeReplacementLibrary  "None"
 	      UtilityFuncGeneration   "Auto"
 	      ERTMultiwordTypeDef     "System defined"
 	      ERTMultiwordLength      256
@@ -731,7 +796,6 @@ Model {
 	      GenerateFullHeader      on
 	      GenerateSampleERTMain   off
 	      GenerateTestInterfaces  off
-	      IsPILTarget	      off
 	      ModelReferenceCompliant on
 	      ParMdlRefBuildCompliant on
 	      CompOptLevelCompliant   on
@@ -748,6 +812,7 @@ Model {
 	      LogVarNameModifier      "rt_"
 	      MatFileLogging	      on
 	      MultiInstanceERTCode    off
+	      CodeInterfacePackaging  "Nonreusable function"
 	      SupportNonFinite	      on
 	      SupportComplex	      on
 	      PurelyIntegerCode	      off
@@ -758,7 +823,7 @@ Model {
 	      ParenthesesLevel	      "Nominal"
 	      MATLABClassNameForMDSCustomization "Simulink.SoftwareTarget.GRTCustomization"
 	      ModelStepFunctionPrototypeControlCompliant off
-	      CPPClassGenCompliant    off
+	      CPPClassGenCompliant    on
 	      AutosarCompliant	      off
 	      GRTInterface	      off
 	      GenerateAllocFcn	      off
@@ -775,6 +840,7 @@ Model {
 	      RTWCAPIStates	      off
 	      RTWCAPIRootIO	      off
 	      GenerateASAP2	      off
+	      MultiInstanceErrorCode  "Error"
 	    }
 	    PropName		    "Components"
 	  }
@@ -790,11 +856,11 @@ Model {
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    7
+    $ObjectID		    11
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    18
+    $ObjectID		    22
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -870,31 +936,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Mux
-      Inputs		      "4"
-      DisplayOption	      "none"
-      UseBusObject	      off
-      BusObject		      "BusObject"
-      NonVirtualBus	      off
-    }
-    Block {
-      BlockType		      Outport
-      Port		      "1"
-      OutMin		      "[]"
-      OutMax		      "[]"
-      OutDataTypeStr	      "Inherit: auto"
-      LockScale		      off
-      BusOutputAsStruct	      off
-      PortDimensions	      "-1"
-      VarSizeSig	      "Inherit"
-      SampleTime	      "-1"
-      SignalType	      "auto"
-      SamplingMode	      "auto"
-      SourceOfInitialOutputValue "Dialog"
-      OutputWhenDisabled      "held"
-      InitialOutput	      "[]"
-    }
-    Block {
       BlockType		      Scope
       ModelBased	      off
       TickLabels	      "OneTimeTick"
@@ -918,11 +959,15 @@ Model {
       Permissions	      "ReadWrite"
       PermitHierarchicalResolution "All"
       TreatAsAtomicUnit	      off
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
       CheckFcnCallInpInsideContextMsg off
       SystemSampleTime	      "-1"
+      RTWSystemCode	      "Auto"
       RTWFcnNameOpts	      "Auto"
       RTWFileNameOpts	      "Auto"
       FunctionInterfaceSpec   "void_void"
+      FunctionWithSeparateData off
       RTWMemSecFuncInitTerm   "Inherit from model"
       RTWMemSecFuncExecute    "Inherit from model"
       RTWMemSecDataConstants  "Inherit from model"
@@ -932,14 +977,17 @@ Model {
       DataTypeOverride	      "UseLocalSettings"
       DataTypeOverrideAppliesTo	"AllNumericTypes"
       MinMaxOverflowLogging   "UseLocalSettings"
+      Opaque		      off
+      MaskHideContents	      off
       SFBlockType	      "NONE"
       Variant		      off
       GeneratePreprocessorConditionals off
+      ContentPreviewEnabled   off
     }
   }
   System {
     Name		    "FrictionIdentification"
-    Location		    [129, 123, 1084, 700]
+    Location		    [-4, 28, 1370, 771]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -951,32 +999,26 @@ Model {
     TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "139"
+    ZoomFactor		    "178"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "254"
+    SIDHighWatermark	    "271"
     Block {
       BlockType		      SubSystem
       Name		      "Dump ENCODERS - ALL JOINTS ROBOT"
       SID		      "230"
       Ports		      []
-      Position		      [366, 298, 501, 388]
+      Position		      [366, 318, 501, 408]
       ZOrder		      107
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
       RequestExecContextInheritance off
-      MaskHideContents	      off
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		19
+	$ObjectID		23
 	$ClassName		"Simulink.Mask"
 	Display			"color('red'); plot([10 20 30 40], [10 20 10 15]);\ncolor('blue'); plot([10 20 30 40], [15 10 20 12]);\ncol"
 	"or('green'); plot([10 20 30 40], [13 16 12 18]);"
 	Object {
 	  $PropName		  "Parameters"
-	  $ObjectID		  20
+	  $ObjectID		  24
 	  $ClassName		  "Simulink.MaskParameter"
 	  Type			  "edit"
 	  Name			  "output"
@@ -987,8 +1029,8 @@ Model {
       }
       System {
 	Name			"Dump ENCODERS - ALL JOINTS ROBOT"
-	Location		[129, 123, 1084, 700]
-	Open			off
+	Location		[-4, 28, 1370, 771]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -999,13 +1041,13 @@ Model {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"150"
+	ZoomFactor		"229"
 	Block {
 	  BlockType		  Scope
 	  Name			  "ENC_ARMS"
 	  SID			  "239"
 	  Ports			  [2]
-	  Position		  [300, 65, 330, 100]
+	  Position		  [335, 65, 365, 100]
 	  ZOrder		  97
 	  Floating		  off
 	  Location		  [183, 279, 1035, 786]
@@ -1039,10 +1081,10 @@ Model {
 	  Name			  "ENC_LEGS"
 	  SID			  "240"
 	  Ports			  [2]
-	  Position		  [135, 70, 165, 105]
+	  Position		  [170, 50, 200, 85]
 	  ZOrder		  69
 	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
+	  Location		  [6, 81, 1362, 762]
 	  Open			  off
 	  NumInputPorts		  "2"
 	  List {
@@ -1060,7 +1102,7 @@ Model {
 	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
-	  ShowLegends		  off
+	  ShowLegends		  on
 	  TimeRange		  "60"
 	  YMin			  "-10~-10"
 	  YMax			  "12.5~15"
@@ -1074,7 +1116,7 @@ Model {
 	  Name			  "ENC_TORSO"
 	  SID			  "241"
 	  Ports			  [1]
-	  Position		  [235, 202, 265, 238]
+	  Position		  [270, 202, 300, 238]
 	  ZOrder		  102
 	  Floating		  off
 	  Location		  [183, 279, 1035, 786]
@@ -1104,713 +1146,162 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Left arm"
-	  SID			  "231"
+	  SID			  "269"
 	  Ports			  [0, 1]
-	  Position		  [185, 20, 255, 80]
-	  ZOrder		  98
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    21
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		22
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'left_arm'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		23
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output Port"
-		Value			"output"
-		Tunable			"off"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [220, 28, 285, 72]
+	  ZOrder		  111
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/left_arm/getMotorEncoderSpeeds']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "enc_left_arm"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_left_arm"
-	  }
-	  System {
-	    Name		    "Left arm"
-	    Location		    [140, 66, 1294, 726]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "232"
-	      Ports		      [5, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "5"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "233"
-	      Ports		      [0, 5]
-	      Position		      [50, 31, 115, 129]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      5
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "234"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Left leg"
-	  SID			  "235"
+	  SID			  "259"
 	  Ports			  [0, 1]
-	  Position		  [20, 25, 90, 85]
-	  ZOrder		  95
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    24
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		25
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'left_leg'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		26
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [20, 38, 85, 82]
+	  ZOrder		  107
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/left_leg/getMotorEncoderSpeeds']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "enc_left_leg"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_left_leg"
-	  }
-	  System {
-	    Name		    "Left leg"
-	    Location		    [189, 102, 1400, 811]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "373"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "236"
-	      Ports		      [6, 1]
-	      Position		      [125, 25, 130, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "6"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "237"
-	      Ports		      [0, 6]
-	      Position		      [20, 21, 85, 139]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      6
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "238"
-	      Position		      [205, 73, 235, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      6
-	      DstBlock		      "Mux"
-	      DstPort		      6
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Right arm"
-	  SID			  "242"
+	  SID			  "270"
 	  Ports			  [0, 1]
-	  Position		  [185, 100, 255, 160]
-	  ZOrder		  105
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    27
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		28
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'right_arm'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		29
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output Port"
-		Value			"output"
-		Tunable			"off"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [220, 108, 285, 152]
+	  ZOrder		  112
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/right_arm/getMotorEncoderSpeeds']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "enc_right_arm"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "[prefix '_right_arm']"
-	  }
-	  System {
-	    Name		    "Right arm"
-	    Location		    [140, 66, 1294, 726]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "243"
-	      Ports		      [5, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "5"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "244"
-	      Ports		      [0, 5]
-	      Position		      [50, 31, 115, 129]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      5
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "245"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Right leg"
-	  SID			  "246"
+	  SID			  "264"
 	  Ports			  [0, 1]
-	  Position		  [20, 110, 90, 170]
-	  ZOrder		  104
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    30
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		31
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'right_leg'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		32
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [20, 108, 85, 152]
+	  ZOrder		  109
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/right_leg/getMotorEncoderSpeeds']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "enc_right_leg"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_right_leg"
-	  }
-	  System {
-	    Name		    "Right leg"
-	    Location		    [140, 66, 1294, 726]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "373"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "247"
-	      Ports		      [6, 1]
-	      Position		      [125, 25, 130, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "6"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "248"
-	      Ports		      [0, 6]
-	      Position		      [20, 21, 85, 139]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      6
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "249"
-	      Position		      [205, 73, 235, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      6
-	      DstBlock		      "Mux"
-	      DstPort		      6
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Torso"
-	  SID			  "250"
+	  SID			  "271"
 	  Ports			  [0, 1]
-	  Position		  [115, 190, 185, 250]
-	  ZOrder		  101
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    33
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		34
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'torso'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		35
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [155, 198, 220, 242]
+	  ZOrder		  113
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/torso/getMotorEncoderSpeeds']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "enc_torso"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_torso"
-	  }
-	  System {
-	    Name		    "Torso"
-	    Location		    [140, 66, 1294, 726]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "251"
-	      Ports		      [3, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "252"
-	      Ports		      [0, 3]
-	      Position		      [45, 28, 115, 132]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      3
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "253"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
 	  }
 	}
 	Line {
 	  Name			  "enc_left_arm"
+	  FontName		  "Helvetica"
+	  FontSize		  9
+	  FontWeight		  "normal"
+	  FontAngle		  "normal"
+	  ZOrder		  13
 	  Labels		  [1, 0]
 	  SrcBlock		  "Left arm"
 	  SrcPort		  1
-	  Points		  [25, 0]
+	  Points		  [30, 0]
 	  DstBlock		  "ENC_ARMS"
 	  DstPort		  1
 	}
 	Line {
 	  Name			  "enc_right_arm"
+	  FontName		  "Helvetica"
+	  FontSize		  9
+	  FontWeight		  "normal"
+	  FontAngle		  "normal"
+	  ZOrder		  14
 	  Labels		  [0, 0]
 	  SrcBlock		  "Right arm"
 	  SrcPort		  1
-	  Points		  [12, 0; 0, -40]
+	  Points		  [17, 0; 0, -40]
 	  DstBlock		  "ENC_ARMS"
 	  DstPort		  2
 	}
 	Line {
 	  Name			  "enc_torso"
-	  Labels		  [1, 1]
+	  ZOrder		  15
+	  Labels		  [0, 0]
 	  SrcBlock		  "Torso"
 	  SrcPort		  1
 	  DstBlock		  "ENC_TORSO"
@@ -1818,19 +1309,20 @@ Model {
 	}
 	Line {
 	  Name			  "enc_right_leg"
+	  ZOrder		  7
 	  Labels		  [0, 0]
 	  SrcBlock		  "Right leg"
 	  SrcPort		  1
-	  Points		  [12, 0; 0, -45]
+	  Points		  [33, 0; 0, -55]
 	  DstBlock		  "ENC_LEGS"
 	  DstPort		  2
 	}
 	Line {
 	  Name			  "enc_left_leg"
-	  Labels		  [1, 0]
+	  ZOrder		  6
+	  Labels		  [-1, 1]
 	  SrcBlock		  "Left leg"
 	  SrcPort		  1
-	  Points		  [25, 0]
 	  DstBlock		  "ENC_LEGS"
 	  DstPort		  1
 	}
@@ -1841,24 +1333,18 @@ Model {
       Name		      "Dump PWM - ALL JOINTS ROBOT"
       SID		      "180"
       Ports		      []
-      Position		      [366, 178, 501, 268]
+      Position		      [366, 193, 501, 283]
       ZOrder		      104
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
       RequestExecContextInheritance off
-      MaskHideContents	      off
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		36
+	$ObjectID		25
 	$ClassName		"Simulink.Mask"
 	Display			"color('red'); plot([10 20 30 40], [10 20 10 15]);\ncolor('blue'); plot([10 20 30 40], [15 10 20 12]);\ncol"
 	"or('green'); plot([10 20 30 40], [13 16 12 18]);"
 	Object {
 	  $PropName		  "Parameters"
-	  $ObjectID		  37
+	  $ObjectID		  26
 	  $ClassName		  "Simulink.MaskParameter"
 	  Type			  "edit"
 	  Name			  "output"
@@ -1869,8 +1355,8 @@ Model {
       }
       System {
 	Name			"Dump PWM - ALL JOINTS ROBOT"
-	Location		[129, 123, 1084, 700]
-	Open			off
+	Location		[-4, 28, 1370, 771]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1881,286 +1367,55 @@ Model {
 	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"150"
+	ZoomFactor		"224"
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Left arm"
-	  SID			  "181"
+	  SID			  "266"
 	  Ports			  [0, 1]
-	  Position		  [185, 20, 255, 80]
-	  ZOrder		  98
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    38
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		39
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'left_arm'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		40
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output Port"
-		Value			"output"
-		Tunable			"off"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [280, 28, 345, 72]
+	  ZOrder		  108
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/left_arm/getOutputs']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "pwm_left_arm"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_left_arm"
-	  }
-	  System {
-	    Name		    "Left arm"
-	    Location		    [120, 82, 1075, 659]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "A4"
-	    PaperUnits		    "centimeters"
-	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "182"
-	      Ports		      [5, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "5"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "183"
-	      Ports		      [0, 5]
-	      Position		      [50, 31, 115, 129]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      5
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "184"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Left leg"
-	  SID			  "185"
+	  SID			  "256"
 	  Ports			  [0, 1]
-	  Position		  [20, 25, 90, 85]
-	  ZOrder		  95
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    41
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		42
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'left_leg'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		43
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [20, 43, 85, 87]
+	  ZOrder		  106
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/left_leg/getOutputs']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "pwm_left_leg"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_left_leg"
-	  }
-	  System {
-	    Name		    "Left leg"
-	    Location		    [120, 82, 1075, 659]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "A4"
-	    PaperUnits		    "centimeters"
-	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "292"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "186"
-	      Ports		      [6, 1]
-	      Position		      [125, 25, 130, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "6"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "187"
-	      Ports		      [0, 6]
-	      Position		      [20, 21, 85, 139]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      6
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "188"
-	      Position		      [205, 73, 235, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      6
-	      DstBlock		      "Mux"
-	      DstPort		      6
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
@@ -2168,7 +1423,7 @@ Model {
 	  Name			  "PWM_ARMS"
 	  SID			  "189"
 	  Ports			  [2]
-	  Position		  [300, 65, 330, 100]
+	  Position		  [390, 65, 420, 100]
 	  ZOrder		  97
 	  Floating		  off
 	  Location		  [183, 279, 1035, 786]
@@ -2202,10 +1457,10 @@ Model {
 	  Name			  "PWM_LEGS"
 	  SID			  "190"
 	  Ports			  [2]
-	  Position		  [135, 70, 165, 105]
+	  Position		  [220, 55, 250, 90]
 	  ZOrder		  69
 	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
+	  Location		  [183, 255, 1035, 762]
 	  Open			  off
 	  NumInputPorts		  "2"
 	  List {
@@ -2237,7 +1492,7 @@ Model {
 	  Name			  "PWM_TORSO"
 	  SID			  "191"
 	  Ports			  [1]
-	  Position		  [235, 202, 265, 238]
+	  Position		  [230, 207, 260, 243]
 	  ZOrder		  102
 	  Floating		  off
 	  Location		  [183, 279, 1035, 786]
@@ -2267,414 +1522,84 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Right arm"
-	  SID			  "192"
+	  SID			  "267"
 	  Ports			  [0, 1]
-	  Position		  [185, 100, 255, 160]
-	  ZOrder		  105
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    44
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		45
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'right_arm'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		46
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output Port"
-		Value			"output"
-		Tunable			"off"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [280, 108, 345, 152]
+	  ZOrder		  109
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/right_arm/getOutputs']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "pwm_right_arm"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "[prefix '_right_arm']"
-	  }
-	  System {
-	    Name		    "Right arm"
-	    Location		    [120, 82, 1075, 659]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "A4"
-	    PaperUnits		    "centimeters"
-	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "193"
-	      Ports		      [5, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "5"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "194"
-	      Ports		      [0, 5]
-	      Position		      [50, 31, 115, 129]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      5
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "195"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "Right leg"
-	  SID			  "196"
+	  BlockType		  Reference
+	  Name			  "Right leg "
+	  SID			  "257"
 	  Ports			  [0, 1]
-	  Position		  [20, 110, 90, 170]
-	  ZOrder		  104
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    47
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		48
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'right_leg'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		49
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [20, 108, 85, 152]
+	  ZOrder		  107
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/right_leg/getOutputs']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "pwm_right_leg"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_right_leg"
-	  }
-	  System {
-	    Name		    "Right leg"
-	    Location		    [120, 82, 1075, 659]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "A4"
-	    PaperUnits		    "centimeters"
-	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "373"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "197"
-	      Ports		      [6, 1]
-	      Position		      [125, 25, 130, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "6"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "198"
-	      Ports		      [0, 6]
-	      Position		      [20, 21, 85, 139]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      6
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "199"
-	      Position		      [205, 73, 235, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      5
-	      DstBlock		      "Mux"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      6
-	      DstBlock		      "Mux"
-	      DstPort		      6
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      4
-	      DstBlock		      "Mux"
-	      DstPort		      4
-	    }
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
+	  BlockType		  Reference
 	  Name			  "Torso"
-	  SID			  "200"
+	  SID			  "268"
 	  Ports			  [0, 1]
-	  Position		  [115, 190, 185, 250]
-	  ZOrder		  101
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  Object {
-	    $PropName		    "MaskObject"
-	    $ObjectID		    50
-	    $ClassName		    "Simulink.Mask"
-	    Array {
-	      Type		      "Simulink.MaskParameter"
-	      Dimension		      2
-	      Object {
-		$ObjectID		51
-		Type			"edit"
-		Name			"type_arm"
-		Prompt			"Type leg"
-		Value			"'torso'"
-		Tunable			"off"
-	      }
-	      Object {
-		$ObjectID		52
-		Type			"edit"
-		Name			"output"
-		Prompt			"Output port"
-		Value			"output"
-	      }
-	      PropName		      "Parameters"
-	    }
-	  }
+	  Position		  [110, 203, 175, 247]
+	  ZOrder		  110
+	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
+	  LibraryVersion	  "1.281"
+	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  SourceType		  "YARP Read"
+	  portName		  "['/controlBoardDumper/torso/getOutputs']"
+	  signalSize		  "6"
+	  blocking		  off
+	  timestamp		  off
+	  autoconnect		  on
+	  errorOnConnection	  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "pwm_torso"
 	    RTWStorageClass	    "Auto"
 	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
-	    DataLoggingName	    "pwm_torso"
-	  }
-	  System {
-	    Name		    "Torso"
-	    Location		    [120, 82, 1075, 659]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "A4"
-	    PaperUnits		    "centimeters"
-	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "150"
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux"
-	      SID		      "201"
-	      Ports		      [3, 1]
-	      Position		      [145, 25, 150, 135]
-	      ZOrder		      90
-	      ShowName		      off
-	      Inputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "yarp controlBoardDumper"
-	      SID		      "202"
-	      Ports		      [0, 3]
-	      Position		      [45, 28, 115, 132]
-	      ZOrder		      60
-	      BackgroundColor	      "black"
-	      LibraryVersion	      "1.241"
-	      SourceBlock	      "WBCLibrary/Utilities/yarp read"
-	      SourceType	      "yarp read"
-	      from		      ['/controlBoardDumper/' type_arm '/' output]
-	      to		      "'...'"
-	      num		      3
-	      blocking		      off
-	      timestamp		      off
-	      autoconnect	      on
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "out"
-	      SID		      "203"
-	      Position		      [225, 73, 255, 87]
-	      ZOrder		      91
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "out"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      3
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "yarp controlBoardDumper"
-	      SrcPort		      2
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
 	  }
 	}
 	Line {
 	  Name			  "pwm_left_arm"
-	  Labels		  [1, 0]
+	  ZOrder		  9
+	  Labels		  [0, 1]
 	  SrcBlock		  "Left arm"
 	  SrcPort		  1
 	  Points		  [25, 0]
@@ -2683,6 +1608,7 @@ Model {
 	}
 	Line {
 	  Name			  "pwm_right_arm"
+	  ZOrder		  10
 	  Labels		  [0, 0]
 	  SrcBlock		  "Right arm"
 	  SrcPort		  1
@@ -2692,29 +1618,31 @@ Model {
 	}
 	Line {
 	  Name			  "pwm_torso"
-	  Labels		  [1, 1]
+	  ZOrder		  11
+	  Labels		  [0, 0]
 	  SrcBlock		  "Torso"
 	  SrcPort		  1
 	  DstBlock		  "PWM_TORSO"
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "pwm_right_leg"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Right leg"
-	  SrcPort		  1
-	  Points		  [12, 0; 0, -45]
-	  DstBlock		  "PWM_LEGS"
-	  DstPort		  2
-	}
-	Line {
 	  Name			  "pwm_left_leg"
-	  Labels		  [1, 0]
+	  ZOrder		  6
+	  Labels		  [1, 1]
 	  SrcBlock		  "Left leg"
 	  SrcPort		  1
-	  Points		  [25, 0]
 	  DstBlock		  "PWM_LEGS"
 	  DstPort		  1
+	}
+	Line {
+	  Name			  "pwm_right_leg"
+	  ZOrder		  8
+	  Labels		  [1, 1]
+	  SrcBlock		  "Right leg "
+	  SrcPort		  1
+	  Points		  [60, 0; 0, -50]
+	  DstBlock		  "PWM_LEGS"
+	  DstPort		  2
 	}
       }
     }
@@ -2727,9 +1655,10 @@ Model {
       ZOrder		      88
       BackgroundColor	      "[0.893000, 0.628791, 0.326838]"
       ShowName		      off
-      LibraryVersion	      "1.241"
+      LibraryVersion	      "1.281"
       SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Accelerations"
       SourceType	      "Joint Accelerations"
+      ContentPreviewEnabled   off
       robotName		      "robot.robotName"
       localName		      "robot.localName"
     }
@@ -2742,9 +1671,10 @@ Model {
       ZOrder		      61
       BackgroundColor	      "[0.375000, 0.187500, 0.000000]"
       ShowName		      off
-      LibraryVersion	      "1.241"
+      LibraryVersion	      "1.281"
       SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Angles"
       SourceType	      "Joint Angles"
+      ContentPreviewEnabled   off
       robotName		      "robot.robotName"
       localName		      "robot.localName"
       Port {
@@ -2763,9 +1693,10 @@ Model {
       ZOrder		      63
       BackgroundColor	      "[1.000000, 0.634000, 0.268000]"
       ShowName		      off
-      LibraryVersion	      "1.241"
+      LibraryVersion	      "1.281"
       SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Torques"
       SourceType	      "Joint Torques"
+      ContentPreviewEnabled   off
       robotName		      "robot.robotName"
       localName		      "robot.localName"
       Port {
@@ -2785,9 +1716,10 @@ Model {
       ZOrder		      62
       BackgroundColor	      "[0.634000, 0.401533, 0.000000]"
       ShowName		      off
-      LibraryVersion	      "1.241"
+      LibraryVersion	      "1.281"
       SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Velocities"
       SourceType	      "Joint Velocities"
+      ContentPreviewEnabled   off
       robotName		      "robot.robotName"
       localName		      "robot.localName"
       Port {
@@ -2809,9 +1741,10 @@ Model {
       DropShadow	      on
       ShowName		      off
       Priority		      "-10"
-      LibraryVersion	      "1.241"
+      LibraryVersion	      "1.281"
       SourceBlock	      "WBCLibrary/Utilities/Real Time Synchronizer"
       SourceType	      ""
+      ContentPreviewEnabled   off
       threadPeriod	      "robot.Ts"
     }
     Block {
@@ -2822,7 +1755,7 @@ Model {
       Position		      [780, 217, 845, 318]
       ZOrder		      64
       Floating		      off
-      Location		      [169, 188, 1398, 845]
+      Location		      [132, 103, 1361, 760]
       Open		      off
       NumInputPorts	      "4"
       ZoomMode		      "yonly"
@@ -2844,8 +1777,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      on
-      LegendLocations	      "0.93525     0.92768    0.048874    0.071549\n0.92956     0.69176     0.05457    0.071549\n"
-      "0.92386     0.45584    0.060265    0.071549\n0.92793     0.22144    0.056197    0.071549"
+      LegendLocations	      "0.92168     0.90753    0.049227    0.030441\n 0.9168     0.67922    0.054109    0.030441\n"
+      "0.91192     0.44939    0.058991    0.030441\n0.91192     0.21956    0.058991    0.030441"
       TimeRange		      "60"
       YMin		      "37.5~-30~-200~-5"
       YMax		      "70~30~250~4"
@@ -2913,6 +1846,7 @@ Model {
     }
     Line {
       Name		      "q"
+      ZOrder		      1
       Labels		      [-1, 0]
       SrcBlock		      "Joint Angles"
       SrcPort		      1
@@ -2921,6 +1855,7 @@ Model {
     }
     Line {
       Name		      "qD"
+      ZOrder		      2
       Labels		      [-1, 0]
       SrcBlock		      "Joint Velocities"
       SrcPort		      1
@@ -2929,6 +1864,7 @@ Model {
     }
     Line {
       Name		      "tau"
+      ZOrder		      3
       Labels		      [0, 0]
       SrcBlock		      "Joint Torques"
       SrcPort		      1
@@ -2938,6 +1874,7 @@ Model {
     }
     Line {
       Name		      "q"
+      ZOrder		      4
       Labels		      [0, 0]
       SrcBlock		      "q"
       SrcPort		      1
@@ -2947,6 +1884,7 @@ Model {
     }
     Line {
       Name		      "qD"
+      ZOrder		      5
       Labels		      [0, 0]
       SrcBlock		      "qD"
       SrcPort		      1
@@ -2954,6 +1892,7 @@ Model {
       DstPort		      2
     }
     Line {
+      ZOrder		      6
       SrcBlock		      "Joint Accelerations"
       SrcPort		      1
       DstBlock		      "qDD"
@@ -2961,6 +1900,7 @@ Model {
     }
     Line {
       Name		      "qDD"
+      ZOrder		      7
       Labels		      [0, 0]
       SrcBlock		      "qDD"
       SrcPort		      1
@@ -2971,7 +1911,10 @@ Model {
     Annotation {
       SID		      "142"
       Name		      "\nSAVE\nPWM=0\nDATA\n"
-      Position		      [432, 145]
+      Position		      [432, 145, 470, 222]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      off
+      FixedWidth	      off
       BackgroundColor	      "orange"
       DropShadow	      on
       ZOrder		      -1
@@ -2983,7 +1926,10 @@ Model {
     Annotation {
       SID		      "143"
       Name		      "\nSAVE\nREF DATA\n"
-      Position		      [812, 145]
+      Position		      [812, 145, 862, 207]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      off
+      FixedWidth	      off
       BackgroundColor	      "green"
       DropShadow	      on
       ZOrder		      -1
@@ -2995,7 +1941,10 @@ Model {
     Annotation {
       SID		      "228"
       Name		      "\nPLOT\nJOINT\n"
-      Position		      [577, 145]
+      Position		      [575, 145, 606, 207]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      off
+      FixedWidth	      off
       BackgroundColor	      "magenta"
       DropShadow	      on
       ZOrder		      -1
@@ -3006,12 +1955,11 @@ Model {
     }
   }
 }
-# Finite State Machines
+#Finite State Machines
 #
-#    Stateflow Version 7.6 (R2013a) dated Jan 19 2013, 14:18:25
+#   Stateflow Version 8.1 (R2014a) dated Feb  7 2014, 22:23:55
 #
 #
-
 Stateflow {
   machine {
     id			    1
@@ -3019,7 +1967,7 @@ Stateflow {
     created		    "20-Nov-2014 20:19:29"
     isLibrary		    0
     firstTarget		    2
-    sfVersion		    76014001.0015
+    sfVersion		    76014001.002
   }
   target {
     id			    2
