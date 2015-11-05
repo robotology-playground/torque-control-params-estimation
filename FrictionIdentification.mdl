@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.310"
+    ComputedModelVersion    "1.312"
     NumModelReferences	    0
     NumTestPointedSignals   14
     TestPointedSignal {
@@ -128,7 +128,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-4.0, 28.0, 1374.0, 743.0]
+      Location		      [6.0, 43.0, 1366.0, 741.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -153,7 +153,7 @@ Model {
 	  IsActive		  [1]
 	  ViewObjType		  "SimulinkTopLevel"
 	  LoadSaveID		  "0"
-	  Extents		  [1123.0, 580.0]
+	  Extents		  [1135.0, 596.0]
 	  ZoomFactor		  [1.7809076682316121]
 	  Offset		  [272.54539213532519, 99.638840070298784]
 	}
@@ -173,7 +173,7 @@ Model {
 	  LoadSaveID		  "180"
 	  Extents		  [1123.0, 580.0]
 	  ZoomFactor		  [2.2362204724409449]
-	  Offset		  [7.9999999999999716, 20.894366197183064]
+	  Offset		  [7.9999999999999716, 20.894366197183075]
 	}
 	Object {
 	  $ObjectID		  8
@@ -203,9 +203,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "daniele"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 24 15:54:55 2015"
-  RTWModifiedTimeStamp	  359654054
-  ModelVersionFormat	  "1.%<AutoIncrement:310>"
+  LastModifiedDate	  "Thu Jul 30 17:26:35 2015"
+  RTWModifiedTimeStamp	  360062611
+  ModelVersionFormat	  "1.%<AutoIncrement:312>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -987,7 +987,7 @@ Model {
   }
   System {
     Name		    "FrictionIdentification"
-    Location		    [-4, 28, 1370, 771]
+    Location		    [6, 43, 1372, 784]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1029,7 +1029,7 @@ Model {
       }
       System {
 	Name			"Dump ENCODERS - ALL JOINTS ROBOT"
-	Location		[-4, 28, 1370, 771]
+	Location		[-4, 73, 1358, 764]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1272,10 +1272,6 @@ Model {
 	}
 	Line {
 	  Name			  "enc_left_arm"
-	  FontName		  "Helvetica"
-	  FontSize		  9
-	  FontWeight		  "normal"
-	  FontAngle		  "normal"
 	  ZOrder		  13
 	  Labels		  [1, 0]
 	  SrcBlock		  "Left arm"
@@ -1286,10 +1282,6 @@ Model {
 	}
 	Line {
 	  Name			  "enc_right_arm"
-	  FontName		  "Helvetica"
-	  FontSize		  9
-	  FontWeight		  "normal"
-	  FontAngle		  "normal"
 	  ZOrder		  14
 	  Labels		  [0, 0]
 	  SrcBlock		  "Right arm"
@@ -1355,7 +1347,7 @@ Model {
       }
       System {
 	Name			"Dump PWM - ALL JOINTS ROBOT"
-	Location		[-4, 28, 1370, 771]
+	Location		[-4, 73, 1358, 764]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1926,7 +1918,7 @@ Model {
     Annotation {
       SID		      "143"
       Name		      "\nSAVE\nREF DATA\n"
-      Position		      [812, 145, 862, 207]
+      Position		      [812, 145, 861, 207]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off

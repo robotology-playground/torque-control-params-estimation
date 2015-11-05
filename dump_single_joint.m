@@ -20,6 +20,14 @@ robot = robot.setReferenceFrame('root_link','true');
 
 % robot.joints = robot.getCoupledJoints('torso');
 
+% robot.joints = robot.getCoupledJoints('r_shoulder');
+% robot.joints = robot.getJoint('r_elbow');
+robot.joints = robot.getJoint('r_wrist_prosup');
+
+% robot.joints = robot.getCoupledJoints('l_shoulder');
+% robot.joints = robot.getJoint('l_elbow');
+% robot.joints = robot.getJoint('l_wrist_prosup');
+
 % robot.joints = robot.getJoint('l_hip_pitch');
 % robot.joints = robot.getJoint('l_hip_roll');
 % robot.joints = robot.getJoint('l_hip_yaw');
@@ -28,7 +36,7 @@ robot = robot.setReferenceFrame('root_link','true');
 % robot.joints = robot.getJoint('l_ankle_roll');
 %  
 % 
-robot.joints = robot.getJoint('r_hip_pitch');
+% robot.joints = robot.getJoint('r_hip_pitch');
 % robot.joints = robot.getJoint('r_hip_roll');
 % robot.joints = robot.getJoint('r_hip_yaw');
 % robot.joints = robot.getJoint('r_knee');
