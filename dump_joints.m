@@ -2,6 +2,7 @@
 % This file is usefull to understand the functionality about all object
 % included on this folder
 
+clear;
 %% Load object Motor
 % Set all information about your robot.
 % - Name of robot
@@ -11,7 +12,24 @@
 %              Default: yarpWholeBodyInterface.ini 
 % - optional: name of the build directory 
 %              Default: build 
-robot = Robot('iCubGenova01', 'experiments', '/usr/local/src/robot/codyco-superbuild');
+
+% if you have to set some additional environmental variables, set it here.
+% e.g. this script will use yarp to check namespace existance. 
+% If yarp is not in PATH, please set it here
+% path = getenv('PATH');
+% path = strcat(path, ':', '/path/to/yarp/bin');
+% setenv('PATH', path);
+
+robotName = getenv('YARP_ROBOT_NAME');
+% you can overwrite the robot name by simply setting it after this line
+% robotName = 'anotherRobot';
+
+% you can overwrite the superbuild directory by simply setting it after this line
+codycoSuperbuildDir = getenv('CODYCO_SUPERBUILD_ROOT');
+% codycoSuperbuildDir = '/path/to/superbuild/';
+
+%Note: it assumes the build directory is called 'build'
+robot = Robot(robotName, 'experiments', codycoSuperbuildDir);
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
@@ -19,8 +37,33 @@ robot = Robot('iCubGenova01', 'experiments', '/usr/local/src/robot/codyco-superb
 robot = robot.setReferenceFrame('root_link','true');
 
 %% Add motors to test
-robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
-robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
+% robot.joints = robot.getCoupledJoints('torso');
+
+% robot.joints = robot.getCoupledJoints('r_shoulder');
+% robot.joints = robot.getJoint('r_elbow');
+robot.joints = robot.getJoint('l_hip_pitch');
+
+% robot.joints = robot.getCoupledJoints('l_shoulder');
+% robot.joints = robot.getJoint('l_elbow');
+% robot.joints = robot.getJoint('l_wrist_prosup');
+
+% robot.joints = robot.getJoint('l_hip_pitch');
+% robot.joints = robot.getJoint('l_hip_roll');
+% robot.joints = robot.getJoint('l_hip_yaw');
+% robot.joints = robot.getJoint('l_knee');
+% robot.joints = robot.getJoint('l_ankle_pitch');
+% robot.joints = robot.getJoint('l_ankle_roll');
+%  
+% 
+% robot.joints = robot.getJoint('r_hip_pitch');
+% robot.joints = robot.getJoint('r_hip_roll');
+% robot.joints = robot.getJoint('r_hip_yaw');
+% robot.joints = robot.getJoint('r_knee');
+% robot.joints = robot.getJoint('r_ankle_pitch');
+% robot.joints = robot.getJoint('r_ankle_roll');
+
+% robot.joints = [robot.joints robot.getJoint('l_hip_roll')];
+% robot.joints = [robot.joints robot.getJoint('l_hip_yaw')];
 % robot.joints = [robot.joints robot.getCoupledJoints('torso')];
 % robot.joints = [robot.joints robot.getCoupledJoints('l_shoulder')];
 
