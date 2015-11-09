@@ -85,6 +85,37 @@ classdef Motor
                 motor.current = data.current;
             end
             motor.time = data.time;
+            
+            removeCenteredData = 0;
+            if removeCenteredData 
+                indices = find(abs(motor.voltage) < 1000);
+                motor.q(indices, :) = [];
+                motor.qdot(indices, :) = [];
+                motor.torque(indices, :) = [];
+                motor.pwm(indices, :) = [];
+                motor.voltage(indices, :) = [];
+                motor.torqueMachine(indices, :) = [];
+                if isfield(data,'current')
+                    motor.current(indices, :) = [];
+                end
+                motor.time(indices, :) = [];
+            end
+            
+            removeLowVelocities = 0;
+            if removeLowVelocities
+                indices = find(abs(motor.qdot) > 50);
+                motor.q(indices, :) = [];
+                motor.qdot(indices, :) = [];
+                motor.torque(indices, :) = [];
+                motor.pwm(indices, :) = [];
+                motor.voltage(indices, :) = [];
+                motor.torqueMachine(indices, :) = [];
+                if isfield(data,'current')
+                    motor.current(indices, :) = [];
+                end
+                motor.time(indices, :) = [];
+            end
+            
             if size(motor.friction,1) > 0
                 motor = motor.evaluateCoefficient();
             end
@@ -139,6 +170,8 @@ classdef Motor
             motor.friction_model = motor.friction.getFriction(motor.qdot);
             A = Joint.linearRegression(motor.pwm,motor.torqueMachine-motor.friction_model);
             B = Joint.linearRegression(motor.voltage,motor.torque-motor.friction_model);
+%             A = Joint.linearRegression(motor.pwm,motor.torqueMachine);
+%             B = Joint.linearRegression(motor.voltage,motor.torque);
             %A = joint.linearRegression(joint.current,joint.torque-joint.friction_model);
             motor.KtFirmware = A(1);
             motor.Kt = B(1);

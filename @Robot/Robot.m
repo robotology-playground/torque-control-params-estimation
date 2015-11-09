@@ -152,7 +152,9 @@ classdef Robot
         end
         
         function robot = loadData(robot, type)
-            cleanupCoupleJoints = 1;
+            cleanupCoupledJoints = 0;
+            removeData = 0;
+            removeZeroVelocities = 0;
             %% Load all data from path folder
             if size(robot.joints,2) > 0
                 for i=1:size(robot.joints,2)
@@ -171,6 +173,67 @@ classdef Robot
                         if exist(path_type_file,'file')
                             data = load(path_type_file);
                             coupled = robot.joints{i};
+                                    
+                            notValid = find(any(isnan(data.q), 2)); 
+                            data.q(notValid,:) = [];
+                            data.qD(notValid,:) = [];
+                            data.qDD(notValid,:) = [];
+                            data.tau(notValid,:) = [];
+                            data.PWM.(coupled{1}.part)(notValid,:) = [];
+                            data.time(notValid) = [];
+                            if isfield(data,'FAST_ENC')
+                                data.FAST_ENC.(coupled{1}.part)(notValid,:) = [];
+                            end
+                            
+                            if cleanupCoupledJoints                                                                    
+                                % cleanup coupled joints.
+                                % for each torque, if it is higher than a
+                                % (high) threshold we force the other
+                                % torque components to zero.
+
+                                % Duplicate tau
+                                tempTau = data.tau;
+                                tauMaxThreshold = 1; %[Nm] to be tuned
+                                tauMinThreshold = 0.75; 
+                                % Auxiliary vectors
+                                zeroing = []; %contains indeces of zeroed elements
+                                toBeRemoved = []; %contains indeces of noisy elements
+                                selected = [];
+                                for t = 1: size(data.tau, 2) %for each joint in the coupling
+                                    upperIndices = find(abs(data.tau(:, t)) > tauMaxThreshold); %find torque elements with torque exceeding threshold
+                                    lowerIndices = find(abs(data.tau(:, setdiff(1:size(data.tau, 2), t))) < tauMinThreshold);
+                                    indices = intersect(upperIndices, lowerIndices);
+                                    tempTau(indices, setdiff(1:size(data.tau, 2), t)) = 0; %set the other torque components to zero
+
+                                    diffZeros = intersect(zeroing, indices); %Check if the indeces have already been zeroed before
+                                    zeroing = [zeroing; setdiff(indices, zeroing)]; %expand the zeroed elements with the new one
+                                    if removeData
+                                        toBeRemoved = [toBeRemoved; diffZeros]; %if some elements have been removed more than once, they should be removed
+                                    else
+                                        selected = [selected; indices];
+                                    end
+                                end
+                                
+                                if ~removeData
+                                    toBeRemoved = setdiff(1:size(data.tau, 1), selected);
+                                end
+                                
+                                if (~isempty(toBeRemoved))
+                                    %Just remove row! Measure is too noisy
+                                    data.q(toBeRemoved,:) = [];
+                                    data.qD(toBeRemoved,:) = [];
+                                    data.qDD(toBeRemoved,:) = [];
+                                    tempTau(toBeRemoved,:) = [];
+                                    data.PWM.(coupled{1}.part)(toBeRemoved,:) = [];
+                                    data.time(toBeRemoved) = [];
+                                    if isfield(data,'FAST_ENC')
+                                        data.FAST_ENC.(coupled{1}.part)(toBeRemoved,:) = [];
+                                    end
+                                end
+
+                                data.tau = tempTau;
+                            end
+                            
                             [T, list_motor] = robot.getTransformMatrix(coupled);
                             mot_data = struct;
                             mot_data.q = (T^-1*data.q')';
@@ -183,42 +246,23 @@ classdef Robot
                             mot_data.qDD = (T^-1*data.qDD')';
 %                             mot_data.qDD = data.qDD;
                             mot_data.tau = (T'*data.tau')';
-
-                            if (cleanupCoupleJoints)
-                                % cleanup coupled joints.
-                                % for each torque, if it is higher than a
-                                % (high) threshold we force the other
-                                % torque components to zero.
-
-                                % Duplicate tau
-                                tempTau = mot_data.tau;
-                                tauThreshold = 2; %[Nm] to be tuned
-                                % Auxiliary vectors
-                                zeroing = []; %contains indeces of zeroed elements
-                                toBeRemoved = []; %contains indeces of noisy elements
-                                for t = 1: size(mot_data.tau, 2) %for each motors in the coupling
-                                    indices = find(abs(mot_data.tau(:, t)) > tauThreshold); %find torque elements with torque exceeding threshold
-                                    tempTau(indices, setdiff(1:size(mot_data.tau, 2), t)) = 0; %set the other torque components to zero
-
-                                    diffZeros = intersect(zeroing, indices); %Check if the indeces have already been zeroed before
-                                    zeroing = [zeroing; setdiff(indices, zeroing)]; %expand the zeroed elements with the new one
-                                    toBeRemoved = [toBeRemoved; diffZeros]; %if some elements have been removed more than once, they should be removed
-
+                            
+                            if removeZeroVelocities %motor side
+                                if isfield(data,'FAST_ENC')
+                                    velocityThreshold = 250; %on motor encoders. 
+                                else
+                                    velocityThreshold = 2; %on joint encoders.
                                 end
-                                if (~isempty(toBeRemoved))
-                                    %Just remove row! Measure is too noisy
-                                    mot_data.q(toBeRemoved,:) = [];
-                                    mot_data.qD(toBeRemoved,:) = [];
-                                    mot_data.qDD(toBeRemoved,:) = [];
-                                    tempTau(toBeRemoved,:) = [];
-                                    data.PWM.(coupled{1}.part)(toBeRemoved,:) = [];
-                                    data.time(toBeRemoved) = [];
-                                end
-
-                                mot_data.tau = tempTau;
+                                
+                                indices = find(all(abs(mot_data.qD) < velocityThreshold, 2));
+                                mot_data.q(indices,:) = [];
+                                mot_data.qD(indices,:) = [];
+                                mot_data.qDD(indices,:) = [];
+                                mot_data.tau(indices,:) = [];
+                                data.PWM.(coupled{1}.part)(indices,:) = [];
+                                data.time(indices) = [];
                             end
 
-                            
                             for count=1:size(coupled,2)
                                 for i_motor=1:size(list_motor,2)
                                     data_temp = struct;
@@ -437,6 +481,8 @@ classdef Robot
                 PWM = struct;
                 PWM.(part) = logsout.get(['pwm_' part]).Values.Data;
                 m.PWM = PWM;
+                m.isValid = logsout.get('dataIsValid').Values.Data;
+                
                 %Current = struct;
                 %Current.(part) = logsout.get(['current_' part]).Values.Data;
                 %m.Current = Current;

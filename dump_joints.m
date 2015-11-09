@@ -19,15 +19,18 @@ clear;
 % path = getenv('PATH');
 % path = strcat(path, ':', '/path/to/yarp/bin');
 % setenv('PATH', path);
+path = getenv('PATH');
+path = strcat(path, ':', '/Users/makaveli/Projects/src/local/bin');
+setenv('PATH', path);
 
 robotName = getenv('YARP_ROBOT_NAME');
 % you can overwrite the robot name by simply setting it after this line
 % robotName = 'anotherRobot';
 
 % you can overwrite the superbuild directory by simply setting it after this line
-codycoSuperbuildDir = getenv('CODYCO_SUPERBUILD_ROOT');
+% codycoSuperbuildDir = getenv('CODYCO_SUPERBUILD_ROOT');
 % codycoSuperbuildDir = '/path/to/superbuild/';
-
+codycoSuperbuildDir = '/Users/makaveli/Projects/src/codyco-superbuild';
 %Note: it assumes the build directory is called 'build'
 robot = Robot(robotName, 'experiments', codycoSuperbuildDir);
 % Setup robot configuration:
@@ -38,10 +41,11 @@ robot = robot.setReferenceFrame('root_link','true');
 
 %% Add motors to test
 % robot.joints = robot.getCoupledJoints('torso');
+robot.joints = robot.getCoupledJoints('r_shoulder');
 
 % robot.joints = robot.getCoupledJoints('r_shoulder');
 % robot.joints = robot.getJoint('r_elbow');
-robot.joints = robot.getJoint('l_hip_pitch');
+% robot.joints = robot.getJoint('l_hip_pitch');
 
 % robot.joints = robot.getCoupledJoints('l_shoulder');
 % robot.joints = robot.getJoint('l_elbow');
@@ -76,3 +80,17 @@ robot.buildFolders();
 
 %% Open Simulink
 open('FrictionIdentification.mdl');
+
+%TORSO
+
+% R = 0.04;
+% r = 0.022;
+% T = [r/R r/(2*R) r/(2*R);
+% 0    1/2     1/2;
+% 0   -1/2     1/2];
+
+%RIGT_ARM
+t = 0.625;
+                T = [1      0   0;
+                     1      t   0;
+                     0     -t   t];
