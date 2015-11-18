@@ -34,23 +34,28 @@ controlBoardDumper --robot icub --part torso --rate 10  --joints "(0 1 2)" --dat
   - For example: `robot.joints = [robot.getJoint('l_hip_roll')];` .
   - Note that the joint names used for the iCub robot are the one documented in http://wiki.icub.org/wiki/ICub_joints .
 - Run the script `dump_joints.m` to load in the matlab environment all variables and read all information and launch the simulink model used to dump data. 
-- At this point, switch the control mode of the select button "PID" for joint in `yarpmotorgui`. In "PID configuration" window write `0` in `Desired PWM max` and `Max integral`.
+
+##### Phase 1 - Friction Estimation
+- At this point, switch the control mode of the select button "PID" for joint in `yarpmotorgui`. In "PID configuration" window write `0` in `Desired PWM max`.
 - Run (pressing the play button) the simulink model for dumping the data, and then move the idle joint to acquire information about the friction. 
   - Just apply external force on the end effector (hands, foots). 
-  - Do not reach the hardware joint limits, the force excerted by this mechanical constraint would corrupt the friction estimation 
+  - Do not reach the hardware joint limits, the force exerted by this mechanical constraint would corrupt the friction estimation.
+  -  Try not to exert too much force as to not saturate the FT sensors, nor move the links too fast. 
 - After you finished the idle data collection, stop the simulink model (or wait for the Simulink simulation to finish).
 - Click on the "Save PWM=0 Data" button.
-- Switch the joint back in position control mode, Return on the `yarpmotorgui`, select "idle" and go, click "PID" button and in "PID Configuration" window write old configuration for `Desired PWM max` and `Max integral`, click "save" and select "run" on `yarpmotorgui`.
-- Apply again external force on the end effector to excert a torque on the joint. Being controlled in position, the joint now will not move. This is necessary to estimate the model between the motor input and the excerted torque. 
+
+##### Phase 2 - Motor Torque Coefficient Estimation
+- Switch the joint back to position control mode, return to the `yarpmotorgui` and click on "idle". Then, click on the "PID" button and in the "Position PID" tab write the previous value for `Desired PWM max`. Finally, click on "Send" and select "run" on `yarpmotorgui`.
+- Apply again external force on the end effector to exert a torque on the joint. Being controlled in position, the joint now will not move. This is necessary to estimate the model between the motor input and the exerted torque. 
 - After you finished the data collection, stop the simulink model (or wait for the Simulink simulation to finish).
 - Click on the "Save Ref Data" button. 
-- Click on "Plot Joint" and you will get the plot of the experiments data and the fitted model. 
+- Click on "Plot Joint" and you will get the plot of the experimental data and the fitted model. 
 - All the data is also saved in the directory that you indicated in the constructor of the Robot object. 
 
-## Perform joint friction estimation for group of coupled joints
+## Perform joint friction estimation for coupled joints
 The procedure is similar to the one done for a single joint, the main differences are:
  - In the `dump_joints.m` file you have to set the `robot.joints` attribute using a special function to add all the joints belonging to the coupled group, the one currently supported are: 
     - `robot.joints = [robot.getCoupledJoints('torso')];` ,
     - `robot.joints = [robot.getCoupledJoints('l_shoulder')];` ,
     - `robot.joints = [robot.getCoupledJoints('r_shoulder')];` ,
- - Then, when you do the data collection you should write `0` in `Desired PWM max` and `Max integral` all the joints in the coupled group and collect the PWM=0 data. Similarly after you clicked  the "Save PWM=0 Data" button, you have to switch all the joints in the coupled group to be controlled in positions, and you have to collect the motor gain data and then click on the "Save Ref Data" button. Remember to try to get exciting data for all the motors belonging to the coupled group. 
+ - Then, when you do the data collection you should write `0` in `Desired PWM max` for all the joints in the coupled group and collect the "PWM=0" data. Similarly after you click  on the "Save PWM=0 Data" button, you have to switch all the joints in the coupled group to be controlled in position, and you have to collect the motor gain data and then click on the "Save Ref Data" button. Make sure you "excite" every joint involved in the coupled group!
