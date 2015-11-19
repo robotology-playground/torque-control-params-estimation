@@ -59,7 +59,8 @@ controlBoardDumper --robot icub --part torso --rate 10  --joints "(0 1 2)" --dat
 
 ## Perform joint friction estimation for coupled joints
 Proceed as in the **Phase 1** and **Phase 2** except that coupled joints are added as follows:
-    - `robot.joints = [robot.getCoupledJoints('torso')];` ,
-    - `robot.joints = [robot.getCoupledJoints('l_shoulder')];` ,
-    - `robot.joints = [robot.getCoupledJoints('r_shoulder')];` ,
+- `robot.joints = [robot.getCoupledJoints('torso')];` ,
+- `robot.joints = [robot.getCoupledJoints('l_shoulder')];` ,
+- `robot.joints = [robot.getCoupledJoints('r_shoulder')];` ,
+
 iCub's coupled joints (torso and shoulders) should be moved as independently as possible for the best estimation possible.
