@@ -28,8 +28,11 @@ robotName = getenv('YARP_ROBOT_NAME');
 codycoSuperbuildDir = getenv('CODYCO_SUPERBUILD_ROOT');
 % codycoSuperbuildDir = '/path/to/superbuild/';
 
+% Directory where experimental data will be saved.
+outputDir = 'experiments';
+
 %Note: it assumes the build directory is called 'build'
-robot = Robot(robotName, 'experiments', codycoSuperbuildDir);
+robot = Robot(robotName, outputDir, codycoSuperbuildDir);
 % Setup robot configuration:
 % Variables:
 % - worldRefFrame
