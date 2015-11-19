@@ -1,5 +1,5 @@
 # FrictionJoint
-This simulonk model allows one to identify viscous and coulomb friction of the iCub joints. 
+This Simulink model identifies the viscous and coulomb friction of the iCub joints. 
 
 ## Dependencies
 The model depends on *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*, see the instructions to install them:
