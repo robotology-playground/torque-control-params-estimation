@@ -10,7 +10,7 @@ The model depends on *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*,
 ## Installation
 Download this repository
 ```
-git clone https://github.com:robotology-playground/torque-control-params-estimation.git
+git clone https://github.com/robotology-playground/torque-control-params-estimation.git
 ```
 ## Initialization setup
 Before launching any script related to this repository, it is important to configure the setup as follows:
