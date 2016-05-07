@@ -1,18 +1,18 @@
 Model {
   Name			  "FrictionIdentification"
-  Version		  8.3
+  Version		  8.6
   MdlSubVersion		  0
-  SavedCharacterEncoding  "UTF-8"
+  SavedCharacterEncoding  "US-ASCII"
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.312"
+    ComputedModelVersion    "1.317"
     NumModelReferences	    0
-    NumTestPointedSignals   14
+    NumTestPointedSignals   13
     TestPointedSignal {
       SignalName	      "tau"
-      FullBlockPath	      "FrictionIdentification/Joint Torques"
+      FullBlockPath	      "FrictionIdentification/Get Estimate3"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
@@ -40,76 +40,68 @@ Model {
     }
     TestPointedSignal {
       SignalName	      "enc_left_arm"
-      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Left arm"
+      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/ENC LARM"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "enc_left_leg"
-      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Left leg"
+      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/ENC LLEG"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "enc_right_arm"
-      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Right arm"
+      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/ENC RARM"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "enc_right_leg"
-      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Right leg"
+      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/ENC RLEG"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "enc_torso"
-      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/Torso"
+      FullBlockPath	      "FrictionIdentification/Dump ENCODERS - ALL JOINTS ROBOT/ENC TORSO"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "pwm_left_arm"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Left arm"
+      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/PWM LARM"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "pwm_left_leg"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Left leg"
+      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/PWM LLEG"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "pwm_right_arm"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Right arm"
+      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/PWM RARM"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
     TestPointedSignal {
       SignalName	      "pwm_right_leg"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Right leg "
-      LogSignal		      1
-      MaxPoints		      5000
-      Decimation	      2
-    }
-    TestPointedSignal {
-      SignalName	      "pwm_torso"
-      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/Torso"
+      FullBlockPath	      "FrictionIdentification/Dump PWM - ALL JOINTS ROBOT/PWM RLEG"
       LogSignal		      1
       MaxPoints		      5000
       Decimation	      2
     }
   }
-  SaveDefaultBlockParams  on
   ScopeRefreshTime	  0.035000
   OverrideScopeRefreshTime on
   DisableAllScopes	  off
@@ -128,7 +120,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [6.0, 43.0, 1366.0, 741.0]
+      Location		      [6.0, 43.0, 1712.0, 971.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -143,55 +135,37 @@ Model {
 	$PropName		"ExplorerBarInfo"
 	$ObjectID		4
 	$ClassName		"Simulink.ExplorerBarInfo"
-	Visible			[0]
+	Visible			[1]
       }
       Array {
 	Type			"Simulink.EditorInfo"
-	Dimension		5
+	Dimension		3
 	Object {
 	  $ObjectID		  5
-	  IsActive		  [1]
+	  IsActive		  [0]
 	  ViewObjType		  "SimulinkTopLevel"
 	  LoadSaveID		  "0"
-	  Extents		  [1135.0, 596.0]
-	  ZoomFactor		  [1.7809076682316121]
-	  Offset		  [272.54539213532519, 99.638840070298784]
+	  Extents		  [1488.0, 798.0]
+	  ZoomFactor		  [2.5412541254125407]
+	  Offset		  [298.91866883116876, 113.49090909090901]
 	}
 	Object {
 	  $ObjectID		  6
-	  IsActive		  [0]
+	  IsActive		  [1]
 	  ViewObjType		  "SimulinkSubsys"
 	  LoadSaveID		  "230"
-	  Extents		  [1123.0, 580.0]
-	  ZoomFactor		  [2.2851405622489955]
-	  Offset		  [-31.218585237258338, 13.873462214411234]
+	  Extents		  [1488.0, 798.0]
+	  ZoomFactor		  [3.3771929824561404]
+	  Offset		  [-20.926298701298691, 23.854545454545459]
 	}
 	Object {
 	  $ObjectID		  7
 	  IsActive		  [0]
 	  ViewObjType		  "SimulinkSubsys"
 	  LoadSaveID		  "180"
-	  Extents		  [1123.0, 580.0]
-	  ZoomFactor		  [2.2362204724409449]
-	  Offset		  [7.9999999999999716, 20.894366197183075]
-	}
-	Object {
-	  $ObjectID		  8
-	  IsActive		  [0]
-	  ViewObjType		  "SimulinkSubsys"
-	  LoadSaveID		  "109"
-	  Extents		  [1135.0, 596.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, 0.0]
-	}
-	Object {
-	  $ObjectID		  9
-	  IsActive		  [0]
-	  ViewObjType		  "SimulinkSubsys"
-	  LoadSaveID		  "20"
-	  Extents		  [1135.0, 596.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, 0.0]
+	  Extents		  [1488.0, 798.0]
+	  ZoomFactor		  [3.3765548420842375]
+	  Offset		  [7.3640974622718431, 24.810671922609046]
 	}
 	PropName		"EditorsInfo"
       }
@@ -201,11 +175,11 @@ Model {
   Creator		  "Raffaello"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "daniele"
+  LastModifiedBy	  "DanielePucci"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jul 30 17:26:35 2015"
-  RTWModifiedTimeStamp	  360062611
-  ModelVersionFormat	  "1.%<AutoIncrement:312>"
+  LastModifiedDate	  "Sat May 07 12:12:20 2016"
+  RTWModifiedTimeStamp	  384523903
+  ModelVersionFormat	  "1.%<AutoIncrement:317>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -223,6 +197,8 @@ Model {
   SortedOrder		  off
   ExecutionContextIcon	  off
   ShowLinearizationAnnotations on
+  ShowVisualizeInsertedRTB on
+  ShowMarkup		  on
   BlockNameDataTip	  off
   BlockParametersDataTip  off
   BlockDescriptionStringDataTip	off
@@ -245,7 +221,7 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    10
+    $ObjectID		    8
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "MotorIdent2"
     overrideMode_	    [0.0]
@@ -262,24 +238,6 @@ Model {
       PropName		      "logAsSpecifiedByModelsSSIDs_"
     }
   }
-  RecordCoverage	  off
-  CovPath		  "/"
-  CovSaveName		  "covdata"
-  CovMetricSettings	  "dw"
-  CovNameIncrementing	  off
-  CovHtmlReporting	  on
-  CovForceBlockReductionOff on
-  CovEnableCumulative	  on
-  covSaveCumulativeToWorkspaceVar on
-  CovSaveSingleToWorkspaceVar on
-  CovCumulativeVarName	  "covCumulativeData"
-  CovCumulativeReport	  off
-  CovReportOnPause	  on
-  CovModelRefEnable	  "Off"
-  CovExternalEMLEnable	  off
-  CovSFcnEnable		  off
-  CovBoundaryAbsTol	  0.000010
-  CovBoundaryRelTol	  0.010000
   ExtModeBatchMode	  off
   ExtModeEnableFloating	  on
   ExtModeTrigType	  "manual"
@@ -301,21 +259,20 @@ Model {
   ExtModeSkipDownloadWhenConnect off
   ExtModeLogAll		  on
   ExtModeAutoUpdateStatusClock on
-  BufferReuse		  on
   ShowModelReferenceBlockVersion off
   ShowModelReferenceBlockIO off
   Array {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      11
-      Version		      "1.14.2"
+      $ObjectID		      9
+      Version		      "1.15.1"
       Array {
 	Type			"Handle"
-	Dimension		8
+	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  12
-	  Version		  "1.14.2"
+	  $ObjectID		  10
+	  Version		  "1.15.1"
 	  StartTime		  "0.0"
 	  StopTime		  "120"
 	  AbsTol		  "auto"
@@ -342,6 +299,8 @@ Model {
 	  ZeroCrossControl	  "UseLocalSettings"
 	  ZeroCrossAlgorithm	  "Nonadaptive"
 	  AlgebraicLoopSolver	  "TrustRegion"
+	  SolverInfoToggleStatus  on
+	  IsAutoAppliedInSIP	  off
 	  SolverResetMethod	  "Fast"
 	  PositivePriorityOrder	  off
 	  AutoInsertRateTranBlk	  off
@@ -349,8 +308,8 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  13
-	  Version		  "1.14.2"
+	  $ObjectID		  11
+	  Version		  "1.15.1"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
 	  FinalStateName	  "xFinal"
@@ -369,6 +328,8 @@ Model {
 	  DSMLogging		  on
 	  InspectSignalLogs	  off
 	  VisualizeSimOutput	  on
+	  StreamToWorkspace	  off
+	  StreamVariableName	  "streamout"
 	  SaveTime		  on
 	  ReturnWorkspaceOutputs  off
 	  StateSaveName		  "xout"
@@ -380,10 +341,11 @@ Model {
 	  OutputTimes		  "[]"
 	  ReturnWorkspaceOutputsName "out"
 	  Refine		  "1"
+	  LoggingIntervals	  "[-inf, inf]"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  14
-	  Version		  "1.14.2"
+	  $ObjectID		  12
+	  Version		  "1.15.1"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    8
@@ -400,8 +362,8 @@ Model {
 	  BlockReduction	  on
 	  BooleanDataType	  on
 	  ConditionallyExecuteInputs on
-	  InlineParams		  off
-	  UseIntDivNetSlope	  off
+	  DefaultParameterBehavior "Tunable"
+	  UseDivisionForNetSlopeComputation "off"
 	  UseFloatMulNetSlope	  off
 	  DefaultUnderspecifiedDataType	"double"
 	  UseSpecifiedMinMax	  off
@@ -418,15 +380,13 @@ Model {
 	  EnableMemcpy		  on
 	  MemcpyThreshold	  64
 	  PassReuseOutputArgsAs	  "Structure reference"
+	  PassReuseOutputArgsThreshold 12
 	  ExpressionDepthLimit	  128
-	  FoldNonRolledExpr	  on
 	  LocalBlockOutputs	  on
 	  RollThreshold		  5
-	  SystemCodeInlineAuto	  off
 	  StateBitsets		  off
 	  DataBitsets		  off
 	  ActiveStateOutputEnumStorageType "Native Integer"
-	  UseTempVars		  off
 	  ZeroExternalMemoryAtStartup on
 	  ZeroInternalMemoryAtStartup on
 	  InitFltsAndDblsToZero	  off
@@ -437,13 +397,12 @@ Model {
 	  LifeSpan		  "inf"
 	  MaxStackSize		  "Inherit from target"
 	  BufferReusableBoundary  on
-	  SimCompilerOptimization "Off"
+	  SimCompilerOptimization "off"
 	  AccelVerboseBuild	  off
-	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  15
-	  Version		  "1.14.2"
+	  $ObjectID		  13
+	  Version		  "1.15.1"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
 	  ArrayBoundsChecking	  "none"
@@ -470,7 +429,6 @@ Model {
 	  IgnoredZcDiagnostic	  "warning"
 	  SolverPrmCheckMsg	  "warning"
 	  InheritedTsInSrcMsg	  "none"
-	  DiscreteInheritContinuousMsg "warning"
 	  MultiTaskDSMMsg	  "error"
 	  MultiTaskCondExecSysMsg "error"
 	  MultiTaskRateTransMsg	  "error"
@@ -498,17 +456,16 @@ Model {
 	  UnconnectedOutputMsg	  "warning"
 	  UnconnectedLineMsg	  "warning"
 	  SFcnCompatibilityMsg	  "none"
-	  FrameProcessingCompatibilityMsg "warning"
+	  FrameProcessingCompatibilityMsg "error"
 	  UniqueDataStoreMsg	  "none"
 	  BusObjectLabelMismatch  "warning"
 	  RootOutportRequireBusObject "warning"
 	  AssertControl		  "UseLocalSettings"
-	  EnableOverflowDetection off
+	  AllowSymbolicDim	  off
 	  ModelReferenceIOMsg	  "none"
 	  ModelReferenceMultiInstanceNormalModeStructChecksumCheck "error"
 	  ModelReferenceVersionMismatchMessage "none"
 	  ModelReferenceIOMismatchMessage "none"
-	  ModelReferenceCSMismatchMessage "none"
 	  UnknownTsInhSupMsg	  "warning"
 	  ModelReferenceDataLoggingMessage "warning"
 	  ModelReferenceSymbolNameMessage "warning"
@@ -520,7 +477,7 @@ Model {
 	  StrictBusMsg		  "ErrorLevel1"
 	  BusNameAdapt		  "WarnAndRepair"
 	  NonBusSignalsTreatedAsBus "none"
-	  LoggingUnavailableSignals "error"
+	  SymbolicDimMinMaxWarning "warning"
 	  BlockIODiagnostic	  "none"
 	  SFUnusedDataAndEventsDiag "warning"
 	  SFUnexpectedBacktrackingDiag "warning"
@@ -530,10 +487,12 @@ Model {
 	  SFUnconditionalTransitionShadowingDiag "warning"
 	  SFUndirectedBroadcastEventsDiag "warning"
 	  SFTransitionActionBeforeConditionDiag	"warning"
+	  SFOutputUsedAsStateInMooreChartDiag "error"
+	  IntegerSaturationMsg	  "warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  16
-	  Version		  "1.14.2"
+	  $ObjectID		  14
+	  Version		  "1.15.1"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
 	  ProdBitPerInt		  32
@@ -565,7 +524,6 @@ Model {
 	  TargetIntDivRoundTo	  "Undefined"
 	  TargetEndianess	  "Unspecified"
 	  TargetWordSize	  32
-	  TargetTypeEmulationWarnSuppressLevel 0
 	  TargetPreprocMaxBitsSint 32
 	  TargetPreprocMaxBitsUint 32
 	  TargetHWDeviceType	  "Specified"
@@ -573,9 +531,10 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  17
-	  Version		  "1.14.2"
+	  $ObjectID		  15
+	  Version		  "1.15.1"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
+	  EnableRefExpFcnMdlSchedulingChecks on
 	  CheckModelReferenceTargetMessage "error"
 	  EnableParallelModelReferenceBuilds off
 	  ParallelModelReferenceErrorOnInvalidPool on
@@ -588,14 +547,10 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  18
-	  Version		  "1.14.2"
-	  SFSimEnableDebug	  on
-	  SFSimOverflowDetection  on
+	  $ObjectID		  16
+	  Version		  "1.15.1"
 	  SFSimEcho		  on
-	  SimBlas		  on
 	  SimCtrlC		  on
-	  SimExtrinsic		  on
 	  SimIntegrity		  on
 	  SimUseLocalCustomCode	  off
 	  SimParseCustomCode	  on
@@ -604,8 +559,8 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  19
-	  Version		  "1.14.2"
+	  $ObjectID		  17
+	  Version		  "1.15.1"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    15
@@ -632,7 +587,6 @@ Model {
 	  MakeCommand		  "make_rtw"
 	  GenerateMakefile	  on
 	  PackageGeneratedCodeAndArtifacts off
-	  PackageName		  ""
 	  TemplateMakefile	  "grt_default_tmf"
 	  PostCodeGenCommand	  ""
 	  Description		  ""
@@ -644,20 +598,8 @@ Model {
 	  TLCDebug		  off
 	  TLCCoverage		  off
 	  TLCAssert		  off
-	  ProcessScriptMode	  "Default"
-	  ConfigurationMode	  "Optimized"
-	  ProcessScript		  ""
-	  ConfigurationScript	  ""
-	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomSourceCode	  ""
-	  CustomHeaderCode	  ""
-	  CustomInclude		  ""
-	  CustomSource		  ""
-	  CustomLibrary		  ""
-	  CustomInitializer	  ""
-	  CustomTerminator	  ""
 	  Toolchain		  "Automatically locate an installed toolchain"
 	  BuildConfiguration	  "Faster Builds"
 	  IncludeHyperlinkInReport off
@@ -671,28 +613,25 @@ Model {
 	  SILDebugging		  off
 	  TargetLang		  "C"
 	  IncludeBusHierarchyInRTWFileBlockHierarchyMap	off
-	  IncludeERTFirstTime	  off
 	  GenerateTraceInfo	  off
 	  GenerateTraceReport	  off
 	  GenerateTraceReportSl	  off
 	  GenerateTraceReportSf	  off
 	  GenerateTraceReportEml  off
-	  GenerateCodeInfo	  off
 	  GenerateWebview	  off
 	  GenerateCodeMetricsReport off
 	  GenerateCodeReplacementReport	off
-	  RTWCompilerOptimization "Off"
+	  GenerateMissedCodeReplacementReport off
+	  RTWCompilerOptimization "off"
 	  RTWCustomCompilerOptimizations ""
 	  CheckMdlBeforeBuild	  "Off"
-	  CustomRebuildMode	  "OnUpdate"
-	  DataInitializer	  ""
 	  SharedConstantsCachingThreshold 1024
 	  Array {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      20
-	      Version		      "1.14.2"
+	      $ObjectID		      18
+	      Version		      "1.15.1"
 	      Array {
 		Type			"Cell"
 		Dimension		22
@@ -761,14 +700,14 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      21
-	      Version		      "1.14.2"
+	      $ObjectID		      19
+	      Version		      "1.15.1"
 	      Array {
 		Type			"Cell"
-		Dimension		15
+		Dimension		14
 		Cell			"GeneratePreprocessorConditionals"
 		Cell			"IncludeMdlTerminateFcn"
-		Cell			"CombineOutputUpdateFcns"
+		Cell			"SupportNonInlinedSFcns"
 		Cell			"SuppressErrorStatus"
 		Cell			"ERTCustomFileBanners"
 		Cell			"GenerateSampleERTMain"
@@ -780,7 +719,6 @@ Model {
 		Cell			"SupportComplex"
 		Cell			"SupportAbsoluteTime"
 		Cell			"SupportContinuousTime"
-		Cell			"SupportNonInlinedSFcns"
 		PropName		"DisabledProps"
 	      }
 	      TargetFcnLib	      "ansi_tfl_table_tmw.mat"
@@ -794,6 +732,7 @@ Model {
 	      ERTMultiwordLength      256
 	      MultiwordLength	      2048
 	      GenerateFullHeader      on
+	      InferredTypesCompatibility off
 	      GenerateSampleERTMain   off
 	      GenerateTestInterfaces  off
 	      ModelReferenceCompliant on
@@ -819,14 +758,16 @@ Model {
 	      SupportContinuousTime   on
 	      SupportNonInlinedSFcns  on
 	      SupportVariableSizeSignals off
-	      EnableShiftOperators    on
 	      ParenthesesLevel	      "Nominal"
+	      CastingMode	      "Nominal"
 	      MATLABClassNameForMDSCustomization "Simulink.SoftwareTarget.GRTCustomization"
 	      ModelStepFunctionPrototypeControlCompliant off
 	      CPPClassGenCompliant    on
 	      AutosarCompliant	      off
 	      GRTInterface	      off
 	      GenerateAllocFcn	      off
+	      UseToolchainInfoCompliant	on
+	      GenerateSharedConstants on
 	      UseMalloc		      off
 	      ExtMode		      off
 	      ExtModeStaticAlloc      off
@@ -845,22 +786,49 @@ Model {
 	    PropName		    "Components"
 	  }
 	}
+	SlCovCC.ConfigComp {
+	  $ObjectID		  20
+	  Version		  "1.15.1"
+	  Description		  "Simulink Coverage Configuration Component"
+	  Name			  "Simulink Coverage"
+	  RecordCoverage	  off
+	  CovPath		  "/"
+	  CovSaveName		  "covdata"
+	  CovMetricSettings	  "dw"
+	  CovNameIncrementing	  off
+	  CovHtmlReporting	  on
+	  CovForceBlockReductionOff on
+	  CovEnableCumulative	  on
+	  CovSaveCumulativeToWorkspaceVar on
+	  CovSaveSingleToWorkspaceVar on
+	  CovCumulativeVarName	  "covCumulativeData"
+	  CovCumulativeReport	  off
+	  CovReportOnPause	  on
+	  CovModelRefEnable	  "Off"
+	  CovExternalEMLEnable	  off
+	  CovSFcnEnable		  off
+	  CovBoundaryAbsTol	  1e-05
+	  CovBoundaryRelTol	  0.01
+	  CovUseTimeInterval	  off
+	  CovStartTime		  0
+	  CovStopTime		  0
+	}
 	PropName		"Components"
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 116, 23, 1176, 895 ] 
+      ConfigPrmDlgPosition     [ 116, 49, 1196, 943 ] 
     }
     PropName		    "ConfigurationSets"
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    11
+    $ObjectID		    9
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    22
+    $ObjectID		    21
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -937,21 +905,9 @@ Model {
     }
     Block {
       BlockType		      Scope
-      ModelBased	      off
-      TickLabels	      "OneTimeTick"
-      ZoomMode		      "on"
-      Grid		      "on"
-      TimeRange		      "auto"
-      YMin		      "-5"
-      YMax		      "5"
-      SaveToWorkspace	      off
-      SaveName		      "ScopeData"
-      DataFormat	      "Array"
-      LimitDataPoints	      on
-      MaxDataPoints	      "5000"
-      Decimation	      "1"
-      SampleInput	      off
-      SampleTime	      "-1"
+      DefaultConfigurationName "Simulink.scopes.TimeScopeBlockCfg"
+      NumInputPorts	      "1"
+      Floating		      off
     }
     Block {
       BlockType		      SubSystem
@@ -980,14 +936,14 @@ Model {
       Opaque		      off
       MaskHideContents	      off
       SFBlockType	      "NONE"
-      Variant		      off
       GeneratePreprocessorConditionals off
       ContentPreviewEnabled   off
+      IsWebBlock	      off
     }
   }
   System {
     Name		    "FrictionIdentification"
-    Location		    [6, 43, 1372, 784]
+    Location		    [6, 43, 1718, 1014]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -999,9 +955,9 @@ Model {
     TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "178"
+    ZoomFactor		    "254"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "271"
+    SIDHighWatermark	    "286"
     Block {
       BlockType		      SubSystem
       Name		      "Dump ENCODERS - ALL JOINTS ROBOT"
@@ -1010,15 +966,16 @@ Model {
       Position		      [366, 318, 501, 408]
       ZOrder		      107
       RequestExecContextInheritance off
+      Variant		      off
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		23
+	$ObjectID		22
 	$ClassName		"Simulink.Mask"
 	Display			"color('red'); plot([10 20 30 40], [10 20 10 15]);\ncolor('blue'); plot([10 20 30 40], [15 10 20 12]);\ncol"
 	"or('green'); plot([10 20 30 40], [13 16 12 18]);"
 	Object {
 	  $PropName		  "Parameters"
-	  $ObjectID		  24
+	  $ObjectID		  23
 	  $ClassName		  "Simulink.MaskParameter"
 	  Type			  "edit"
 	  Name			  "output"
@@ -1029,7 +986,7 @@ Model {
       }
       System {
 	Name			"Dump ENCODERS - ALL JOINTS ROBOT"
-	Location		[-4, 73, 1358, 764]
+	Location		[6, 43, 1718, 1014]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1041,123 +998,20 @@ Model {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"229"
-	Block {
-	  BlockType		  Scope
-	  Name			  "ENC_ARMS"
-	  SID			  "239"
-	  Ports			  [2]
-	  Position		  [335, 65, 365, 100]
-	  ZOrder		  97
-	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
-	  Open			  off
-	  NumInputPorts		  "2"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "60"
-	  YMin			  "-50~-50"
-	  YMax			  "30~50"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "ENC_LEGS"
-	  SID			  "240"
-	  Ports			  [2]
-	  Position		  [170, 50, 200, 85]
-	  ZOrder		  69
-	  Floating		  off
-	  Location		  [6, 81, 1362, 762]
-	  Open			  off
-	  NumInputPorts		  "2"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  on
-	  TimeRange		  "60"
-	  YMin			  "-10~-10"
-	  YMax			  "12.5~15"
-	  SaveName		  "ScopeData1"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "ENC_TORSO"
-	  SID			  "241"
-	  Ports			  [1]
-	  Position		  [270, 202, 300, 238]
-	  ZOrder		  102
-	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "60"
-	  YMin			  "-10"
-	  YMax			  "12.5"
-	  SaveName		  "ScopeData5"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
+	ZoomFactor		"338"
 	Block {
 	  BlockType		  Reference
-	  Name			  "Left arm"
-	  SID			  "269"
+	  Name			  "ENC LARM"
+	  SID			  "284"
 	  Ports			  [0, 1]
-	  Position		  [220, 28, 285, 72]
-	  ZOrder		  111
+	  Position		  [220, 33, 285, 67]
+	  ZOrder		  116
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/left_arm/getMotorEncoderSpeeds']"
-	  signalSize		  "6"
+	  portName		  "PORTS.ENCODERS.LARM"
+	  signalSize		  "5"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1172,16 +1026,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Left leg"
-	  SID			  "259"
+	  Name			  "ENC LLEG"
+	  SID			  "282"
 	  Ports			  [0, 1]
-	  Position		  [20, 38, 85, 82]
-	  ZOrder		  107
+	  Position		  [20, 43, 85, 77]
+	  ZOrder		  114
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/left_leg/getMotorEncoderSpeeds']"
+	  portName		  "PORTS.ENCODERS.LLEG"
 	  signalSize		  "6"
 	  blocking		  off
 	  timestamp		  off
@@ -1197,17 +1051,17 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Right arm"
-	  SID			  "270"
+	  Name			  "ENC RARM"
+	  SID			  "285"
 	  Ports			  [0, 1]
-	  Position		  [220, 108, 285, 152]
-	  ZOrder		  112
+	  Position		  [220, 113, 285, 147]
+	  ZOrder		  117
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/right_arm/getMotorEncoderSpeeds']"
-	  signalSize		  "6"
+	  portName		  "PORTS.ENCODERS.RARM"
+	  signalSize		  "5"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1222,16 +1076,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Right leg"
-	  SID			  "264"
+	  Name			  "ENC RLEG"
+	  SID			  "283"
 	  Ports			  [0, 1]
-	  Position		  [20, 108, 85, 152]
-	  ZOrder		  109
+	  Position		  [20, 113, 85, 147]
+	  ZOrder		  115
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/right_leg/getMotorEncoderSpeeds']"
+	  portName		  "PORTS.ENCODERS.RLEG"
 	  signalSize		  "6"
 	  blocking		  off
 	  timestamp		  off
@@ -1247,17 +1101,17 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Torso"
-	  SID			  "271"
+	  Name			  "ENC TORSO"
+	  SID			  "286"
 	  Ports			  [0, 1]
-	  Position		  [155, 198, 220, 242]
-	  ZOrder		  113
+	  Position		  [20, 198, 85, 232]
+	  ZOrder		  118
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/torso/getMotorEncoderSpeeds']"
-	  signalSize		  "6"
+	  portName		  "PORTS.ENCODERS.RARM"
+	  signalSize		  "3"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1270,11 +1124,58 @@ Model {
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "ENC_ARMS"
+	  SID			  "239"
+	  Ports			  [2]
+	  Position		  [335, 65, 365, 100]
+	  ZOrder		  97
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[183, 279, 1035, 786]'),StrPVP('Open','off'),MxPVP('AxesTitles',"
+	  "24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureCo"
+	  "lor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1"
+	  ";1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+	  "''none|none|none|none|none|none'')'),StrPVP('ShowLegends','off'),StrPVP('TimeRange','60'),StrPVP('YMin','-50~-50'),"
+	  "StrPVP('YMax','30~50'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamS"
+	  "ampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	  NumInputPorts		  "2"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "ENC_LEGS"
+	  SID			  "240"
+	  Ports			  [2]
+	  Position		  [170, 50, 200, 85]
+	  ZOrder		  69
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[6, 81, 1362, 762]'),StrPVP('Open','off'),MxPVP('AxesTitles',24,"
+	  "'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor"
+	  "'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 "
+	  "0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''n"
+	  "one|none|none|none|none|none'')'),StrPVP('ShowLegends','on'),StrPVP('TimeRange','60'),StrPVP('YMin','-10~-10'),StrP"
+	  "VP('YMax','12.5~15'),StrPVP('SaveName','ScopeData1'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoin"
+	  "ts','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	  NumInputPorts		  "2"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "ENC_TORSO"
+	  SID			  "241"
+	  Ports			  [1]
+	  Position		  [135, 197, 165, 233]
+	  ZOrder		  102
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[183, 279, 1035, 786]'),StrPVP('Open','off'),MxPVP('AxesTitles',"
+	  "24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''Axe"
+	  "sColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineS"
+	  "tyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|no"
+	  "ne'')'),StrPVP('ShowLegends','off'),StrPVP('TimeRange','60'),StrPVP('YMin','-10'),StrPVP('YMax','12.5'),StrPVP('Sav"
+	  "eName','ScopeData5'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSam"
+	  "pleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	}
 	Line {
 	  Name			  "enc_left_arm"
-	  ZOrder		  13
-	  Labels		  [1, 0]
-	  SrcBlock		  "Left arm"
+	  ZOrder		  20
+	  Labels		  [0, 1]
+	  SrcBlock		  "ENC LARM"
 	  SrcPort		  1
 	  Points		  [30, 0]
 	  DstBlock		  "ENC_ARMS"
@@ -1282,9 +1183,9 @@ Model {
 	}
 	Line {
 	  Name			  "enc_right_arm"
-	  ZOrder		  14
+	  ZOrder		  21
 	  Labels		  [0, 0]
-	  SrcBlock		  "Right arm"
+	  SrcBlock		  "ENC RARM"
 	  SrcPort		  1
 	  Points		  [17, 0; 0, -40]
 	  DstBlock		  "ENC_ARMS"
@@ -1292,18 +1193,18 @@ Model {
 	}
 	Line {
 	  Name			  "enc_torso"
-	  ZOrder		  15
+	  ZOrder		  22
 	  Labels		  [0, 0]
-	  SrcBlock		  "Torso"
+	  SrcBlock		  "ENC TORSO"
 	  SrcPort		  1
 	  DstBlock		  "ENC_TORSO"
 	  DstPort		  1
 	}
 	Line {
 	  Name			  "enc_right_leg"
-	  ZOrder		  7
+	  ZOrder		  19
 	  Labels		  [0, 0]
-	  SrcBlock		  "Right leg"
+	  SrcBlock		  "ENC RLEG"
 	  SrcPort		  1
 	  Points		  [33, 0; 0, -55]
 	  DstBlock		  "ENC_LEGS"
@@ -1311,9 +1212,9 @@ Model {
 	}
 	Line {
 	  Name			  "enc_left_leg"
-	  ZOrder		  6
+	  ZOrder		  18
 	  Labels		  [-1, 1]
-	  SrcBlock		  "Left leg"
+	  SrcBlock		  "ENC LLEG"
 	  SrcPort		  1
 	  DstBlock		  "ENC_LEGS"
 	  DstPort		  1
@@ -1328,15 +1229,16 @@ Model {
       Position		      [366, 193, 501, 283]
       ZOrder		      104
       RequestExecContextInheritance off
+      Variant		      off
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		25
+	$ObjectID		24
 	$ClassName		"Simulink.Mask"
 	Display			"color('red'); plot([10 20 30 40], [10 20 10 15]);\ncolor('blue'); plot([10 20 30 40], [15 10 20 12]);\ncol"
 	"or('green'); plot([10 20 30 40], [13 16 12 18]);"
 	Object {
 	  $PropName		  "Parameters"
-	  $ObjectID		  26
+	  $ObjectID		  25
 	  $ClassName		  "Simulink.MaskParameter"
 	  Type			  "edit"
 	  Name			  "output"
@@ -1347,7 +1249,7 @@ Model {
       }
       System {
 	Name			"Dump PWM - ALL JOINTS ROBOT"
-	Location		[-4, 73, 1358, 764]
+	Location		[6, 43, 1718, 1014]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1359,20 +1261,20 @@ Model {
 	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"224"
+	ZoomFactor		"338"
 	Block {
 	  BlockType		  Reference
-	  Name			  "Left arm"
-	  SID			  "266"
+	  Name			  "PWM LARM"
+	  SID			  "279"
 	  Ports			  [0, 1]
-	  Position		  [280, 28, 345, 72]
-	  ZOrder		  108
+	  Position		  [280, 33, 345, 67]
+	  ZOrder		  113
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/left_arm/getOutputs']"
-	  signalSize		  "6"
+	  portName		  "PORTS.PWM.LARM"
+	  signalSize		  "5"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1387,16 +1289,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Left leg"
-	  SID			  "256"
+	  Name			  "PWM LLEG"
+	  SID			  "277"
 	  Ports			  [0, 1]
-	  Position		  [20, 43, 85, 87]
-	  ZOrder		  106
+	  Position		  [20, 48, 85, 82]
+	  ZOrder		  111
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/left_leg/getOutputs']"
+	  portName		  "PORTS.PWM.LLEG"
 	  signalSize		  "6"
 	  blocking		  off
 	  timestamp		  off
@@ -1411,121 +1313,18 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Scope
-	  Name			  "PWM_ARMS"
-	  SID			  "189"
-	  Ports			  [2]
-	  Position		  [390, 65, 420, 100]
-	  ZOrder		  97
-	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
-	  Open			  off
-	  NumInputPorts		  "2"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "60"
-	  YMin			  "-5000~-5000"
-	  YMax			  "70000~70000"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "PWM_LEGS"
-	  SID			  "190"
-	  Ports			  [2]
-	  Position		  [220, 55, 250, 90]
-	  ZOrder		  69
-	  Floating		  off
-	  Location		  [183, 255, 1035, 762]
-	  Open			  off
-	  NumInputPorts		  "2"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "60"
-	  YMin			  "-10~-10"
-	  YMax			  "12.5~15"
-	  SaveName		  "ScopeData1"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "PWM_TORSO"
-	  SID			  "191"
-	  Ports			  [1]
-	  Position		  [230, 207, 260, 243]
-	  ZOrder		  102
-	  Floating		  off
-	  Location		  [183, 279, 1035, 786]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "60"
-	  YMin			  "-10"
-	  YMax			  "12.5"
-	  SaveName		  "ScopeData5"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
 	  BlockType		  Reference
-	  Name			  "Right arm"
-	  SID			  "267"
+	  Name			  "PWM RARM"
+	  SID			  "280"
 	  Ports			  [0, 1]
-	  Position		  [280, 108, 345, 152]
-	  ZOrder		  109
+	  Position		  [280, 113, 345, 147]
+	  ZOrder		  114
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/right_arm/getOutputs']"
-	  signalSize		  "6"
+	  portName		  "PORTS.PWM.RARM"
+	  signalSize		  "5"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1540,16 +1339,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Right leg "
-	  SID			  "257"
+	  Name			  "PWM RLEG"
+	  SID			  "278"
 	  Ports			  [0, 1]
-	  Position		  [20, 108, 85, 152]
-	  ZOrder		  107
+	  Position		  [20, 113, 85, 147]
+	  ZOrder		  112
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/right_leg/getOutputs']"
+	  portName		  "PORTS.PWM.RLEG"
 	  signalSize		  "6"
 	  blocking		  off
 	  timestamp		  off
@@ -1565,17 +1364,17 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Torso"
-	  SID			  "268"
+	  Name			  "PWM TORSO"
+	  SID			  "281"
 	  Ports			  [0, 1]
-	  Position		  [110, 203, 175, 247]
-	  ZOrder		  110
+	  Position		  [105, 208, 170, 242]
+	  ZOrder		  115
 	  ForegroundColor	  "[0.490196, 0.000000, 0.000000]"
-	  LibraryVersion	  "1.281"
-	  SourceBlock		  "WBCLibrary/Utilities/YARP Read"
+	  LibraryVersion	  "1.348"
+	  SourceBlock		  "WBToolboxLibrary/Utilities/Yarp Read"
 	  SourceType		  "YARP Read"
-	  portName		  "['/controlBoardDumper/torso/getOutputs']"
-	  signalSize		  "6"
+	  portName		  "PORTS.PWM.TORSO"
+	  signalSize		  "3"
 	  blocking		  off
 	  timestamp		  off
 	  autoconnect		  on
@@ -1584,15 +1383,61 @@ Model {
 	    PortNumber		    1
 	    Name		    "pwm_torso"
 	    RTWStorageClass	    "Auto"
-	    DataLogging		    on
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "PWM_ARMS"
+	  SID			  "189"
+	  Ports			  [2]
+	  Position		  [390, 65, 420, 100]
+	  ZOrder		  97
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[183, 279, 1035, 786]'),StrPVP('Open','off'),MxPVP('AxesTitles',"
+	  "24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureCo"
+	  "lor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1"
+	  ";1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+	  "''none|none|none|none|none|none'')'),StrPVP('ShowLegends','off'),StrPVP('TimeRange','60'),StrPVP('YMin','-5000~-500"
+	  "0'),StrPVP('YMax','70000~70000'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('B"
+	  "lockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	  NumInputPorts		  "2"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "PWM_LEGS"
+	  SID			  "190"
+	  Ports			  [2]
+	  Position		  [220, 55, 250, 90]
+	  ZOrder		  69
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[183, 255, 1035, 762]'),StrPVP('Open','off'),MxPVP('AxesTitles',"
+	  "24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureCo"
+	  "lor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1"
+	  ";1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+	  "''none|none|none|none|none|none'')'),StrPVP('ShowLegends','off'),StrPVP('TimeRange','60'),StrPVP('YMin','-10~-10'),"
+	  "StrPVP('YMax','12.5~15'),StrPVP('SaveName','ScopeData1'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitData"
+	  "Points','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	  NumInputPorts		  "2"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "PWM_TORSO"
+	  SID			  "191"
+	  Ports			  [1]
+	  Position		  [230, 207, 260, 243]
+	  ZOrder		  102
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[183, 279, 1035, 786]'),StrPVP('Open','off'),MxPVP('AxesTitles',"
+	  "24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''Axe"
+	  "sColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineS"
+	  "tyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|no"
+	  "ne'')'),StrPVP('ShowLegends','off'),StrPVP('TimeRange','60'),StrPVP('YMin','-10'),StrPVP('YMax','12.5'),StrPVP('Sav"
+	  "eName','ScopeData5'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSam"
+	  "pleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
+	}
 	Line {
 	  Name			  "pwm_left_arm"
-	  ZOrder		  9
+	  ZOrder		  17
 	  Labels		  [0, 1]
-	  SrcBlock		  "Left arm"
+	  SrcBlock		  "PWM LARM"
 	  SrcPort		  1
 	  Points		  [25, 0]
 	  DstBlock		  "PWM_ARMS"
@@ -1600,9 +1445,9 @@ Model {
 	}
 	Line {
 	  Name			  "pwm_right_arm"
-	  ZOrder		  10
+	  ZOrder		  18
 	  Labels		  [0, 0]
-	  SrcBlock		  "Right arm"
+	  SrcBlock		  "PWM RARM"
 	  SrcPort		  1
 	  Points		  [12, 0; 0, -40]
 	  DstBlock		  "PWM_ARMS"
@@ -1610,27 +1455,27 @@ Model {
 	}
 	Line {
 	  Name			  "pwm_torso"
-	  ZOrder		  11
+	  ZOrder		  19
 	  Labels		  [0, 0]
-	  SrcBlock		  "Torso"
+	  SrcBlock		  "PWM TORSO"
 	  SrcPort		  1
 	  DstBlock		  "PWM_TORSO"
 	  DstPort		  1
 	}
 	Line {
 	  Name			  "pwm_left_leg"
-	  ZOrder		  6
-	  Labels		  [1, 1]
-	  SrcBlock		  "Left leg"
+	  ZOrder		  15
+	  Labels		  [0, 1]
+	  SrcBlock		  "PWM LLEG"
 	  SrcPort		  1
 	  DstBlock		  "PWM_LEGS"
 	  DstPort		  1
 	}
 	Line {
 	  Name			  "pwm_right_leg"
-	  ZOrder		  8
-	  Labels		  [1, 1]
-	  SrcBlock		  "Right leg "
+	  ZOrder		  16
+	  Labels		  [0, 0]
+	  SrcBlock		  "PWM RLEG"
 	  SrcPort		  1
 	  Points		  [60, 0; 0, -50]
 	  DstBlock		  "PWM_LEGS"
@@ -1640,35 +1485,22 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Joint Accelerations"
-      SID		      "109"
+      Name		      "Get Estimate"
+      SID		      "273"
       Ports		      [0, 1]
-      Position		      [540, 288, 610, 332]
-      ZOrder		      88
-      BackgroundColor	      "[0.893000, 0.628791, 0.326838]"
+      Position		      [515, 182, 610, 218]
+      ZOrder		      109
+      BackgroundColor	      "[0.513700, 0.851000, 0.670600]"
       ShowName		      off
-      LibraryVersion	      "1.281"
-      SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Accelerations"
-      SourceType	      "Joint Accelerations"
+      LibraryVersion	      "1.348"
+      SourceBlock	      "WBToolboxLibrary/wholeBodyStates/Get Estimate"
+      SourceType	      "Get Estimate"
       ContentPreviewEnabled   off
-      robotName		      "robot.robotName"
-      localName		      "robot.localName"
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Joint Angles"
-      SID		      "18"
-      Ports		      [0, 1]
-      Position		      [540, 178, 610, 222]
-      ZOrder		      61
-      BackgroundColor	      "[0.375000, 0.187500, 0.000000]"
-      ShowName		      off
-      LibraryVersion	      "1.281"
-      SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Angles"
-      SourceType	      "Joint Angles"
-      ContentPreviewEnabled   off
-      robotName		      "robot.robotName"
-      localName		      "robot.localName"
+      estimateType	      "Joints Position"
+      robotName		      "WBT_robotName"
+      localName		      "WBT_modelName"
+      wbiFile		      "WBT_wbiFilename"
+      wbiList		      "WBT_wbiList"
       Port {
 	PortNumber		1
 	Name			"q"
@@ -1678,19 +1510,66 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Joint Torques"
-      SID		      "20"
+      Name		      "Get Estimate1"
+      SID		      "274"
       Ports		      [0, 1]
-      Position		      [540, 343, 610, 387]
-      ZOrder		      63
-      BackgroundColor	      "[1.000000, 0.634000, 0.268000]"
+      Position		      [515, 237, 610, 273]
+      ZOrder		      110
+      BackgroundColor	      "[0.513700, 0.674500, 1.000000]"
       ShowName		      off
-      LibraryVersion	      "1.281"
-      SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Torques"
-      SourceType	      "Joint Torques"
+      LibraryVersion	      "1.348"
+      SourceBlock	      "WBToolboxLibrary/wholeBodyStates/Get Estimate"
+      SourceType	      "Get Estimate"
       ContentPreviewEnabled   off
-      robotName		      "robot.robotName"
-      localName		      "robot.localName"
+      estimateType	      "Joints Velocity"
+      robotName		      "WBT_robotName"
+      localName		      "WBT_modelName"
+      wbiFile		      "WBT_wbiFilename"
+      wbiList		      "WBT_wbiList"
+      Port {
+	PortNumber		1
+	Name			"qD"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Get Estimate2"
+      SID		      "275"
+      Ports		      [0, 1]
+      Position		      [515, 292, 610, 328]
+      ZOrder		      111
+      BackgroundColor	      "[0.925500, 0.870600, 0.133300]"
+      ShowName		      off
+      LibraryVersion	      "1.348"
+      SourceBlock	      "WBToolboxLibrary/wholeBodyStates/Get Estimate"
+      SourceType	      "Get Estimate"
+      ContentPreviewEnabled   off
+      estimateType	      "Joints Acceleration"
+      robotName		      "WBT_robotName"
+      localName		      "WBT_modelName"
+      wbiFile		      "WBT_wbiFilename"
+      wbiList		      "WBT_wbiList"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Get Estimate3"
+      SID		      "276"
+      Ports		      [0, 1]
+      Position		      [515, 342, 610, 378]
+      ZOrder		      112
+      BackgroundColor	      "[0.827500, 0.576500, 0.603900]"
+      ShowName		      off
+      LibraryVersion	      "1.348"
+      SourceBlock	      "WBToolboxLibrary/wholeBodyStates/Get Estimate"
+      SourceType	      "Get Estimate"
+      ContentPreviewEnabled   off
+      estimateType	      "Joints Torque"
+      robotName		      "WBT_robotName"
+      localName		      "WBT_modelName"
+      wbiFile		      "WBT_wbiFilename"
+      wbiList		      "WBT_wbiList"
       Port {
 	PortNumber		1
 	Name			"tau"
@@ -1701,43 +1580,18 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Joint Velocities"
-      SID		      "19"
-      Ports		      [0, 1]
-      Position		      [540, 233, 610, 277]
-      ZOrder		      62
-      BackgroundColor	      "[0.634000, 0.401533, 0.000000]"
-      ShowName		      off
-      LibraryVersion	      "1.281"
-      SourceBlock	      "WBCLibrary/wholeBodyStates/Joint Velocities"
-      SourceType	      "Joint Velocities"
-      ContentPreviewEnabled   off
-      robotName		      "robot.robotName"
-      localName		      "robot.localName"
-      Port {
-	PortNumber		1
-	Name			"qD"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-    }
-    Block {
-      BlockType		      Reference
       Name		      "Real Time Synchronizer"
-      SID		      "86"
+      SID		      "272"
       Ports		      []
-      Position		      [625, 125, 750, 160]
-      ZOrder		      79
-      ForegroundColor	      "[0.916667, 0.916667, 0.916667]"
+      Position		      [615, 119, 740, 156]
+      ZOrder		      108
+      ForegroundColor	      "white"
       BackgroundColor	      "gray"
-      DropShadow	      on
       ShowName		      off
-      Priority		      "-10"
-      LibraryVersion	      "1.281"
-      SourceBlock	      "WBCLibrary/Utilities/Real Time Synchronizer"
-      SourceType	      ""
-      ContentPreviewEnabled   off
-      threadPeriod	      "robot.Ts"
+      LibraryVersion	      "1.348"
+      SourceBlock	      "WBToolboxLibrary/Utilities/Real Time Synchronizer"
+      SourceType	      "Real Time Synchronizer"
+      period		      "robot.Ts"
     }
     Block {
       BlockType		      Scope
@@ -1746,38 +1600,16 @@ Model {
       Ports		      [4]
       Position		      [780, 217, 845, 318]
       ZOrder		      64
-      Floating		      off
-      Location		      [132, 103, 1361, 760]
-      Open		      off
+      ScopeSpecificationString "C++SS(StrPVP('Location','[132, 103, 1361, 760]'),StrPVP('Open','off'),StrPVP('ZoomMode"
+      "','yonly'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%"
+      "<SignalLabel>'',''axes4'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5019607843"
+      "13725 0.501960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColor"
+      "s'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0"
+      ".5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('ShowLegends','on'),StrPVP('TimeRange','6"
+      "0'),StrPVP('YMin','37.5~-30~-200~-5'),StrPVP('YMax','70~30~250~4'),StrPVP('SaveName','ScopeData2'),StrPVP('DataF"
+      "ormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimatio"
+      "n','1'),StrPVP('BlockParamSampleInput','off'))"
       NumInputPorts	      "4"
-      ZoomMode		      "yonly"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-	axes2			"%<SignalLabel>"
-	axes3			"%<SignalLabel>"
-	axes4			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      ShowLegends	      on
-      LegendLocations	      "0.92168     0.90753    0.049227    0.030441\n 0.9168     0.67922    0.054109    0.030441\n"
-      "0.91192     0.44939    0.058991    0.030441\n0.91192     0.21956    0.058991    0.030441"
-      TimeRange		      "60"
-      YMin		      "37.5~-30~-200~-5"
-      YMax		      "70~30~250~4"
-      SaveName		      "ScopeData2"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
     }
     Block {
       BlockType		      Gain
@@ -1838,29 +1670,29 @@ Model {
     }
     Line {
       Name		      "q"
-      ZOrder		      1
+      ZOrder		      8
       Labels		      [-1, 0]
-      SrcBlock		      "Joint Angles"
+      SrcBlock		      "Get Estimate"
       SrcPort		      1
       DstBlock		      "q"
       DstPort		      1
     }
     Line {
       Name		      "qD"
-      ZOrder		      2
+      ZOrder		      9
       Labels		      [-1, 0]
-      SrcBlock		      "Joint Velocities"
+      SrcBlock		      "Get Estimate1"
       SrcPort		      1
       DstBlock		      "qD"
       DstPort		      1
     }
     Line {
       Name		      "tau"
-      ZOrder		      3
+      ZOrder		      11
       Labels		      [0, 0]
-      SrcBlock		      "Joint Torques"
+      SrcBlock		      "Get Estimate3"
       SrcPort		      1
-      Points		      [128, 0; 0, -60]
+      Points		      [126, 0; 0, -55]
       DstBlock		      "Scope"
       DstPort		      4
     }
@@ -1884,8 +1716,8 @@ Model {
       DstPort		      2
     }
     Line {
-      ZOrder		      6
-      SrcBlock		      "Joint Accelerations"
+      ZOrder		      10
+      SrcBlock		      "Get Estimate2"
       SrcPort		      1
       DstBlock		      "qDD"
       DstPort		      1
@@ -1903,7 +1735,7 @@ Model {
     Annotation {
       SID		      "142"
       Name		      "\nSAVE\nPWM=0\nDATA\n"
-      Position		      [432, 145, 470, 222]
+      Position		      [432, 145, 469, 197]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -1918,7 +1750,7 @@ Model {
     Annotation {
       SID		      "143"
       Name		      "\nSAVE\nREF DATA\n"
-      Position		      [812, 145, 861, 207]
+      Position		      [812, 145, 861, 187]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -1933,7 +1765,7 @@ Model {
     Annotation {
       SID		      "228"
       Name		      "\nPLOT\nJOINT\n"
-      Position		      [575, 145, 606, 207]
+      Position		      [575, 145, 605, 187]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -1949,7 +1781,7 @@ Model {
 }
 #Finite State Machines
 #
-#   Stateflow Version 8.1 (R2014a) dated Feb  7 2014, 22:23:55
+#   Stateflow 80000006
 #
 #
 Stateflow {
@@ -1959,7 +1791,7 @@ Stateflow {
     created		    "20-Nov-2014 20:19:29"
     isLibrary		    0
     firstTarget		    2
-    sfVersion		    76014001.002
+    sfVersion		    80000006
   }
   target {
     id			    2

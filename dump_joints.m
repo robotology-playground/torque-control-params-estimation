@@ -2,7 +2,7 @@
 % This file is usefull to understand the functionality about all object
 % included on this folder
 
-clear;
+clear all; clc;
 %% Load object Motor
 % Set all information about your robot.
 % - Name of robot
@@ -24,20 +24,11 @@ robotName = getenv('YARP_ROBOT_NAME');
 % you can overwrite the robot name by simply setting it after this line
 % robotName = 'anotherRobot';
 
-% you can overwrite the superbuild directory by simply setting it after this line
-codycoSuperbuildDir = getenv('CODYCO_SUPERBUILD_ROOT');
-% codycoSuperbuildDir = '/path/to/superbuild/';
-
 % Directory where experimental data will be saved.
 outputDir = 'experiments';
 
 %Note: it assumes the build directory is called 'build'
-robot = Robot(robotName, outputDir, codycoSuperbuildDir);
-% Setup robot configuration:
-% Variables:
-% - worldRefFrame
-% - robot_fixed
-robot = robot.setReferenceFrame('root_link','true');
+robot = Robot(robotName, outputDir, getenv('CODYCO_SUPERBUILD_ROOT'));
 
 %% Add motors to test
 % robot.joints = robot.getCoupledJoints('torso');
@@ -78,4 +69,19 @@ robot.configure('JOINT_FRICTION','false');
 robot.buildFolders();
 
 %% Open Simulink
-open('FrictionIdentification.mdl');
+% open('FrictionIdentification.mdl');
+
+PORTS.PWM.TORSO      = '';
+PORTS.PWM.LARM       = '';
+PORTS.PWM.RARM       = '';
+PORTS.PWM.LLEG       = '';
+PORTS.PWM.LLEG       = '';
+
+PORTS.ENCODERS.TORSO = ''; 
+PORTS.ENCODERS.LARM  = ''; 
+PORTS.ENCODERS.RARM  = ''; 
+PORTS.ENCODERS.LLEG  = ''; 
+PORTS.ENCODERS.LLEG  = ''; 
+
+ %: if not defined by default is WBT_simulink.
+WBT_wbiList     =  robot.WBT_wbiList; %: the name of the robot list to be used in the Toolbox. By default ROBOT_TORQUE_CONTROL_JOINTS

@@ -17,11 +17,11 @@ classdef Robot
     
     properties
         Ts = 0.01;
+        robotName = 'icub';
         realNameRobot;
         joints;
         joints_avaiable;
-        robotName = 'icub';
-        localName = 'simulink_joint_friction';
+        WBT_wbiList     = '';
     end
     
     methods
@@ -254,8 +254,8 @@ classdef Robot
                 % Set Yarp WBI
                 robot.loadYarpWBI(format_list, yarpWBIfile);
                 % Set WBI
-                text = robot.setupWBI(name);
-                
+%                 text = robot.setupWBI(name);
+                text = '';
                 disp('[INFO] Update!');
             else
                 text = '';
@@ -351,12 +351,6 @@ classdef Robot
                 end
                 coupled_joints = {};
             end
-        end
-        
-        function robot = setReferenceFrame(robot, worldRefFrame, robot_fixed)
-            %% Set Reference_frame
-            robot.worldRefFrame = worldRefFrame;
-            robot.robot_fixed = robot_fixed;
         end
         
         function command = getControlBoardCommand(robot, rate)
@@ -574,27 +568,27 @@ classdef Robot
         
         function text = setupWBI(robot, name)
             %% Setup Whole Body Interface
-            path = fullfile(getenv('HOME'),'.local','share','yarp','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
-            if exist(path,'file')
-                name_yarp_file = cd(path);
-                disp('UPDATE LOCAL FOLDER!');
-            else
-                %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
-                name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
-            end
-            if ~strcmp(robot.realNameRobot, robot.SIMULATOR)
-                text = sprintf('robot          %s\n',robot.robotName);
-            else
-                text = sprintf('robot          %s\n',robot.realNameRobot);
-            end
-            text = [text sprintf('localName      %s\n',robot.localName)];
-            text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
-            text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
-            text = [text sprintf('wbi_id_list    %s\n',name)];
-            text = [text sprintf('wbi_config_file %s', robot.configFile)];
-            fid = fopen(name_yarp_file,'w');
-            fprintf(fid, '%s', text);
-            fclose(fid);
+%             path = fullfile(getenv('HOME'),'.local','share','yarp','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
+%             if exist(path,'file')
+%                 name_yarp_file = cd(path);
+%                 disp('UPDATE LOCAL FOLDER!');
+%             else
+%                 %name_yarp_file = [build_folder '/main/WBIToolbox/share/codyco/contexts/wholeBodyInterfaceToolbox/wholeBodyInterfaceToolbox.ini'];
+%                 name_yarp_file = fullfile(robot.codyco_folder,robot.build_folder,'install','share','codyco','contexts','wholeBodyInterfaceToolbox','wholeBodyInterfaceToolbox.ini');
+%             end
+%             if ~strcmp(robot.realNameRobot, robot.SIMULATOR)
+%                 text = sprintf('robot          %s\n',robot.robotName);
+%             else
+%                 text = sprintf('robot          %s\n',robot.realNameRobot);
+%             end
+%             text = [text sprintf('localName      %s\n',robot.localName)];
+%             text = [text sprintf('worldRefFrame  %s\n',robot.worldRefFrame)];
+%             text = [text sprintf('robot_fixed    %s\n',robot.robot_fixed)];
+%             text = [text sprintf('wbi_id_list    %s\n',name)];
+%             text = [text sprintf('wbi_config_file %s', robot.configFile)];
+%             fid = fopen(name_yarp_file,'w');
+%             fprintf(fid, '%s', text);
+%             fclose(fid);
         end
         
         function loadYarpWBI(robot, list, yarpWBIfile)
