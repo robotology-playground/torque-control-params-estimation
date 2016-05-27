@@ -2,10 +2,15 @@
 This Simulink model identifies the viscous and coulomb friction of the iCub joints. 
 
 ## Dependencies
-The model depends on *yarp*, *icub-main*, *codyco-superbuild* and *WBI-toolbox*, see the instructions to install them:
+The model depends on *yarp*, *icub-main*, *codyco-superbuild* and *WBI-Toolbox 1.0*, see the instructions to install them:
 - [ICub Software Installation](http://wiki.icub.org/wiki/ICub_Software_Installation)
 - [Codyco superbuild](https://github.com/robotology/codyco-superbuild)
 - [WBI-Toolbox](https://github.com/robotology-playground/WBI-Toolbox)
+
+**Important note:**
+This model depends on the *WBI-Toolbox 1.0*, not on the new *WB-Toolbox 2.0*. When using the 
+`codyco-superbuild`, only the new *WB-Toolbox 2.0* is installed by default. To install the *WBI-Toolbox 1.0*, please read 
+the instruction at [https://github.com/robotology/codyco-superbuild#matlab-software](https://github.com/robotology/codyco-superbuild#matlab-software). In particular you should enable the `CODYCO_USES_WBI_TOOLBOX` flag when configuring the `codyco-superbuild`. Migrating this repo to use the new *WB-Toolbox 2.0* is tracked in https://github.com/robotology-playground/torque-control-params-estimation/issues/32 . 
 
 ## Installation
 Download this repository
