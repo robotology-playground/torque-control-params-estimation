@@ -23,7 +23,7 @@ Before launching any script related to this repository, it is important to confi
 1. Plug the computer, from which you want to launch the simulink model, into icub local area network
 2. Run `robotInterface` on **pc104**
 3. Run `wholeBodyDymanicsTree`;
-4. Run `controlBoardDumper` to read PWMs and encoder speeds. For instance, if you want to estimate the friction of the `left_leg` joints you can launch the controlBoradDumper as follows:
+4. Run `controlBoardDumper` to read PWMs and encoder speeds. For instance, if you want to estimate the friction of the `left_leg` joints and you are working with a CAN robot, launch the controlBoradDumper as follows:
 ```
 controlBoardDumper --robot icub --part right_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
 controlBoardDumper --robot icub --part left_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
@@ -31,6 +31,16 @@ controlBoardDumper --robot icub --part right_arm --rate 10  --joints "(0 1 2 3)"
 controlBoardDumper --robot icub --part left_arm --rate 10  --joints "(0 1 2 3)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
 controlBoardDumper --robot icub --part torso --rate 10  --joints "(0 1 2)" --dataToDump "(getOutputs getMotorEncoderSpeeds)"
 ```
+
+Instead, if you are working with an ETH robot, launch e.g.
+```
+controlBoardDumper --robot icub --part right_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getMotorsPwm getMotorEncoderSpeeds)"
+controlBoardDumper --robot icub --part left_leg --rate 10  --joints "(0 1 2 3 4 5)" --dataToDump "(getMotorsPwm getMotorEncoderSpeeds)"
+controlBoardDumper --robot icub --part right_arm --rate 10  --joints "(0 1 2 3)" --dataToDump "(getMotorsPwm getMotorEncoderSpeeds)"
+controlBoardDumper --robot icub --part left_arm --rate 10  --joints "(0 1 2 3)" --dataToDump "(getMotorsPwm getMotorEncoderSpeeds)"
+controlBoardDumper --robot icub --part torso --rate 10  --joints "(0 1 2)" --dataToDump "(getMotorsPwm getMotorEncoderSpeeds)"
+```
+
 5. Run `matlab` 
 6. Open and set the script `dump_joints.m` to load on matlab environment all variables and read all information regarding your robot. 
 
