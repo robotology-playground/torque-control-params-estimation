@@ -3,7 +3,7 @@ classdef Robot
     %   Detailed explanation goes here
     
     properties (Access = private)
-        SIMULATOR = 'icubGazeboSim';
+        SIMULATOR = 'icubSim';
         
         codyco_folder;
         build_folder = 'build';
